@@ -18,8 +18,8 @@ public:
      Eigen::Vector3f GetSpherePos();
 private:
     std::shared_ptr<Movable> root;
-    std::shared_ptr<cg3d::Model> sphere1 ,cube;
-    std::shared_ptr<cg3d::AutoMorphingModel> autoCube;
+    //std::shared_ptr<cg3d::Model> sphere1 ,cube;
+    //std::shared_ptr<cg3d::AutoMorphingModel> autoCube;
     std::vector<std::shared_ptr<cg3d::Model>> cyls, axis;
     int pickedIndex = 0;
     int tipIndex = 0;
