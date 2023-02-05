@@ -32,11 +32,18 @@
 
 using namespace std;
 using namespace cg3d;
+using namespace Eigen;
 
 void BasicScene::Init(float fov, int width, int height, float near, float far)
 {
-    camera = Camera::Create( "camera", fov, float(width) / height, near, far);
-    
+    // Set camera list
+    camera_list.resize(camera_list.capacity());
+    camera_list[0] = Camera::Create("global camera", fov, float(width) / height, near, far);
+    camera_list[1] = Camera::Create("snake camera", fov, float(width) / height, near, far);
+
+    camera = camera_list[0];
+    number_of_cameras = camera_list.size();
+
     AddChild(root = Movable::Create("root")); // a common (invisible) parent object for all the shapes
     auto daylight{std::make_shared<Material>("daylight", "shaders/cubemapShader")}; 
     daylight->AddTexture(0, "textures/cubemaps/Daylight Box_", 3);
@@ -46,6 +53,7 @@ void BasicScene::Init(float fov, int width, int height, float near, float far)
     background->SetPickable(false);
     background->SetStatic();
 
+    root->AddChild(camera_list[1]);
  
     auto program = std::make_shared<Program>("shaders/phongShader");
     auto program1 = std::make_shared<Program>("shaders/pickingShader");
@@ -78,7 +86,7 @@ void BasicScene::Init(float fov, int width, int height, float near, float far)
     camera->Translate(22, Axis::Z);
 
     // Init snake
-    snake = Snake(root, camera);
+    snake = Snake(root, camera_list[1]);
     snake.InitSnake(); 
 }
 
@@ -210,7 +218,8 @@ void BasicScene::KeyCallback(Viewport* viewport, int x, int y, int key, int scan
                 camera->TranslateInSystem(system, {0, 0, -0.1f});
                 break;
             case GLFW_KEY_V:
-                snake.SwitchView();
+                SwitchView(viewport);
+                /*cout << camera->GetTranslation() << endl;*/
                 break;
             //case GLFW_KEY_1:
             //    if( pickedIndex > 0)
@@ -240,4 +249,12 @@ void BasicScene::KeyCallback(Viewport* viewport, int x, int y, int key, int scan
             //    break;
         }
     }
+}
+
+
+void BasicScene::SwitchView(Viewport* viewport) {
+    camera_index = (camera_index + 1) % number_of_cameras;
+    camera = camera_list[camera_index];
+    //camera = snake.camera;
+    viewport->camera = camera;
 }

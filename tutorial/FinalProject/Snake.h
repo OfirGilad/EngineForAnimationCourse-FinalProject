@@ -22,16 +22,12 @@ public:
     Snake() {};
     Snake(std::shared_ptr<Movable> root, std::shared_ptr<Camera> camera);
     void InitSnake();
+    void UpdateCameraView();
 
     void MoveUp();
     void MoveDown();
     void MoveLeft();
     void MoveRight();
-
-    void SwitchView();
-    void ChangeCameraView(int mode);
-
-    int GetViewState() { return view_state; }
 
 private:
     std::shared_ptr<Camera> camera;

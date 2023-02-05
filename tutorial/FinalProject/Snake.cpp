@@ -10,7 +10,8 @@ using namespace cg3d;
 using namespace std;
 using namespace Eigen;
 
-Snake::Snake(std::shared_ptr<Movable> root, std::shared_ptr<Camera> camera) {
+Snake::Snake(std::shared_ptr<Movable> root, std::shared_ptr<Camera> camera)
+{
     this->root = root;
     this->camera = camera;
 }
@@ -47,68 +48,38 @@ void Snake::InitSnake()
         snake_bones[i - 1]->AddChild(snake_bones[i]);
         i++;
     }
-    snake_bones[0]->Translate({ 0,0,half_size * scaleFactor });
+    snake_bones[first_index]->Translate({ 0,0,half_size * scaleFactor });
+    UpdateCameraView();
 
     // Building snake model
     snake_body = Model::Create("snake", snakeMesh, snake_material);
     //root->AddChild(snake_body);
 }
 
+void Snake::UpdateCameraView()
+{
+    snake_bones[first_index]->AddChild(camera);
+    Vector3f camera_translation = camera->GetRotation() * Vector3f(0, 0.5, 0);
+    camera->Translate(camera_translation);
+}
 
 // Snake Movement
-void Snake::MoveUp() {
+void Snake::MoveUp()
+{
     snake_bones[first_index]->Rotate(0.1f, Movable::Axis::X);
-
-    if (view_state == 1) {
-        ChangeCameraView(view_state);
-    }
 }
 
-void Snake::MoveDown() {
+void Snake::MoveDown()
+{
     snake_bones[first_index]->Rotate(-0.1f, Movable::Axis::X);
-
-    if (view_state == 1) {
-        ChangeCameraView(view_state);
-    }
 }
 
-void Snake::MoveLeft() {
+void Snake::MoveLeft()
+{
     snake_bones[first_index]->Rotate(0.1f, Movable::Axis::Y);
-
-    if (view_state == 1) {
-        ChangeCameraView(view_state);
-    }
 }
 
-void Snake::MoveRight() {
+void Snake::MoveRight()
+{
     snake_bones[first_index]->Rotate(-0.1f, Movable::Axis::Y);
-
-    if (view_state == 1) {
-        ChangeCameraView(view_state);
-    }
-}
-
-void Snake::SwitchView() {
-    if (view_state == 0) {
-        view_state = 1;
-        ChangeCameraView(view_state);
-    }
-    else {
-        view_state = 0;
-        ChangeCameraView(view_state);
-    }
-}
-
-void Snake::ChangeCameraView(int state) {
-    // Global View: state=0
-    if (state == 0) {
-        camera->SetTransform(Matrix4f::Identity());
-        camera->Translate(22, Movable::Axis::Z);
-    }
-    // Snake View: state=1
-    else {
-        camera->SetTransform(snake_bones[first_index]->GetAggregatedTransform());
-        Vector3f camera_translation = camera->GetRotation() * Vector3f(0, 0.5, 0);
-        camera->Translate(camera_translation);
-    }
 }

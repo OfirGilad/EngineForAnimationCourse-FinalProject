@@ -18,6 +18,8 @@ public:
     void CursorPosCallback(cg3d::Viewport* viewport, int x, int y, bool dragging, int* buttonState)  override;
     void KeyCallback(cg3d::Viewport* viewport, int x, int y, int key, int scancode, int action, int mods) override;
 
+    void SwitchView(Viewport* viewport);
+
 private:
     std::shared_ptr<Movable> root;
     //std::shared_ptr<cg3d::Model> sphere1 ,cube;
@@ -30,8 +32,11 @@ private:
     Eigen::VectorXi EMAP;
     Eigen::MatrixXi F,E,EF,EI;
     Eigen::VectorXi EQ;
-  // If an edge were collapsed, we'd collapse it to these points:
+    // If an edge were collapsed, we'd collapse it to these points:
     Eigen::MatrixXd V, C, N, T, points,edges,colors;
 
+    std::vector<std::shared_ptr<cg3d::Camera>> camera_list{ 2 };
+    int camera_index = 0;
+    int number_of_cameras;
     Snake snake;
 };
