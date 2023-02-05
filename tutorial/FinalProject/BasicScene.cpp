@@ -38,8 +38,8 @@ void BasicScene::Init(float fov, int width, int height, float near, float far)
 {
     // Set camera list
     camera_list.resize(camera_list.capacity());
-    camera_list[0] = Camera::Create("global camera", fov, float(width) / height, near, far);
-    camera_list[1] = Camera::Create("snake camera", fov, float(width) / height, near, far);
+    camera_list[0] = Camera::Create("global view", fov, float(width) / height, near, far);
+    camera_list[1] = Camera::Create("snake view", fov, float(width) / height, near, far);
 
     camera = camera_list[0];
     number_of_cameras = camera_list.size();
@@ -83,7 +83,10 @@ void BasicScene::Init(float fov, int width, int height, float near, float far)
     axis[0]->Scale(4,Axis::XYZ);
     root->AddChild(axis[0]);
 
-    camera->Translate(22, Axis::Z);
+    camera->Translate(distance, Axis::Z);
+
+    // Init camera rotations modes
+    InitRotationModes();
 
     // Init snake
     snake = Snake(root, camera_list[1]);
@@ -134,14 +137,18 @@ void BasicScene::MouseCallback(Viewport* viewport, int x, int y, int button, int
 
 void BasicScene::ScrollCallback(Viewport* viewport, int x, int y, int xoffset, int yoffset, bool dragging, int buttonState[])
 {
-    // note: there's a (small) chance the button state here precedes the mouse press/release event
-    auto system = camera->GetRotation().transpose();
-    if (pickedModel) {
-        pickedModel->TranslateInSystem(system, {0, 0, -float(yoffset)});
-        pickedToutAtPress = pickedModel->GetTout();
-    } else {
-        camera->TranslateInSystem(system, {0, 0, -float(yoffset)});
-        cameraToutAtPress = camera->GetTout();
+    // Disabled scrolling for all cameras
+    if (camera_index == -1) {
+        // note: there's a (small) chance the button state here precedes the mouse press/release event
+        auto system = camera->GetRotation().transpose();
+        if (pickedModel) {
+            pickedModel->TranslateInSystem(system, { 0, 0, -float(yoffset) });
+            pickedToutAtPress = pickedModel->GetTout();
+        }
+        else {
+            camera->TranslateInSystem(system, { 0, 0, -float(yoffset) });
+            cameraToutAtPress = camera->GetTout();
+        }
     }
 }
 
@@ -181,6 +188,11 @@ void BasicScene::KeyCallback(Viewport* viewport, int x, int y, int key, int scan
 {
     auto system = camera->GetRotation().transpose();
 
+    int translation = translation_modes[up_down_mode][left_right_mode].first;
+    Axis axis = translation_modes[up_down_mode][left_right_mode].second;
+
+    Matrix3f Kp = Matrix3f();
+
     if (action == GLFW_PRESS || action == GLFW_REPEAT) {
         switch (key) // NOLINT(hicpp-multiway-paths-covered)
         {
@@ -200,16 +212,56 @@ void BasicScene::KeyCallback(Viewport* viewport, int x, int y, int key, int scan
                 snake.MoveRight();
                 break;
             case GLFW_KEY_UP:
-                camera->TranslateInSystem(system, {0, 0.1f, 0});
+                if ((up_down_mode == 0 || up_down_mode == 2) && left_right_mode == 0) {
+                    camera->Translate(-translation, axis);
+                    camera->RotateByDegree(90, Vector3f(-1, 0, 0));
+                    up_down_mode = (up_down_mode + 1) % 3;
+
+                    translation = translation_modes[up_down_mode][left_right_mode].first;
+                    axis = translation_modes[up_down_mode][left_right_mode].second;
+                    camera->Translate(translation, axis);
+                }
+
+                //camera->TranslateInSystem(system, {0, 0.1f, 0});
                 break;
             case GLFW_KEY_DOWN:
-                camera->TranslateInSystem(system, {0, -0.1f, 0});
+                if ((up_down_mode == 0 || up_down_mode == 1) && left_right_mode == 0) {
+                    camera->Translate(-translation, axis);
+                    camera->RotateByDegree(90, Vector3f(1, 0, 0));
+                    up_down_mode = (up_down_mode + 2) % 3;
+
+                    translation = translation_modes[up_down_mode][left_right_mode].first;
+                    axis = translation_modes[up_down_mode][left_right_mode].second;
+                    camera->Translate(translation, axis);
+                }
+
+                //camera->TranslateInSystem(system, {0, -0.1f, 0});
                 break;
             case GLFW_KEY_LEFT:
-                camera->TranslateInSystem(system, {-0.1f, 0, 0});
+                if (up_down_mode == 0) {
+                    camera->Translate(-translation, axis);
+                    camera->RotateByDegree(90, Vector3f(0, -1, 0));
+                    left_right_mode = (left_right_mode + 1) % 4;
+
+                    translation = translation_modes[up_down_mode][left_right_mode].first;
+                    axis = translation_modes[up_down_mode][left_right_mode].second;
+                    camera->Translate(translation, axis);
+                }
+                
+                //camera->TranslateInSystem(system, {-0.1f, 0, 0});
                 break;
             case GLFW_KEY_RIGHT:
-                camera->TranslateInSystem(system, {0.1f, 0, 0});
+                if (up_down_mode == 0) {
+                    camera->Translate(-translation, axis);
+                    camera->RotateByDegree(90, Vector3f(0, 1, 0));
+                    left_right_mode = (left_right_mode + 3) % 4;
+
+                    translation = translation_modes[up_down_mode][left_right_mode].first;
+                    axis = translation_modes[up_down_mode][left_right_mode].second;
+                    camera->Translate(translation, axis);
+                }
+
+                //camera->TranslateInSystem(system, {0.1f, 0, 0});
                 break;
             case GLFW_KEY_B:
                 camera->TranslateInSystem(system, {0, 0, 0.1f});
@@ -219,7 +271,6 @@ void BasicScene::KeyCallback(Viewport* viewport, int x, int y, int key, int scan
                 break;
             case GLFW_KEY_V:
                 SwitchView(viewport);
-                /*cout << camera->GetTranslation() << endl;*/
                 break;
             //case GLFW_KEY_1:
             //    if( pickedIndex > 0)
@@ -252,9 +303,33 @@ void BasicScene::KeyCallback(Viewport* viewport, int x, int y, int key, int scan
 }
 
 
-void BasicScene::SwitchView(Viewport* viewport) {
+void BasicScene::SwitchView(Viewport* viewport)
+{
     camera_index = (camera_index + 1) % number_of_cameras;
     camera = camera_list[camera_index];
-    //camera = snake.camera;
     viewport->camera = camera;
+}
+
+void BasicScene::InitRotationModes() {
+    // Global camera static view modes:
+    vector<pair<int, Axis>> sub_translation_modes1;
+    sub_translation_modes1.push_back({ distance, Axis::Z });  // Front
+    sub_translation_modes1.push_back({ -distance, Axis::X }); // Right
+    sub_translation_modes1.push_back({ -distance, Axis::Z }); // Back
+    sub_translation_modes1.push_back({ distance, Axis::X });  // Left
+    translation_modes.push_back(sub_translation_modes1);
+
+    vector<pair<int, Axis>> sub_translation_modes2;
+    sub_translation_modes2.push_back({ distance, Axis::Y });  // Top
+    //sub_translation_modes2.push_back({ -distance, Axis::X });
+    //sub_translation_modes2.push_back({ -distance, Axis::X });
+    //sub_translation_modes2.push_back({ distance, Axis::Y });
+    translation_modes.push_back(sub_translation_modes2);
+
+    vector<pair<int, Axis>> sub_translation_modes3;
+    sub_translation_modes3.push_back({ -distance, Axis::Y }); // Bottom
+    //sub_translation_modes3.push_back({ -distance, Axis::X });
+    //sub_translation_modes3.push_back({ distance, Axis::Y });
+    //sub_translation_modes3.push_back({ distance, Axis::X });
+    translation_modes.push_back(sub_translation_modes3);
 }

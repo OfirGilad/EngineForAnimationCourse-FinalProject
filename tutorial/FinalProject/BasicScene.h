@@ -19,6 +19,7 @@ public:
     void KeyCallback(cg3d::Viewport* viewport, int x, int y, int key, int scancode, int action, int mods) override;
 
     void SwitchView(Viewport* viewport);
+    void InitRotationModes();
 
 private:
     std::shared_ptr<Movable> root;
@@ -39,4 +40,7 @@ private:
     int camera_index = 0;
     int number_of_cameras;
     Snake snake;
+    vector<vector<pair<int, Axis>>> translation_modes;
+    int distance = 30;
+    int up_down_mode = 0, left_right_mode = 0;
 };
