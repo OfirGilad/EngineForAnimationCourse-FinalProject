@@ -149,7 +149,7 @@ void Scene::KeyCallback(Viewport* viewport, int x, int y, int key, int scancode,
 
 void Scene::CharCallback(Viewport* viewport, int x, int y, unsigned int codepoint)
 {
-    debug("char codepoint input: ", codepoint, " ('", (char) codepoint, "')");
+    //debug("char codepoint input: ", codepoint, " ('", (char) codepoint, "')");
 }
 
 void Scene::ViewportSizeCallback(Viewport* viewport)
