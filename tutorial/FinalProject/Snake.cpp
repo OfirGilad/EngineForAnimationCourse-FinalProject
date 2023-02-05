@@ -102,9 +102,7 @@ void Snake::SwitchView() {
 void Snake::ChangeCameraView(int state) {
     // Global View: state=0
     if (state == 0) {
-        Matrix4f center = Matrix4f();
-        center.setIdentity();
-        camera->SetTransform(center);
+        camera->SetTransform(Matrix4f::Identity());
         camera->Translate(22, Movable::Axis::Z);
     }
     // Snake View: state=1
