@@ -29,6 +29,15 @@ public:
     void SwitchView();
     void InitRotationModes();
 
+    // Menu Managmenet
+    void MenuManager();
+    enum MenuMapping { MainMenu, StageSelectionMenu, GameMenu };
+
+    void MainMenuHandler();
+    void StageSelectionMenuHandler();
+    void GameMenuHandler();
+
+
 private:
     void BuildImGui() override;
     cg3d::Viewport* viewport = nullptr;
@@ -49,6 +58,7 @@ private:
     Eigen::MatrixXd V, C, N, T, points,edges,colors;
 
 
+    // Snake Params
     std::vector<std::shared_ptr<cg3d::Camera>> camera_list{ 2 };
     int camera_index = 0;
     int number_of_cameras = 0;
@@ -56,4 +66,9 @@ private:
     vector<vector<pair<int, Axis>>> translation_modes;
     int distance = 30;
     int up_down_mode = 0, left_right_mode = 0;
+
+
+    // Menu Params
+    int menu_index = 0;
+    int display_keys = 0;;
 };

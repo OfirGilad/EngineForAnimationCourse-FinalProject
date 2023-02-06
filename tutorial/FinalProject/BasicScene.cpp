@@ -294,45 +294,7 @@ void BasicScene::KeyCallback(Viewport* viewport, int x, int y, int key, int scan
 
 // Game Menu
 void BasicScene::BuildImGui() {
-    int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
-    bool* pOpen = nullptr;
-
-    ImGui::Begin("Menu", pOpen, flags);
-    ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
-    ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
-    ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Game Menu");
-
-    // Handle Score
-    string button_name = "Score: " + std::to_string(0);
-    ImGui::Text(button_name.c_str());
-
-    // Handle View
-    ImGui::Text("Camera List: ");
-    for (int i = 0; i < camera_list.size(); i++) {
-        ImGui::SameLine(0);
-        bool selectedCamera = camera_list[i] == camera;
-        if (selectedCamera) {
-            ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetStyleColorVec4(ImGuiCol_ButtonActive));
-        }
-        if (ImGui::Button(std::to_string(i + 1).c_str())) {
-            SetCamera(i);
-        }
-        if (selectedCamera) {
-            ImGui::PopStyleColor();
-        }
-    }
-    
-    // Handle Stages
-    ImGui::Text("Select Stage: ");
-    for (int i = 1; i <= 3; i++) {
-        string button_name = "Stage " + std::to_string(i);
-
-        if (ImGui::Button(button_name.c_str())) {
-            cout << button_name.c_str() << endl;
-        }
-    }
-
-    ImGui::End();
+    MenuManager();
 }
 
 void BasicScene::SetCamera(int index)
@@ -388,4 +350,160 @@ void BasicScene::InitRotationModes() {
     //sub_translation_modes3.push_back({ distance, Axis::Y });
     //sub_translation_modes3.push_back({ distance, Axis::X });
     translation_modes.push_back(sub_translation_modes3);
+}
+
+
+// Menu
+void BasicScene::MenuManager() {
+    switch (menu_index)
+    {
+        case MainMenu:
+            MainMenuHandler();
+            break;
+        case StageSelectionMenu:
+            StageSelectionMenuHandler();
+            break;
+        case GameMenu:
+            GameMenuHandler();
+            break;
+    }
+}
+
+void BasicScene::MainMenuHandler() {
+    int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
+    bool* pOpen = nullptr;
+
+    ImGui::Begin("Menu", pOpen, flags);
+    ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
+    ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
+    ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Main Menu");
+
+    // Handle Score
+    string button_name = "Score: " + std::to_string(0);
+    ImGui::Text(button_name.c_str());
+
+    ImGui::Spacing();
+
+    // Move to stage selection menu
+    if (ImGui::Button("Shop")) {
+        //menu_index = ShopMenu;
+        cout << "Shop" << endl;
+    }
+
+    ImGui::Spacing();
+
+    if (ImGui::Button("Hall Of Fame")) {
+        //menu_index = HallOfFameMenu;
+        cout << "Hall Of Fame" << endl;
+    }
+
+    ImGui::Spacing();
+
+    // Move to stage selection menu
+    if (ImGui::Button("Select Stage")) {
+        menu_index = StageSelectionMenu;
+    }
+
+    ImGui::Spacing();
+
+    if (ImGui::Button("Exit")) {
+        glfwSetWindowShouldClose(window, GLFW_TRUE);
+    }
+    
+    ImGui::End();
+}
+
+void BasicScene::StageSelectionMenuHandler() {
+    int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
+    bool* pOpen = nullptr;
+    ImGui::Begin("Menu", pOpen, flags);
+    ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
+    ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
+    ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Stage Selection Menu");
+
+    // Handle Stages
+    ImGui::Text("Select Stage: ");
+    for (int i = 1; i <= 3; i++) {
+        string button_name = "Stage " + std::to_string(i);
+
+        if (ImGui::Button(button_name.c_str())) {
+            cout << button_name.c_str() << endl;
+            menu_index = GameMenu;
+        }
+    }
+
+    ImGui::Spacing();
+
+    if (ImGui::Button("Back")) {
+        menu_index = MainMenu;
+    }
+    ImGui::End();
+}
+
+void BasicScene::GameMenuHandler() {
+    int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
+    bool* pOpen = nullptr;
+
+    ImGui::Begin("Menu", pOpen, flags);
+    ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
+    ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
+    ImGui::TextColored(ImVec4(0.0, 0.5, 1.0, 1.0), "Game Menu");
+
+    // Handle Score
+    string button_name = "Score: " + std::to_string(0);
+    ImGui::Text(button_name.c_str());
+
+    // Handle View
+    ImGui::Text("Camera List: ");
+    for (int i = 0; i < camera_list.size(); i++) {
+        ImGui::SameLine(0);
+        bool selectedCamera = camera_list[i] == camera;
+        if (selectedCamera) {
+            ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetStyleColorVec4(ImGuiCol_ButtonActive));
+        }
+        if (ImGui::Button(std::to_string(i + 1).c_str())) {
+            SetCamera(i);
+        }
+        if (selectedCamera) {
+            ImGui::PopStyleColor();
+        }
+    }
+
+    ImGui::Spacing();
+
+    if (display_keys == 0) {
+        if (ImGui::Button("Show Keys")) {
+            display_keys = 1;
+        }
+    }
+    else {
+        if (ImGui::Button("Hide Keys")) {
+            display_keys = 0;
+        }
+        ImGui::Text("Keyboard Keys: ");
+        ImGui::Text("W - Move snake up");
+        ImGui::Text("S - Move snake down");
+        ImGui::Text("A - Move snake left");
+        ImGui::Text("D - Move snake right");
+        ImGui::Text("V - Switch view");
+        ImGui::Text("UP - Switch camera view up");
+        ImGui::Text("DOWN - Switch camera view down");
+        ImGui::Text("LEFT - Switch camera view left");
+        ImGui::Text("RIGHT - Switch camera view right");
+        ImGui::Text("ESC - Exit game");
+    }
+
+    ImGui::Spacing();
+
+    if (ImGui::Button("Pasue")) {
+        cout << "Pause Game" << endl;
+    }
+
+    ImGui::Spacing();
+
+    if (ImGui::Button("Back to Main Menu")) {
+        menu_index = MainMenu;
+    }
+
+    ImGui::End();
 }
