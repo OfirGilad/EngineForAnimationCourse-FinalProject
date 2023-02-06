@@ -70,5 +70,5 @@ private:
 
     // Menu Params
     int menu_index = 0;
-    int display_keys = 0;;
+    int display_keys = 0;
 };

@@ -5,6 +5,8 @@
 #include "DrawVisitor.h"
 #include "GLFW/glfw3.h"
 
+#include "AnimationVisitor.h"
+
 
 namespace cg3d
 {
@@ -41,6 +43,9 @@ private:
     Viewport* viewportAtKeyPress = nullptr;
     int windowWidth = 0, windowHeight = 0, xPress = 0, yPress = 0;
     bool isMouseDragging = false;
+
+    // New Visitors
+    AnimationVisitor animationVisitor;
 };
 
 } // namespace cg3d

@@ -10,10 +10,10 @@ using namespace cg3d;
 using namespace std;
 using namespace Eigen;
 
-Snake::Snake(std::shared_ptr<Movable> root, std::shared_ptr<Camera> camera)
+Snake::Snake(std::shared_ptr<Movable> root, vector<std::shared_ptr<Camera>> camera_list)
 {
     this->root = root;
-    this->camera = camera;
+    this->camera_list = camera_list;
 }
 
 void Snake::InitSnake()
@@ -34,7 +34,7 @@ void Snake::InitSnake()
     float scaleFactor = 1;
     int i = 0;
     snake_bones.push_back(Model::Create("bone " + to_string(i), cylMesh, material));
-    snake_bones[i]->Scale(scaleFactor, Movable::Axis::X);
+    snake_bones[i]->Scale(scaleFactor, Scene::Axis::X);
     snake_bones[i]->SetCenter(Eigen::Vector3f(0, 0, -half_size * scaleFactor));
     root->AddChild(snake_bones[i]);
     i++;
@@ -42,8 +42,8 @@ void Snake::InitSnake()
     while(i < number_of_bones)
     {
         snake_bones.push_back(Model::Create("bone " + to_string(i), cylMesh, material));
-        snake_bones[i]->Scale(scaleFactor, Movable::Axis::X);
-        snake_bones[i]->Translate(size * scaleFactor, Movable::Axis::Z);
+        snake_bones[i]->Scale(scaleFactor, Scene::Axis::X);
+        snake_bones[i]->Translate(size * scaleFactor, Scene::Axis::Z);
         snake_bones[i]->SetCenter(Eigen::Vector3f(0, 0, -half_size * scaleFactor));
         snake_bones[i - 1]->AddChild(snake_bones[i]);
         i++;
@@ -60,30 +60,31 @@ void Snake::InitSnake()
 // Snake Movement
 void Snake::MoveUp()
 {
-    snake_bones[first_index]->Rotate(0.1f, Movable::Axis::X);
+    snake_bones[first_index]->Rotate(0.1f, Scene::Axis::X);
 }
 
 void Snake::MoveDown()
 {
-    snake_bones[first_index]->Rotate(-0.1f, Movable::Axis::X);
+    snake_bones[first_index]->Rotate(-0.1f, Scene::Axis::X);
 }
 
 void Snake::MoveLeft()
 {
-    snake_bones[first_index]->Rotate(0.1f, Movable::Axis::Y);
+    snake_bones[first_index]->Rotate(0.1f, Scene::Axis::Y);
 }
 
 void Snake::MoveRight()
 {
-    snake_bones[first_index]->Rotate(-0.1f, Movable::Axis::Y);
+    snake_bones[first_index]->Rotate(-0.1f, Scene::Axis::Y);
 }
 
 
 void Snake::UpdateCameraView()
 {
-    snake_bones[first_index]->AddChild(camera);
-    Vector3f camera_translation = camera->GetRotation() * Vector3f(0, 0.5, 0);
-    camera->Translate(camera_translation);
+    snake_bones[first_index]->AddChild(camera_list[0]);
+    snake_bones[first_index]->AddChild(camera_list[1]);
+    Vector3f camera_translation = camera_list[1]->GetRotation() * Vector3f(0, 0.5, 0);
+    camera_list[1]->Translate(camera_translation);
 }
 
 void Snake::InitCollisionBoxes() {

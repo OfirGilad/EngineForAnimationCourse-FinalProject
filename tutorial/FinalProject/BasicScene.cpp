@@ -97,12 +97,14 @@ void BasicScene::Init(float fov, int width, int height, float near, float far)
     root->AddChild(axis[0]);
 
     camera->Translate(distance, Axis::Z);
+    camera->Translate(10, Axis::Y);
+    camera->RotateByDegree(-10, Axis::X);
 
     // Init camera rotations modes
     InitRotationModes();
 
     // Init snake
-    snake = Snake(root, camera_list[1]);
+    snake = Snake(root, camera_list);
     snake.InitSnake();
 }
 
@@ -287,6 +289,10 @@ void BasicScene::KeyCallback(Viewport* viewport, int x, int y, int key, int scan
                 break;
             case GLFW_KEY_V:
                 SwitchView();
+                break;
+            case GLFW_KEY_SPACE:
+                this->animate = !this->animate;
+                cout << this->animate << endl;
                 break;
         }
     }

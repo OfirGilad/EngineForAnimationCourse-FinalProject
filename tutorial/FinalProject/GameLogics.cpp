@@ -661,9 +661,9 @@ void GameLogics::IKCyclicCoordinateDecentMethod() {
             Eigen::Matrix3f Ri = (Eigen::AngleAxisf(angle, rotation_vector.normalized())).toRotationMatrix();
             Eigen::Vector3f euler_angles = Ri.eulerAngles(2, 0, 2);
 
-            arms[curr_link]->Rotate(euler_angles[0], Movable::Axis::Z);
-            arms[curr_link]->Rotate(euler_angles[1], Movable::Axis::X);
-            arms[curr_link]->Rotate(euler_angles[2], Movable::Axis::Z);
+            arms[curr_link]->Rotate(euler_angles[0], Scene::Axis::Z);
+            arms[curr_link]->Rotate(euler_angles[1], Scene::Axis::X);
+            arms[curr_link]->Rotate(euler_angles[2], Scene::Axis::Z);
 
             curr_link--;
         }
@@ -800,7 +800,7 @@ void GameLogics::IKSolverHelper(int link_id, Eigen::Vector3f D) {
     Eigen::Matrix3f Ri = (Eigen::AngleAxisf(angle, rotation_vector.normalized())).toRotationMatrix();
     Eigen::Vector3f euler_angles = Ri.eulerAngles(2, 0, 2);
 
-    arms[link_id]->Rotate(euler_angles[0], Movable::Axis::Z);
-    arms[link_id]->Rotate(euler_angles[1], Movable::Axis::X);
-    arms[link_id]->Rotate(euler_angles[2], Movable::Axis::Z);
+    arms[link_id]->Rotate(euler_angles[0], Scene::Axis::Z);
+    arms[link_id]->Rotate(euler_angles[1], Scene::Axis::X);
+    arms[link_id]->Rotate(euler_angles[2], Scene::Axis::Z);
 }

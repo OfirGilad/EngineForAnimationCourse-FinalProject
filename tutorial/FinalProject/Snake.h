@@ -21,7 +21,7 @@ class Snake
 {
 public:
     Snake() {};
-    Snake(std::shared_ptr<Movable> root, std::shared_ptr<Camera> camera);
+    Snake(std::shared_ptr<Movable> root, vector<std::shared_ptr<Camera>> camera_list);
     void InitSnake();
 
     void MoveUp();
@@ -33,7 +33,7 @@ private:
     void UpdateCameraView();
     void InitCollisionBoxes();
 
-    std::shared_ptr<Camera> camera;
+    vector<std::shared_ptr<Camera>> camera_list;
     std::shared_ptr<Movable> root;
     std::vector<std::shared_ptr<cg3d::Model>> snake_bones;
     std::shared_ptr <cg3d::Model> snake_body;

@@ -48,11 +48,15 @@ public:
     virtual void ViewportSizeCallback(Viewport* viewport);
     virtual void AddViewportCallback(Viewport* viewport) {};
 
+    bool IsAnimate() { return animate; }
+
 protected:
     Renderer* renderer; // required for picking
     int xAtPress = -1, yAtPress = -1;
     float pickedModelDepth = 0;
     Eigen::Affine3f pickedToutAtPress, cameraToutAtPress;
+
+    bool animate = false;
 };
 
 } // namespace cg3d
