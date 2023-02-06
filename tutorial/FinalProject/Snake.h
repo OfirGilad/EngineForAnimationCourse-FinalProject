@@ -9,6 +9,7 @@
 
 #pragma once
 #include "Scene.h"
+#include "igl/AABB.h"
 
 #include <memory>
 #include <utility>
@@ -22,7 +23,6 @@ public:
     Snake() {};
     Snake(std::shared_ptr<Movable> root, std::shared_ptr<Camera> camera);
     void InitSnake();
-    void UpdateCameraView();
 
     void MoveUp();
     void MoveDown();
@@ -30,6 +30,9 @@ public:
     void MoveRight();
 
 private:
+    void UpdateCameraView();
+    void InitCollisionBoxes();
+
     std::shared_ptr<Camera> camera;
     std::shared_ptr<Movable> root;
     std::vector<std::shared_ptr<cg3d::Model>> snake_bones;
@@ -40,4 +43,10 @@ private:
     int first_index = 0;
     int last_index = number_of_bones;
     int view_state = 0;
+
+
+    vector<igl::AABB<Eigen::MatrixXd, 3>> bones_trees;
+    std::vector<Eigen::MatrixXi> F, E, EF, EI;
+    std::vector<Eigen::VectorXi> EQ;
+    std::vector<Eigen::MatrixXd> V, C;
 };

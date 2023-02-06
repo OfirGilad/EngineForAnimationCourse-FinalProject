@@ -50,17 +50,11 @@ void Snake::InitSnake()
     }
     snake_bones[first_index]->Translate({ 0,0,half_size * scaleFactor });
     UpdateCameraView();
+    InitCollisionBoxes();
 
     // Building snake model
     snake_body = Model::Create("snake", snakeMesh, snake_material);
     //root->AddChild(snake_body);
-}
-
-void Snake::UpdateCameraView()
-{
-    snake_bones[first_index]->AddChild(camera);
-    Vector3f camera_translation = camera->GetRotation() * Vector3f(0, 0.5, 0);
-    camera->Translate(camera_translation);
 }
 
 // Snake Movement
@@ -82,4 +76,24 @@ void Snake::MoveLeft()
 void Snake::MoveRight()
 {
     snake_bones[first_index]->Rotate(-0.1f, Movable::Axis::Y);
+}
+
+
+void Snake::UpdateCameraView()
+{
+    snake_bones[first_index]->AddChild(camera);
+    Vector3f camera_translation = camera->GetRotation() * Vector3f(0, 0.5, 0);
+    camera->Translate(camera_translation);
+}
+
+void Snake::InitCollisionBoxes() {
+    bones_trees.clear();
+    bones_trees.resize(number_of_bones);
+
+    for (int i = 0; i < number_of_bones; i++) {
+        auto mesh = snake_bones[i]->GetMeshList();
+        V.push_back(mesh[0]->data[0].vertices);
+        F.push_back(mesh[0]->data[0].faces);
+        bones_trees[i].init(V[0], F[0]);
+    }
 }
