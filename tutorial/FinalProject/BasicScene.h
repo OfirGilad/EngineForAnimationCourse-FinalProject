@@ -12,7 +12,6 @@
 class BasicScene : public cg3d::SceneWithImGui
 {
 public:
-    // Functions
     BasicScene(std::string name, cg3d::Display* display);
     void Init(float fov, int width, int height, float near, float far);
     void Update(const cg3d::Program& program, const Eigen::Matrix4f& proj, const Eigen::Matrix4f& view, const Eigen::Matrix4f& model) override;
@@ -20,6 +19,7 @@ public:
     void ScrollCallback(cg3d::Viewport* viewport, int x, int y, int xoffset, int yoffset, bool dragging, int buttonState[]) override;
     void CursorPosCallback(cg3d::Viewport* viewport, int x, int y, bool dragging, int* buttonState)  override;
     void KeyCallback(cg3d::Viewport* viewport, int x, int y, int key, int scancode, int action, int mods) override;
+
 
     void SetCamera(int index);
     void AddViewportCallback(cg3d::Viewport* _viewport) override;
@@ -47,6 +47,7 @@ private:
     Eigen::VectorXi EQ;
     // If an edge were collapsed, we'd collapse it to these points:
     Eigen::MatrixXd V, C, N, T, points,edges,colors;
+
 
     std::vector<std::shared_ptr<cg3d::Camera>> camera_list{ 2 };
     int camera_index = 0;
