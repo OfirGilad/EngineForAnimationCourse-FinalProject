@@ -30,9 +30,22 @@
 
 // #include "AutoMorphingModel.h"
 
+#include "imgui.h"
+#include "file_dialog_open.h"
+#include "GLFW/glfw3.h"
+
 using namespace std;
 using namespace cg3d;
 using namespace Eigen;
+
+
+BasicScene::BasicScene(std::string name, Display* display) : SceneWithImGui(std::move(name), display)
+{
+    ImGui::GetIO().IniFilename = nullptr;
+    ImGui::StyleColorsDark();
+    ImGuiStyle& style = ImGui::GetStyle();
+    style.FrameRounding = 5.0f;
+}
 
 void BasicScene::Init(float fov, int width, int height, float near, float far)
 {
@@ -90,7 +103,7 @@ void BasicScene::Init(float fov, int width, int height, float near, float far)
 
     // Init snake
     snake = Snake(root, camera_list[1]);
-    snake.InitSnake(); 
+    snake.InitSnake();
 }
 
 void BasicScene::Update(const Program& program, const Eigen::Matrix4f& proj, const Eigen::Matrix4f& view, const Eigen::Matrix4f& model)
@@ -105,6 +118,9 @@ void BasicScene::Update(const Program& program, const Eigen::Matrix4f& proj, con
 
 void BasicScene::MouseCallback(Viewport* viewport, int x, int y, int button, int action, int mods, int buttonState[])
 {
+    // Handle ImGui Menu
+    if (ImGui::GetIO().WantCaptureMouse) return;
+    
     // note: there's a (small) chance the button state here precedes the mouse press/release event
 
     if (action == GLFW_PRESS) { // default mouse button press behavior
@@ -212,7 +228,7 @@ void BasicScene::KeyCallback(Viewport* viewport, int x, int y, int key, int scan
                 snake.MoveRight();
                 break;
             case GLFW_KEY_UP:
-                if ((up_down_mode == 0 || up_down_mode == 2) && left_right_mode == 0) {
+                if ((camera_list[0] == camera) && ((up_down_mode == 0 || up_down_mode == 2) && left_right_mode == 0)) {
                     camera->Translate(-translation, axis);
                     camera->RotateByDegree(90, Vector3f(-1, 0, 0));
                     up_down_mode = (up_down_mode + 1) % 3;
@@ -225,7 +241,7 @@ void BasicScene::KeyCallback(Viewport* viewport, int x, int y, int key, int scan
                 //camera->TranslateInSystem(system, {0, 0.1f, 0});
                 break;
             case GLFW_KEY_DOWN:
-                if ((up_down_mode == 0 || up_down_mode == 1) && left_right_mode == 0) {
+                if ((camera_list[0] == camera) && ((up_down_mode == 0 || up_down_mode == 1) && left_right_mode == 0)) {
                     camera->Translate(-translation, axis);
                     camera->RotateByDegree(90, Vector3f(1, 0, 0));
                     up_down_mode = (up_down_mode + 2) % 3;
@@ -238,7 +254,7 @@ void BasicScene::KeyCallback(Viewport* viewport, int x, int y, int key, int scan
                 //camera->TranslateInSystem(system, {0, -0.1f, 0});
                 break;
             case GLFW_KEY_LEFT:
-                if (up_down_mode == 0) {
+                if ((camera_list[0] == camera) && (up_down_mode == 0)) {
                     camera->Translate(-translation, axis);
                     camera->RotateByDegree(90, Vector3f(0, -1, 0));
                     left_right_mode = (left_right_mode + 1) % 4;
@@ -251,7 +267,7 @@ void BasicScene::KeyCallback(Viewport* viewport, int x, int y, int key, int scan
                 //camera->TranslateInSystem(system, {-0.1f, 0, 0});
                 break;
             case GLFW_KEY_RIGHT:
-                if (up_down_mode == 0) {
+                if ((camera_list[0] == camera) && (up_down_mode == 0)) {
                     camera->Translate(-translation, axis);
                     camera->RotateByDegree(90, Vector3f(0, 1, 0));
                     left_right_mode = (left_right_mode + 3) % 4;
@@ -270,40 +286,80 @@ void BasicScene::KeyCallback(Viewport* viewport, int x, int y, int key, int scan
                 camera->TranslateInSystem(system, {0, 0, -0.1f});
                 break;
             case GLFW_KEY_V:
-                SwitchView(viewport);
+                SwitchView();
                 break;
-            //case GLFW_KEY_1:
-            //    if( pickedIndex > 0)
-            //      pickedIndex--;
-            //    break;
-            //case GLFW_KEY_2:
-            //    if(pickedIndex < snake_bones.size()-1)
-            //        pickedIndex++;
-            //    break;
-            //case GLFW_KEY_3:
-            //    if( tipIndex >= 0)
-            //    {
-            //      if(tipIndex == snake_bones.size())
-            //        tipIndex--;
-            //      //sphere1->Translate(GetSpherePos());
-            //      tipIndex--;
-            //    }
-            //    break;
-            //case GLFW_KEY_4:
-            //    if(tipIndex < snake_bones.size())
-            //    {
-            //        if(tipIndex < 0)
-            //          tipIndex++;
-            //        //sphere1->Translate(GetSpherePos());
-            //        tipIndex++;
-            //    }
-            //    break;
         }
     }
 }
 
+// Game Menu
+void BasicScene::BuildImGui() {
+    int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
+    bool* pOpen = nullptr;
 
-void BasicScene::SwitchView(Viewport* viewport)
+    ImGui::Begin("Menu", pOpen, flags);
+    ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
+    ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
+    ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Game Menu");
+
+    // Handle Score
+    string button_name = "Score: " + std::to_string(0);
+    ImGui::Text(button_name.c_str());
+
+    // Handle View
+    ImGui::Text("Camera List: ");
+    for (int i = 0; i < camera_list.size(); i++) {
+        ImGui::SameLine(0);
+        bool selectedCamera = camera_list[i] == camera;
+        if (selectedCamera) {
+            ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetStyleColorVec4(ImGuiCol_ButtonActive));
+        }
+        if (ImGui::Button(std::to_string(i + 1).c_str())) {
+            SetCamera(i);
+        }
+        if (selectedCamera) {
+            ImGui::PopStyleColor();
+        }
+    }
+    
+    // Handle Stages
+    ImGui::Text("Select Stage: ");
+    for (int i = 1; i <= 3; i++) {
+        string button_name = "Stage " + std::to_string(i);
+
+        if (ImGui::Button(button_name.c_str())) {
+            cout << button_name.c_str() << endl;
+        }
+    }
+
+    ImGui::End();
+}
+
+void BasicScene::SetCamera(int index)
+{
+    camera = camera_list[index];
+    viewport->camera = camera;
+}
+
+void BasicScene::ViewportSizeCallback(Viewport* _viewport)
+{
+    for (auto& cam : camera_list) {
+        cam->SetProjection(float(_viewport->width) / float(_viewport->height));
+    }
+
+    // note: we don't need to call Scene::ViewportSizeCallback since we are setting the projection of all the cameras
+}
+
+void BasicScene::AddViewportCallback(Viewport* _viewport)
+{
+    viewport = _viewport;
+
+    Scene::AddViewportCallback(viewport);
+}
+
+
+
+void BasicScene::SwitchView()
 {
     camera_index = (camera_index + 1) % number_of_cameras;
     camera = camera_list[camera_index];
