@@ -146,6 +146,13 @@ void Movable::Rotate(float angle, const Eigen::Vector3f& axisVec)
     PropagateTransform();
 }
 
+void Movable::Rotate(const Eigen::Quaternionf& quat)
+{
+    if (isStatic) return;
+    Tout.rotate(quat);
+    PropagateTransform();
+}
+
 void Movable::RotateByDegree(float degree, Axis axis)
 {
     RotateByDegree(degree, AxisVec(axis));
