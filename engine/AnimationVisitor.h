@@ -8,6 +8,7 @@
 #endif //ENGINEFORANIMATIONCOURSE_FINALPROJECT_ANIMATIONVISITOR_H
 
 #include "Visitor.h"
+#include "Model.h"
 #include <vector>
 
 
@@ -22,5 +23,9 @@ namespace cg3d
     private:
         std::vector<Model*> models;
         Scene* scene;
+        Eigen::Quaternionf quaternion;
+        int bone_index = 0;
+        int number_of_bones = 2; // without the first bone
+        bool bones_found_flag = false;
     };
 }

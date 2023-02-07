@@ -218,16 +218,24 @@ void BasicScene::KeyCallback(Viewport* viewport, int x, int y, int key, int scan
                 glfwSetWindowShouldClose(window, GLFW_TRUE);
                 break;
             case GLFW_KEY_W:
-                snake.MoveUp();
+                if (IsAnimate()) {
+                    snake.MoveUp();
+                }
                 break;
             case GLFW_KEY_S:
-                snake.MoveDown();
+                if (IsAnimate()) {
+                    snake.MoveDown();
+                }
                 break;
             case GLFW_KEY_A:
-                snake.MoveLeft();
+                if (IsAnimate()) {
+                    snake.MoveLeft();
+                }
                 break;
             case GLFW_KEY_D:
-                snake.MoveRight();
+                if (IsAnimate()) {
+                    snake.MoveRight();
+                }
                 break;
             case GLFW_KEY_UP:
                 if ((camera_list[0] == camera) && ((up_down_mode == 0 || up_down_mode == 2) && left_right_mode == 0)) {
@@ -281,12 +289,12 @@ void BasicScene::KeyCallback(Viewport* viewport, int x, int y, int key, int scan
 
                 //camera->TranslateInSystem(system, {0.1f, 0, 0});
                 break;
-            case GLFW_KEY_B:
-                camera->TranslateInSystem(system, {0, 0, 0.1f});
-                break;
-            case GLFW_KEY_F:
-                camera->TranslateInSystem(system, {0, 0, -0.1f});
-                break;
+            //case GLFW_KEY_B:
+            //    camera->TranslateInSystem(system, {0, 0, 0.1f});
+            //    break;
+            //case GLFW_KEY_F:
+            //    camera->TranslateInSystem(system, {0, 0, -0.1f});
+            //    break;
             case GLFW_KEY_V:
                 SwitchView();
                 break;

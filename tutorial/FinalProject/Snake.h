@@ -41,7 +41,7 @@ private:
     float half_size = size / 2;
     int number_of_bones = 3;
     int first_index = 0;
-    int last_index = number_of_bones;
+    int last_index = number_of_bones - 1;
     int view_state = 0;
 
 

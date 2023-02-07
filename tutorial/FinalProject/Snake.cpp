@@ -61,21 +61,45 @@ void Snake::InitSnake()
 void Snake::MoveUp()
 {
     snake_bones[first_index]->Rotate(0.1f, Scene::Axis::X);
+
+    snake_bones[first_index + 1]->Rotate(-0.1f, Scene::Axis::X);
+
+    /*for (int i = first_index + 1; i <= last_index; i++) {
+        snake_bones[i]->Rotate(-0.1f, Scene::Axis::X);
+    }*/
 }
 
 void Snake::MoveDown()
 {
     snake_bones[first_index]->Rotate(-0.1f, Scene::Axis::X);
+
+    snake_bones[first_index + 1]->Rotate(0.1f, Scene::Axis::X);
+
+    /*for (int i = first_index + 1; i <= last_index; i++) {
+        snake_bones[i]->Rotate(0.1f, Scene::Axis::X);
+    }*/
 }
 
 void Snake::MoveLeft()
 {
     snake_bones[first_index]->Rotate(0.1f, Scene::Axis::Y);
+
+    snake_bones[first_index + 1]->Rotate(-0.1f, Scene::Axis::Y);
+
+    /*for (int i = first_index + 1; i <= last_index; i++) {
+        snake_bones[i]->Rotate(-0.1f, Scene::Axis::Y);
+    }*/
 }
 
 void Snake::MoveRight()
 {
     snake_bones[first_index]->Rotate(-0.1f, Scene::Axis::Y);
+
+    snake_bones[first_index + 1]->Rotate(0.1f, Scene::Axis::Y);
+
+    /*for (int i = first_index + 1; i <= last_index; i++) {
+        snake_bones[i]->Rotate(0.1f, Scene::Axis::Y);
+    }*/
 }
 
 
