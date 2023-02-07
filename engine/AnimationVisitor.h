@@ -10,6 +10,7 @@
 #include "Visitor.h"
 #include "Model.h"
 #include <vector>
+#include "../tutorial/FinalProject/BasicScene.h"
 
 
 namespace cg3d
@@ -22,7 +23,7 @@ namespace cg3d
 
     private:
         std::vector<Model*> models;
-        Scene* scene;
+        BasicScene* scene;
         Eigen::Quaternionf quaternion;
         int bone_index = 0;
         int number_of_bones = 2; // without the first bone

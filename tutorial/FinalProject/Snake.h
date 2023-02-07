@@ -49,6 +49,8 @@ public:
     void MoveLeft();
     void MoveRight();
 
+    void Skinning();
+
 private:
     void UpdateCameraView();
     void InitCollisionBoxes();
@@ -56,7 +58,7 @@ private:
     void InitBonesData();
     void RestartSnake();
     void CalculateWeight(Eigen::MatrixXd& V, double min_z);
-    void Skinning();
+    
 
     vector<std::shared_ptr<Camera>> camera_list;
     std::shared_ptr<Movable> root;
@@ -99,4 +101,7 @@ private:
     // Also deform skeleton edges
     Eigen::MatrixXd CT;
     Eigen::MatrixXi BET;
+
+
+    Eigen::MatrixXd VN, FN, T;
 };

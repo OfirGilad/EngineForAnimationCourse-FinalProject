@@ -39,6 +39,8 @@ void Snake::InitSnake(int num_of_bones)
     snake_bones.push_back(Model::Create("bone " + to_string(i), cylMesh, material));
     snake_bones[i]->Scale(scaleFactor, Scene::Axis::X);
     snake_bones[i]->SetCenter(Eigen::Vector3f(0, 0, -(bone_size / 2) *scaleFactor));
+    snake_bones[i]->showWireframe = true;
+    snake_bones[i]->showFaces = false;
     root->AddChild(snake_bones[i]);
     i++;
 
@@ -48,6 +50,9 @@ void Snake::InitSnake(int num_of_bones)
         snake_bones[i]->Scale(scaleFactor, Scene::Axis::X);
         snake_bones[i]->Translate(bone_size * scaleFactor, Scene::Axis::Z);
         snake_bones[i]->SetCenter(Eigen::Vector3f(0, 0, -(bone_size / 2) * scaleFactor));
+        snake_bones[i]->showWireframe = true;
+
+        snake_bones[i]->showFaces = false;
         snake_bones[i - 1]->AddChild(snake_bones[i]);
         i++;
     }
@@ -55,13 +60,16 @@ void Snake::InitSnake(int num_of_bones)
 
     // Building snake model
     snake_body = Model::Create("snake", snakeMesh, snake_material);
+    snake_body->Scale(Vector3f(1, 1, number_of_bones));
     auto mesh = snake_body->GetMeshList();
     V = mesh[0]->data[0].vertices;
     F = mesh[0]->data[0].faces;
-    //root->AddChild(snake_body);
+    root->AddChild(snake_body);
+    snake_body->Translate((bone_size * number_of_bones)/2.f, Scene::Axis::Z);
 
     UpdateCameraView();
     InitCollisionBoxes();
+    InitBonesData();
 }
 
 // Snake Movement
@@ -164,7 +172,7 @@ void Snake::InitBonesData() {
         15, 16;
 
 
-    //restartSnake();
+    RestartSnake();
     //viewer->data_list[0].add_points(points, Eigen::RowVector3d(0, 0, 1));
     CalculateWeight(V, min_z);
 }
@@ -217,6 +225,8 @@ void Snake::CalculateWeight(Eigen::MatrixXd& V, double min_z)
 }
 
 
+#include "igl/per_vertex_normals.h"
+
 void Snake::Skinning() {
     // igl::forward_kinematics(C, BE, P, anim_pose, vQ, vT);
 
@@ -234,10 +244,28 @@ void Snake::Skinning() {
     //move joints according to T, returns new position in CT and BET
     igl::deform_skeleton(C, BE, T, CT, BET);
 
+    
+    //igl::opengl::glfw::Viewer viewer;
+    //viewer.data().set_mesh(V, F);
+    //viewer.data().set_vertices(U);
+    //viewer.data().set_edges(CT, BET, Eigen::RowVector3d(70. / 255., 252. / 255., 167. / 255.));
+    //
+    //V = viewer.data().V;
+    //F = viewer.data().F;
+    //
+    //igl::per_vertex_normals(V, F, VN);
+    //T = Eigen::MatrixXd::Zero(V.rows(), 2);
+    //auto mesh = snake_body->GetMeshList();
+    //mesh[0]->data.pop_back();
+    //mesh[0]->data.push_back({ V, F, VN, T });
+    //snake_body->SetMeshList(mesh);
+    //snake_body->Translate(0, Scene::Axis::Z);
+
+
     //viewer->data(0).set_vertices(U);
     //viewer->data(0).set_edges(CT, BET, Eigen::RowVector3d(70. / 255., 252. / 255., 167. / 255.));
-    //for (int i = 0; i < numberOfJoints + 1; i++)
-        //vC[i] = vT[i];
+    for (int i = 0; i < number_of_bones + 1; i++)
+        vC[i] = vT[i];
 
     //for (int i = 1; i < numberOfJoints + 1; i++)
         //viewer->data_list[i].SetTranslation(CT.row(2 * i - 1));

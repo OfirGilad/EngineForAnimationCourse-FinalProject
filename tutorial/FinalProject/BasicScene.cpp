@@ -105,7 +105,7 @@ void BasicScene::Init(float fov, int width, int height, float near, float far)
 
     // Init snake
     snake = Snake(root, camera_list);
-    snake.InitSnake(3);
+    snake.InitSnake(number_of_bones);
 }
 
 void BasicScene::Update(const Program& program, const Eigen::Matrix4f& proj, const Eigen::Matrix4f& view, const Eigen::Matrix4f& model)
@@ -155,18 +155,21 @@ void BasicScene::MouseCallback(Viewport* viewport, int x, int y, int button, int
 
 void BasicScene::ScrollCallback(Viewport* viewport, int x, int y, int xoffset, int yoffset, bool dragging, int buttonState[])
 {
-    // Disabled scrolling for all cameras
-    if (camera_index == -1) {
-        // note: there's a (small) chance the button state here precedes the mouse press/release event
-        auto system = camera->GetRotation().transpose();
-        if (pickedModel) {
-            pickedModel->TranslateInSystem(system, { 0, 0, -float(yoffset) });
-            pickedToutAtPress = pickedModel->GetTout();
-        }
-        else {
-            camera->TranslateInSystem(system, { 0, 0, -float(yoffset) });
-            cameraToutAtPress = camera->GetTout();
-        }
+    //// note: there's a (small) chance the button state here precedes the mouse press/release event
+    //auto system = camera->GetRotation().transpose();
+    //if (pickedModel) {
+    //    pickedModel->TranslateInSystem(system, { 0, 0, -float(yoffset) });
+    //    pickedToutAtPress = pickedModel->GetTout();
+    //}
+    //else {
+    //    camera->TranslateInSystem(system, { 0, 0, -float(yoffset) });
+    //    cameraToutAtPress = camera->GetTout();
+    //}
+
+    // Enable scrolling only for global camera
+    if (camera_index == 0) {
+        camera->Translate({ 0, 0, -float(yoffset) });
+        cameraToutAtPress = camera->GetTout();
     }
 }
 
@@ -510,6 +513,7 @@ void BasicScene::GameMenuHandler() {
     ImGui::Spacing();
 
     if (ImGui::Button("Pasue")) {
+        animate = false;
         cout << "Pause Game" << endl;
     }
 

@@ -4,8 +4,7 @@
 
 #include "AnimationVisitor.h"
 
-#include <GL.h>
-#include "Scene.h"
+//#include <GL.h>
 #include "Utility.h"
 
 
@@ -13,7 +12,8 @@ namespace cg3d
 {
     void AnimationVisitor::Run(Scene* _scene, Camera* camera)
     {
-        Visitor::Run(scene = _scene, camera);
+        scene = (BasicScene *) _scene;
+        Visitor::Run(scene, camera);
     }
 
     void AnimationVisitor::Visit(Model* model)
@@ -32,6 +32,7 @@ namespace cg3d
                 if (model->name == std::string("bone 0"))
                 {
                     model->TranslateInSystem(system, Eigen::Vector3f(0, 0, -0.1f));
+                    //scene->snake.Skinning();
                 }
                 else {
                     std::string bone_name1 = std::string("bone ") + std::to_string(bone_index + 1);

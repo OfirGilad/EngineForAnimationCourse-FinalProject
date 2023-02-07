@@ -37,6 +37,7 @@ public:
     void StageSelectionMenuHandler();
     void GameMenuHandler();
 
+    Snake snake;
 
 private:
     void BuildImGui() override;
@@ -48,7 +49,6 @@ private:
     //std::shared_ptr<cg3d::AutoMorphingModel> autoCube;
     std::vector<std::shared_ptr<cg3d::Model>> axis;
     std::shared_ptr<cg3d::Model> sphere1, cube;
-    int number_of_bones = 3;
     int pickedIndex = 0;
     int tipIndex = 0;
     Eigen::VectorXi EMAP;
@@ -57,14 +57,15 @@ private:
     // If an edge were collapsed, we'd collapse it to these points:
     Eigen::MatrixXd V, C, N, T, points,edges,colors;
 
+    int distance = 50;
 
     // Snake Params
+    int number_of_bones = 16;
     std::vector<std::shared_ptr<cg3d::Camera>> camera_list{ 2 };
     int camera_index = 0;
     int number_of_cameras = 0;
-    Snake snake;
+    
     vector<vector<pair<int, Axis>>> translation_modes;
-    int distance = 30;
     int up_down_mode = 0, left_right_mode = 0;
 
 
