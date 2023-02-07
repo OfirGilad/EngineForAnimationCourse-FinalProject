@@ -31,11 +31,14 @@ public:
 
     // Menu Managmenet
     void MenuManager();
-    enum MenuMapping { MainMenu, StageSelectionMenu, GameMenu };
+    enum MenuMapping { MainMenu, StageSelectionMenu, GameMenu, ShopMenu, HallOfFameMenu, CreditsMenu };
 
     void MainMenuHandler();
     void StageSelectionMenuHandler();
     void GameMenuHandler();
+    void ShopMenuHandler();
+    void HallOfFameMenuHandler();
+    void CreditsMenuHandler();
 
     Snake snake;
 
@@ -72,4 +75,5 @@ private:
     // Menu Params
     int menu_index = 0;
     int display_keys = 0;
+    bool payed_credits = false;
 };

@@ -48,6 +48,8 @@ public:
     void MoveDown();
     void MoveLeft();
     void MoveRight();
+    void RollLeft();
+    void RollRight();
 
     void Skinning();
 

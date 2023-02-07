@@ -117,6 +117,28 @@ void Snake::MoveRight()
     }*/
 }
 
+void Snake::RollLeft()
+{
+    snake_bones[first_index]->Rotate(0.1f, Scene::Axis::Z);
+
+    snake_bones[first_index + 1]->Rotate(-0.1f, Scene::Axis::Z);
+
+    /*for (int i = first_index + 1; i <= last_index; i++) {
+        snake_bones[i]->Rotate(-0.1f, Scene::Axis::X);
+    }*/
+}
+
+void Snake::RollRight()
+{
+    snake_bones[first_index]->Rotate(-0.1f, Scene::Axis::Z);
+
+    snake_bones[first_index + 1]->Rotate(0.1f, Scene::Axis::Z);
+
+    /*for (int i = first_index + 1; i <= last_index; i++) {
+        snake_bones[i]->Rotate(0.1f, Scene::Axis::X);
+    }*/
+}
+
 
 void Snake::UpdateCameraView()
 {

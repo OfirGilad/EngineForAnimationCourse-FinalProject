@@ -267,28 +267,32 @@ void BasicScene::KeyCallback(Viewport* viewport, int x, int y, int key, int scan
                 //camera->TranslateInSystem(system, {0, -0.1f, 0});
                 break;
             case GLFW_KEY_LEFT:
-                if ((camera_list[0] == camera) && (up_down_mode == 0)) {
-                    camera->Translate(-translation, axis);
-                    camera->RotateByDegree(90, Vector3f(0, -1, 0));
-                    left_right_mode = (left_right_mode + 1) % 4;
-
-                    translation = translation_modes[up_down_mode][left_right_mode].first;
-                    axis = translation_modes[up_down_mode][left_right_mode].second;
-                    camera->Translate(translation, axis);
-                }
+                //if ((camera_list[0] == camera) && (up_down_mode == 0)) {
+                //    camera->Translate(-translation, axis);
+                //    camera->RotateByDegree(90, Vector3f(0, -1, 0));
+                //    left_right_mode = (left_right_mode + 1) % 4;
+                //
+                //    translation = translation_modes[up_down_mode][left_right_mode].first;
+                //    axis = translation_modes[up_down_mode][left_right_mode].second;
+                //    camera->Translate(translation, axis);
+                //}
                 
+                snake.RollLeft();
+
                 //camera->TranslateInSystem(system, {-0.1f, 0, 0});
                 break;
             case GLFW_KEY_RIGHT:
-                if ((camera_list[0] == camera) && (up_down_mode == 0)) {
-                    camera->Translate(-translation, axis);
-                    camera->RotateByDegree(90, Vector3f(0, 1, 0));
-                    left_right_mode = (left_right_mode + 3) % 4;
+                //if ((camera_list[0] == camera) && (up_down_mode == 0)) {
+                //    camera->Translate(-translation, axis);
+                //    camera->RotateByDegree(90, Vector3f(0, 1, 0));
+                //    left_right_mode = (left_right_mode + 3) % 4;
+                //
+                //    translation = translation_modes[up_down_mode][left_right_mode].first;
+                //    axis = translation_modes[up_down_mode][left_right_mode].second;
+                //    camera->Translate(translation, axis);
+                //}
 
-                    translation = translation_modes[up_down_mode][left_right_mode].first;
-                    axis = translation_modes[up_down_mode][left_right_mode].second;
-                    camera->Translate(translation, axis);
-                }
+                snake.RollRight();
 
                 //camera->TranslateInSystem(system, {0.1f, 0, 0});
                 break;
@@ -383,35 +387,37 @@ void BasicScene::MenuManager() {
         case GameMenu:
             GameMenuHandler();
             break;
+        case ShopMenu:
+            ShopMenuHandler();
+            break;
+        case HallOfFameMenu:
+            HallOfFameMenuHandler();
+            break;
+        case CreditsMenu:
+            CreditsMenuHandler();
+            break;
     }
 }
 
 void BasicScene::MainMenuHandler() {
     int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
     bool* pOpen = nullptr;
+    string gui_text;
 
     ImGui::Begin("Menu", pOpen, flags);
     ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
     ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
     ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Main Menu");
 
-    // Handle Score
-    string button_name = "Score: " + std::to_string(0);
-    ImGui::Text(button_name.c_str());
+    // Handle Gold
+    gui_text = "Gold: " + std::to_string(0);
+    ImGui::Text(gui_text.c_str());
 
     ImGui::Spacing();
 
     // Move to stage selection menu
     if (ImGui::Button("Shop")) {
-        //menu_index = ShopMenu;
-        cout << "Shop" << endl;
-    }
-
-    ImGui::Spacing();
-
-    if (ImGui::Button("Hall Of Fame")) {
-        //menu_index = HallOfFameMenu;
-        cout << "Hall Of Fame" << endl;
+        menu_index = ShopMenu;
     }
 
     ImGui::Spacing();
@@ -421,6 +427,19 @@ void BasicScene::MainMenuHandler() {
         menu_index = StageSelectionMenu;
     }
 
+    ImGui::Spacing();
+
+    if (ImGui::Button("Hall Of Fame")) {
+        menu_index = HallOfFameMenu;
+    }
+
+    ImGui::Spacing();
+
+    if (ImGui::Button("Credits")) {
+        menu_index = CreditsMenu;
+    }
+
+    ImGui::Spacing();
     ImGui::Spacing();
 
     if (ImGui::Button("Exit")) {
@@ -433,22 +452,31 @@ void BasicScene::MainMenuHandler() {
 void BasicScene::StageSelectionMenuHandler() {
     int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
     bool* pOpen = nullptr;
+    string gui_text;
+
     ImGui::Begin("Menu", pOpen, flags);
     ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
     ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
     ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Stage Selection Menu");
 
+    // Handle Gold
+    gui_text = "Gold: " + std::to_string(0);
+    ImGui::Text(gui_text.c_str());
+
+    ImGui::Spacing();
+
     // Handle Stages
     ImGui::Text("Select Stage: ");
     for (int i = 1; i <= 3; i++) {
-        string button_name = "Stage " + std::to_string(i);
+        gui_text = "Stage " + std::to_string(i);
 
-        if (ImGui::Button(button_name.c_str())) {
-            cout << button_name.c_str() << endl;
+        if (ImGui::Button(gui_text.c_str())) {
+            cout << gui_text.c_str() << endl;
             menu_index = GameMenu;
         }
     }
 
+    ImGui::Spacing();
     ImGui::Spacing();
 
     if (ImGui::Button("Back")) {
@@ -460,15 +488,24 @@ void BasicScene::StageSelectionMenuHandler() {
 void BasicScene::GameMenuHandler() {
     int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
     bool* pOpen = nullptr;
+    string gui_text;
 
     ImGui::Begin("Menu", pOpen, flags);
     ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
     ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
     ImGui::TextColored(ImVec4(0.0, 0.5, 1.0, 1.0), "Game Menu");
 
+    // Handle Gold
+    gui_text = "Gold: " + std::to_string(0);
+    ImGui::Text(gui_text.c_str());
+
+    ImGui::Spacing();
+
     // Handle Score
-    string button_name = "Score: " + std::to_string(0);
-    ImGui::Text(button_name.c_str());
+    gui_text = "Score: " + std::to_string(0);
+    ImGui::Text(gui_text.c_str());
+
+    ImGui::Spacing();
 
     // Handle View
     ImGui::Text("Camera List: ");
@@ -505,8 +542,8 @@ void BasicScene::GameMenuHandler() {
         ImGui::Text("V - Switch view");
         ImGui::Text("UP - Switch camera view up");
         ImGui::Text("DOWN - Switch camera view down");
-        ImGui::Text("LEFT - Switch camera view left");
-        ImGui::Text("RIGHT - Switch camera view right");
+        ImGui::Text("LEFT - Rotate snake left");
+        ImGui::Text("RIGHT - Rotate snake right");
         ImGui::Text("ESC - Exit game");
     }
 
@@ -518,8 +555,133 @@ void BasicScene::GameMenuHandler() {
     }
 
     ImGui::Spacing();
+    ImGui::Spacing();
 
     if (ImGui::Button("Back to Main Menu")) {
+        menu_index = MainMenu;
+    }
+
+    ImGui::End();
+}
+
+void BasicScene::ShopMenuHandler() {
+    int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
+    bool* pOpen = nullptr;
+    string gui_text;
+
+    ImGui::Begin("Menu", pOpen, flags);
+    ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
+    ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
+    ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Shop");
+
+    // Handle Gold
+    gui_text = "Gold: " + std::to_string(0);
+    ImGui::Text(gui_text.c_str());
+
+    ImGui::Spacing();
+
+    ImGui::Text("Refill Health");
+    if (ImGui::Button("50 Gold")) {
+        cout << "Refill Health" << endl;
+    }
+
+    ImGui::Spacing();
+
+    ImGui::Text("Increase Max Health");
+    if (ImGui::Button("100 Gold")) {
+        cout << "Increase Max Health" << endl;
+    }
+
+    ImGui::Spacing();
+
+    ImGui::Text("Increase Max Speed");
+    if (ImGui::Button("25 Gold")) {
+        cout << "Increase Max Speed" << endl;
+    }
+
+    ImGui::Spacing();
+
+    ImGui::Text("X2 Gold");
+    if (ImGui::Button("100 Gold")) {
+        cout << "Increase Max Speed" << endl;
+    }
+    
+    ImGui::Spacing();
+    ImGui::Spacing();
+
+    if (ImGui::Button("Back")) {
+        menu_index = MainMenu;
+    }
+
+    ImGui::End();
+}
+
+void BasicScene::HallOfFameMenuHandler() {
+    int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
+    bool* pOpen = nullptr;
+    string gui_text;
+
+    ImGui::Begin("Menu", pOpen, flags);
+    ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
+    ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
+    ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Hall of Fame");
+
+    ImGui::Text("1.  AAA - 1000");
+    ImGui::Text("2.  AAA - 900");
+    ImGui::Text("3.  AAA - 800");
+    ImGui::Text("4.  AAA - 700");
+    ImGui::Text("5.  AAA - 600");
+    ImGui::Text("6.  AAA - 500");
+    ImGui::Text("7.  AAA - 400");
+    ImGui::Text("8.  AAA - 300");
+    ImGui::Text("9.  AAA - 200");
+    ImGui::Text("10. AAA - 100");
+
+    ImGui::Spacing();
+    ImGui::Spacing();
+
+    if (ImGui::Button("Back")) {
+        menu_index = MainMenu;
+    }
+
+    ImGui::End();
+}
+
+void BasicScene::CreditsMenuHandler() {
+    int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
+    bool* pOpen = nullptr;
+    string gui_text;
+
+    ImGui::Begin("Menu", pOpen, flags);
+    ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
+    ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
+    ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Credits");
+
+    ImGui::Text("Created by: Ofir Gilad");
+
+    ImGui::Spacing();
+
+    ImGui::Text("Course Teacher: Tamir Grossinger");
+
+    ImGui::Spacing();
+
+    ImGui::Text("Game Engine: OpenGL");
+
+    ImGui::Spacing();
+
+    if (payed_credits == true) {
+        ImGui::Text("Honorable Contributor: You");
+    }
+    else {
+        if (ImGui::Button("Contribute Credit")) {
+            payed_credits = true;
+        }
+    }
+
+    ImGui::Spacing();
+    ImGui::Spacing();
+
+    if (ImGui::Button("Back")) {
         menu_index = MainMenu;
     }
 
