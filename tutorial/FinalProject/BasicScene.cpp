@@ -105,7 +105,7 @@ void BasicScene::Init(float fov, int width, int height, float near, float far)
 
     // Init snake
     snake = Snake(root, camera_list);
-    snake.InitSnake();
+    snake.InitSnake(3);
 }
 
 void BasicScene::Update(const Program& program, const Eigen::Matrix4f& proj, const Eigen::Matrix4f& view, const Eigen::Matrix4f& model)

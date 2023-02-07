@@ -9,7 +9,27 @@
 
 #pragma once
 #include "Scene.h"
+#include "IglMeshLoader.h"
+
 #include "igl/AABB.h"
+
+#include <igl/directed_edge_orientations.h>
+#include <igl/directed_edge_parents.h>
+#include <igl/forward_kinematics.h>
+#include <igl/PI.h>
+#include <igl/lbs_matrix.h>
+#include <igl/deform_skeleton.h>
+#include <igl/dqs.h>
+#include <igl/readDMAT.h>
+#include <igl/readOBJ.h>
+#include <igl/readTGF.h>
+#include <igl/opengl/glfw/Viewer.h>
+
+#include <Eigen/Geometry>
+#include <Eigen/StdVector>
+#include <vector>
+#include <algorithm>
+#include <iostream>
 
 #include <memory>
 #include <utility>
@@ -22,7 +42,7 @@ class Snake
 public:
     Snake() {};
     Snake(std::shared_ptr<Movable> root, vector<std::shared_ptr<Camera>> camera_list);
-    void InitSnake();
+    void InitSnake(int num_of_bones);
 
     void MoveUp();
     void MoveDown();
@@ -32,21 +52,51 @@ public:
 private:
     void UpdateCameraView();
     void InitCollisionBoxes();
+    
+    void InitBonesData();
+    void RestartSnake();
+    void CalculateWeight(Eigen::MatrixXd& V, double min_z);
+    void Skinning();
 
     vector<std::shared_ptr<Camera>> camera_list;
     std::shared_ptr<Movable> root;
     std::vector<std::shared_ptr<cg3d::Model>> snake_bones;
     std::shared_ptr <cg3d::Model> snake_body;
-    float size = 1.6;
-    float half_size = size / 2;
-    int number_of_bones = 3;
+    float bone_size = 1.6;
+    int number_of_bones = 0;
     int first_index = 0;
-    int last_index = number_of_bones - 1;
+    int last_index = 0;
     int view_state = 0;
+    float snake_length = 0;
 
 
     vector<igl::AABB<Eigen::MatrixXd, 3>> bones_trees;
-    std::vector<Eigen::MatrixXi> F, E, EF, EI;
-    std::vector<Eigen::VectorXi> EQ;
-    std::vector<Eigen::MatrixXd> V, C;
+    std::vector<Eigen::MatrixXi> F_bones;
+    std::vector<Eigen::MatrixXd> V_bones;
+
+    // W - weights matrix
+    // BE - Edges between joints
+    // C - joints positions
+    // P - parents
+    // M - weights per vertex per joint matrix
+    // U - new vertices position after skinning
+    Eigen::MatrixXd V, W, C, M, U;
+    Eigen::MatrixXi F, BE;
+
+    vector<int> P;
+
+    typedef
+        std::vector<Eigen::Quaterniond, Eigen::aligned_allocator<Eigen::Quaterniond>> 
+        RotationList;
+
+    // Propagate relative rotations via FK to retrieve absolute transformations
+    // vQ - rotations of joints
+    // vT - translation of joints
+    RotationList vQ;
+    vector<Eigen::Vector3d> vT;
+    vector<Eigen::Vector3d> vC;
+
+    // Also deform skeleton edges
+    Eigen::MatrixXd CT;
+    Eigen::MatrixXi BET;
 };
