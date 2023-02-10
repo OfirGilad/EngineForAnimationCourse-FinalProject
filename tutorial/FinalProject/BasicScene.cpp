@@ -376,6 +376,9 @@ void BasicScene::InitRotationModes() {
 
 // Menu
 void BasicScene::MenuManager() {
+    width = viewport->width;
+    height = viewport->height;
+
     switch (menu_index)
     {
         case MainMenu:
@@ -406,6 +409,7 @@ void BasicScene::MainMenuHandler() {
 
     ImGui::Begin("Menu", pOpen, flags);
     ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
+    //ImGui::SetWindowSize(ImVec2(width, height), ImGuiCond_Always);
     ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
     ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Main Menu");
 
@@ -416,33 +420,33 @@ void BasicScene::MainMenuHandler() {
     ImGui::Spacing();
 
     // Move to stage selection menu
-    if (ImGui::Button("Shop")) {
+    if (ImGui::Button("Shop", ImVec2(width/4, height/8))) {
         menu_index = ShopMenu;
     }
 
     ImGui::Spacing();
 
     // Move to stage selection menu
-    if (ImGui::Button("Select Stage")) {
+    if (ImGui::Button("Select Stage", ImVec2(width / 4, height / 8))) {
         menu_index = StageSelectionMenu;
     }
 
     ImGui::Spacing();
 
-    if (ImGui::Button("Hall Of Fame")) {
+    if (ImGui::Button("Hall Of Fame", ImVec2(width / 4, height / 8))) {
         menu_index = HallOfFameMenu;
     }
 
     ImGui::Spacing();
 
-    if (ImGui::Button("Credits")) {
+    if (ImGui::Button("Credits", ImVec2(width / 4, height / 8))) {
         menu_index = CreditsMenu;
     }
 
     ImGui::Spacing();
     ImGui::Spacing();
 
-    if (ImGui::Button("Exit")) {
+    if (ImGui::Button("Exit", ImVec2(width / 4, height / 8))) {
         glfwSetWindowShouldClose(window, GLFW_TRUE);
     }
     

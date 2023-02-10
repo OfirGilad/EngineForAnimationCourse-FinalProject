@@ -73,6 +73,8 @@ private:
 
 
     // Menu Params
+    int width, height;
+
     int menu_index = 0;
     int display_keys = 0;
     bool payed_credits = false;
