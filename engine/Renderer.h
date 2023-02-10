@@ -6,6 +6,7 @@
 #include "GLFW/glfw3.h"
 
 #include "AnimationVisitor.h"
+#include "CollisionDetectionVisitor.h"
 
 
 namespace cg3d
@@ -44,8 +45,9 @@ private:
     int windowWidth = 0, windowHeight = 0, xPress = 0, yPress = 0;
     bool isMouseDragging = false;
 
-    // New Visitors
+    // New Code
     AnimationVisitor animationVisitor;
+    CollisionDetectionVisitor collisionDetectionVisitor;
 };
 
 } // namespace cg3d

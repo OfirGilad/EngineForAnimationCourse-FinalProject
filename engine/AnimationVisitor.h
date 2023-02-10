@@ -22,7 +22,6 @@ namespace cg3d
         void Visit(Model* model) override;
 
     private:
-        std::vector<Model*> models;
         BasicScene* scene;
         Eigen::Quaternionf quaternion;
         int bone_index = 0;

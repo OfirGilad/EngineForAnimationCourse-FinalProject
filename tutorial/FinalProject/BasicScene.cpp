@@ -76,13 +76,17 @@ void BasicScene::Init(float fov, int width, int height, float near, float far)
     //SetNamedObject(cube, Model::Create, Mesh::Cube(), material, shared_from_this());
  
     material->AddTexture(0, "textures/box0.bmp", 2);
-    //auto sphereMesh{IglLoader::MeshFromFiles("sphere_igl", "data/sphere.obj")};
+    auto sphereMesh{IglLoader::MeshFromFiles("sphere_igl", "data/sphere.obj")};
     auto cylMesh{IglLoader::MeshFromFiles("cyl_igl", "data/zcylinder.obj")};
     auto snakeMesh{ IglLoader::MeshFromFiles("cyl_igl", "data/snake1.obj") };
     //auto cubeMesh{IglLoader::MeshFromFiles("cube_igl","data/cube_old.obj")};
-    //sphere1 = Model::Create( "sphere",sphereMesh, material);    
+    sphere1 = Model::Create( "sphere",sphereMesh, material);    
     //cube = Model::Create( "cube", cubeMesh, material);
     
+    root->AddChild(sphere1);
+
+    sphere1->Translate(-distance, Axis::Z);
+
     //Axis
     Eigen::MatrixXd vertices(6,3);
     vertices << -1,0,0,1,0,0,0,-1,0,0,1,0,0,0,-1,0,0,1;

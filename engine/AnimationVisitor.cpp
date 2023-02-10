@@ -3,8 +3,6 @@
 //
 
 #include "AnimationVisitor.h"
-
-//#include <GL.h>
 #include "Utility.h"
 
 

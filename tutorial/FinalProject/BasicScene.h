@@ -25,6 +25,7 @@ public:
     void AddViewportCallback(cg3d::Viewport* _viewport) override;
     void ViewportSizeCallback(cg3d::Viewport* _viewport) override;
     
+    void SetAnimate(bool status) { animate = status; }
 
     void SwitchView();
     void InitRotationModes();
@@ -42,6 +43,8 @@ public:
 
     Snake snake;
 
+    std::shared_ptr<cg3d::Model> sphere1;
+
 private:
     void BuildImGui() override;
     cg3d::Viewport* viewport = nullptr;
@@ -51,7 +54,7 @@ private:
     //std::shared_ptr<cg3d::Model> sphere1 ,cube;
     //std::shared_ptr<cg3d::AutoMorphingModel> autoCube;
     std::vector<std::shared_ptr<cg3d::Model>> axis;
-    std::shared_ptr<cg3d::Model> sphere1, cube;
+    std::shared_ptr<cg3d::Model> cube;
     int pickedIndex = 0;
     int tipIndex = 0;
     Eigen::VectorXi EMAP;

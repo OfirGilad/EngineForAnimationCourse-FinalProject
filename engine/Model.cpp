@@ -95,4 +95,15 @@ void Model::SetMeshList(std::vector<std::shared_ptr<Mesh>> _meshList)
         viewerDataListPerMesh.emplace_back(CreateViewerData(mesh));
 }
 
+// New Code
+igl::AABB<Eigen::MatrixXd, 3>* Model::GetAABBTree()
+{
+    if (!init_status) 
+    {
+        AABB_tree.init(GetMeshList()[0]->data[0].vertices, GetMeshList()[0]->data[0].faces);
+        init_status = true;
+    }
+    return &AABB_tree;
+}
+
 } // namespace cg3d

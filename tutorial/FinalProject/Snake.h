@@ -53,6 +53,9 @@ public:
 
     void Skinning();
 
+
+    std::vector<std::shared_ptr<cg3d::Model>> GetBones() { return snake_bones; }
+
 private:
     void UpdateCameraView();
     void InitCollisionBoxes();

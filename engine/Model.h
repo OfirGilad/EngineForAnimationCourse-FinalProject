@@ -6,6 +6,8 @@
 #include "Movable.h"
 #include "ViewerData.h"
 
+#include <igl/AABB.h>
+
 
 namespace cg3d
 {
@@ -48,6 +50,10 @@ public:
     void SetMeshList(std::vector<std::shared_ptr<Mesh>> _meshList);
     void UpdateDataAndDrawMeshes(const Program& program, bool _showFaces, bool bindTextures); // helper function
     void AddOverlay(const OverlayData& data, bool drawPoints);
+
+    // New Code
+    igl::AABB<Eigen::MatrixXd, 3>* GetAABBTree();
+
 private:
     static void UpdateDataAndBindMesh(igl::opengl::ViewerData& viewerData, const Program& program); // helper function
 
@@ -59,6 +65,10 @@ private:
     Eigen::RowVector4f ambient = Eigen::RowVector4f(1.0, 1.0, 1.0, 1.0);
     Eigen::RowVector4f diffuse = Eigen::RowVector4f(1.0, 1.0, 1.0, 1.0);
     Eigen::RowVector4f specular = Eigen::RowVector4f(1.0, 1.0, 1.0, 1.0);
+
+    // New Code
+    igl::AABB<Eigen::MatrixXd, 3> AABB_tree;
+    bool init_status = false;
 };
 
 } // namespace cg3d
