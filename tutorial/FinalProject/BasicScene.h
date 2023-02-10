@@ -68,7 +68,7 @@ private:
     int camera_index = 0;
     int number_of_cameras = 0;
     
-    vector<vector<pair<int, Axis>>> translation_modes;
+    std::vector<std::vector<std::pair<int, Axis>>> translation_modes;
     int up_down_mode = 0, left_right_mode = 0;
 
 
