@@ -216,6 +216,9 @@ void BasicScene::CursorPosCallback(Viewport* viewport, int x, int y, bool draggi
 
 void BasicScene::KeyCallback(Viewport* viewport, int x, int y, int key, int scancode, int action, int mods)
 {
+    // Handle ImGui Menu
+    if (ImGui::GetIO().WantCaptureMouse) return;
+
     auto system = camera->GetRotation().transpose();
 
     int translation = translation_modes[up_down_mode][left_right_mode].first;
@@ -388,6 +391,7 @@ void BasicScene::MenuManager() {
     width = viewport->width;
     height = viewport->height;
     buttons_size1 = ImVec2(width / 4, height / 8);
+    buttons_size2 = ImVec2(width / 4, height / 16);
     font_scale1 = (2.f * width) / 800.f;
     text_position1 = width * 0.4f;
     text_position2 = width * 0.35f;
@@ -401,20 +405,23 @@ void BasicScene::MenuManager() {
         case MainMenu:
             MainMenuHandler();
             break;
-        case StageSelectionMenu:
-            StageSelectionMenuHandler();
-            break;
-        case GameMenu:
-            GameMenuHandler();
-            break;
         case ShopMenu:
             ShopMenuHandler();
+            break;
+        case StatsMenu:
+            StatsMenuHandler();
+            break;
+        case StageSelectionMenu:
+            StageSelectionMenuHandler();
             break;
         case HallOfFameMenu:
             HallOfFameMenuHandler();
             break;
         case CreditsMenu:
             CreditsMenuHandler();
+            break;
+        case GameMenu:
+            GameMenuHandler();
             break;
     }
 }
@@ -445,6 +452,7 @@ void BasicScene::LoginMenuHandler() {
     ImGui::SameLine();
     ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "D");
 
+    Spacing(5);
 
     ImGui::SetCursorPosX(text_position2);
     if (display_new_game) {
@@ -453,29 +461,42 @@ void BasicScene::LoginMenuHandler() {
         }
     }
     else {
-        static char name[20] = "";
-
         ImGui::Text("Your Name: ");
 
         ImGui::SetCursorPosX(text_position2);
+        static char name[20] = "";
         //ImGui::InputTextMultiline("", name, IM_ARRAYSIZE(name), ImVec2(200 * (width / 4), 35 * (height / 8)));
         ImGui::InputTextMultiline("", name, IM_ARRAYSIZE(name), ImVec2((width / 4), (height / 16)));
 
-        ImGui::SetCursorPosX(text_position2);
+        Spacing(5);
 
+        ImGui::SetCursorPosX(text_position2);
         if (ImGui::Button("Start New Game", buttons_size1)) {
             display_new_game = true;
             user_name = name;
+            user_created = true;
             menu_index = MainMenu;
         }
     }
 
+    Spacing(5);
+
     ImGui::SetCursorPosX(text_position2);
     if (display_new_game) {
-        if (ImGui::Button("Continue Game", buttons_size1)) {
-            // If load detected
-            display_new_game = true;
-            menu_index = MainMenu;
+        if (user_created == false) {
+            ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled));
+
+            if (ImGui::Button("Continue Game", buttons_size1)) {
+                cout << "No save data available" << endl;
+            }
+            ImGui::PopStyleColor();
+        }
+        else {
+            if (ImGui::Button("Continue Game", buttons_size1)) {
+                // If load detected
+                display_new_game = true;
+                menu_index = MainMenu;
+            }
         }
     }
     else {
@@ -484,12 +505,16 @@ void BasicScene::LoginMenuHandler() {
         }
     }
 
+    Spacing(5);
+
     if (display_new_game) {
         ImGui::SetCursorPosX(text_position2);
         if (ImGui::Button("Credits", buttons_size1)) {
             menu_index = CreditsMenu;
         }
     }
+
+    Spacing(10);
 
     ImGui::SetCursorPosX(text_position2);
     if (ImGui::Button("Exit", buttons_size1)) {
@@ -514,53 +539,157 @@ void BasicScene::MainMenuHandler() {
     ImGui::SetCursorPosX(text_position1);
     ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Main Menu");
 
+    Spacing(5);
+
     // Handel User name
     gui_text = "Welcome back, " + user_name;
     ImGui::SetCursorPosX(text_position2);
     ImGui::Text(gui_text.c_str());
+
+    Spacing(5);
 
     // Handle Gold
     gui_text = "Gold: " + std::to_string(0);
     ImGui::SetCursorPosX(text_position2);
     ImGui::Text(gui_text.c_str());
 
-    ImGui::Spacing();
+    Spacing(5);
 
     ImGui::SetCursorPosX(text_position2);
-    if (ImGui::Button("Shop", buttons_size1)) {
+    if (ImGui::Button("Shop", buttons_size2)) {
         menu_index = ShopMenu;
     }
 
-    ImGui::Spacing();
+    Spacing(5);
 
-    // Move to stage selection menu
     ImGui::SetCursorPosX(text_position2);
-    if (ImGui::Button("Select Stage", buttons_size1)) {
+    if (ImGui::Button("Stats", buttons_size2)) {
+        menu_index = StatsMenu;
+    }
+
+    Spacing(5);
+
+    ImGui::SetCursorPosX(text_position2);
+    if (ImGui::Button("Select Stage", buttons_size2)) {
         menu_index = StageSelectionMenu;
     }
 
-    ImGui::Spacing();
+    Spacing(5);
 
     ImGui::SetCursorPosX(text_position2);
-    if (ImGui::Button("Hall Of Fame", buttons_size1)) {
+    if (ImGui::Button("Hall Of Fame", buttons_size2)) {
         menu_index = HallOfFameMenu;
     }
 
-    ImGui::Spacing();
+    Spacing(5);
 
     ImGui::SetCursorPosX(text_position2);
-    if (ImGui::Button("Credits", buttons_size1)) {
+    if (ImGui::Button("Credits", buttons_size2)) {
         menu_index = CreditsMenu;
     }
 
-    ImGui::Spacing();
-    ImGui::Spacing();
+    Spacing(10);
 
     ImGui::SetCursorPosX(text_position2);
     if (ImGui::Button("Logout", buttons_size1)) {
         menu_index = LoginMenu;
     }
     
+    ImGui::End();
+}
+
+void BasicScene::ShopMenuHandler() {
+    int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
+    bool* pOpen = nullptr;
+    string gui_text;
+
+    ImGui::Begin("Menu", pOpen, flags);
+    ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
+    //ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
+    ImGui::SetWindowSize(ImVec2(width, height), ImGuiCond_Always);
+    ImGui::SetWindowFontScale(font_scale1);
+
+    ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Shop");
+
+    Spacing(10);
+
+    // Handle Gold
+    gui_text = "Gold: " + std::to_string(0);
+    ImGui::Text(gui_text.c_str());
+
+    Spacing(5);
+
+    ImGui::Text("Increase Max Health");
+    if (ImGui::Button("100 Gold", buttons_size2)) {
+        cout << "Increase Max Health" << endl;
+    }
+
+    Spacing(5);
+
+    ImGui::Text("Increase Max Speed");
+    if (ImGui::Button("25 Gold", buttons_size2)) {
+        cout << "Increase Max Speed" << endl;
+    }
+
+    Spacing(5);
+
+    ImGui::Text("Increase Bonuses Duration");
+    if (ImGui::Button("50 Gold", buttons_size2)) {
+        cout << "Increase Bonuses Duration" << endl;
+    }
+
+    Spacing(5);
+
+    ImGui::Text("X2 Gold");
+    if (ImGui::Button("100 Gold", buttons_size2)) {
+        cout << "Increase Max Speed" << endl;
+    }
+
+    Spacing(10);
+
+    if (ImGui::Button("Back", buttons_size1)) {
+        menu_index = MainMenu;
+    }
+
+    ImGui::End();
+}
+
+void BasicScene::StatsMenuHandler() {
+    int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
+    bool* pOpen = nullptr;
+    string gui_text;
+
+    ImGui::Begin("Menu", pOpen, flags);
+    ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
+    //ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
+    ImGui::SetWindowSize(ImVec2(width, height), ImGuiCond_Always);
+    ImGui::SetWindowFontScale(font_scale1);
+
+    ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Stats");
+
+    Spacing(10);
+
+    ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "Snake Stats");
+    ImGui::Text("Max Health: 100");
+    ImGui::Text("Max Movment Speed: 10");
+    ImGui::Text("Bonuses Duration: 5 sec");
+    ImGui::Text("Gold Multiplier: X1");
+
+    Spacing(5);
+
+    ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "Statistics");
+    ImGui::Text("Total Points Earned: 10");
+    ImGui::Text("Total Gold Earned: 10");
+    ImGui::Text("Total Gold Spent: 10");
+    ImGui::Text("Total Boosts Collected: 10");
+    ImGui::Text("Total Deaths: 10");
+
+    Spacing(10);
+
+    if (ImGui::Button("Back", buttons_size1)) {
+        menu_index = MainMenu;
+    }
+
     ImGui::End();
 }
 
@@ -571,16 +700,20 @@ void BasicScene::StageSelectionMenuHandler() {
 
     ImGui::Begin("Menu", pOpen, flags);
     ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
-    ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
+    ImGui::SetWindowSize(ImVec2(width, height), ImGuiCond_Always);
+    //ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
     ImGui::SetWindowFontScale(font_scale1);
 
+    ImGui::SetCursorPosX(text_position1);
     ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Stage Selection Menu");
+
+    Spacing(10);
 
     // Handle Gold
     gui_text = "Gold: " + std::to_string(0);
     ImGui::Text(gui_text.c_str());
 
-    ImGui::Spacing();
+    Spacing(5);
 
     // Handle Stages
     ImGui::Text("Select Stage: ");
@@ -593,12 +726,99 @@ void BasicScene::StageSelectionMenuHandler() {
         }
     }
 
+    Spacing(10);
+
+    if (ImGui::Button("Back", buttons_size1)) {
+        menu_index = MainMenu;
+    }
+    ImGui::End();
+}
+
+void BasicScene::HallOfFameMenuHandler() {
+    int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
+    bool* pOpen = nullptr;
+    string gui_text;
+
+    ImGui::Begin("Menu", pOpen, flags);
+    ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
+    //ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
+    ImGui::SetWindowSize(ImVec2(width, height), ImGuiCond_Always);
+    ImGui::SetWindowFontScale(font_scale1);
+
+    ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Hall of Fame");
+
+    Spacing(10);
+
+    ImGui::Text("1.  AAA - 1000");
+    ImGui::Text("2.  AAA - 900");
+    ImGui::Text("3.  AAA - 800");
+    ImGui::Text("4.  AAA - 700");
+    ImGui::Text("5.  AAA - 600");
+    ImGui::Text("6.  AAA - 500");
+    ImGui::Text("7.  AAA - 400");
+    ImGui::Text("8.  AAA - 300");
+    ImGui::Text("9.  AAA - 200");
+    ImGui::Text("10. AAA - 100");
+
     ImGui::Spacing();
     ImGui::Spacing();
 
     if (ImGui::Button("Back", buttons_size1)) {
         menu_index = MainMenu;
     }
+
+    ImGui::End();
+}
+
+void BasicScene::CreditsMenuHandler() {
+    int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
+    bool* pOpen = nullptr;
+    string gui_text;
+
+    ImGui::Begin("Menu", pOpen, flags);
+    ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
+    //ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
+    ImGui::SetWindowSize(ImVec2(width, height), ImGuiCond_Always);
+    ImGui::SetWindowFontScale(font_scale1);
+
+    ImGui::SetCursorPosX(text_position1);
+    ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Credits");
+
+    Spacing(10);
+
+    ImGui::SetCursorPosX(text_position3);
+    ImGui::Text("Created by: Ofir Gilad");
+
+    Spacing(5);
+
+    ImGui::SetCursorPosX(text_position3);
+    ImGui::Text("Course Teacher: Tamir Grossinger");
+
+    Spacing(5);
+
+    ImGui::SetCursorPosX(text_position3);
+    ImGui::Text("Game Engine: OpenGL");
+
+    Spacing(5);
+
+    ImGui::SetCursorPosX(text_position3);
+    if (payed_credits == true) {
+        gui_text = "Honorable Contributor: " + user_name;
+        ImGui::Text(gui_text.c_str());
+    }
+    else {
+        if (ImGui::Button("Contribute Credit")) {
+            payed_credits = true;
+        }
+    }
+
+    Spacing(10);
+
+    ImGui::SetCursorPosX(text_position2);
+    if (ImGui::Button("Back", buttons_size1)) {
+        menu_index = MainMenu;
+    }
+
     ImGui::End();
 }
 
@@ -682,148 +902,6 @@ void BasicScene::GameMenuHandler() {
 
     ImGui::End();
 }
-
-void BasicScene::ShopMenuHandler() {
-    int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
-    bool* pOpen = nullptr;
-    string gui_text;
-
-    ImGui::Begin("Menu", pOpen, flags);
-    ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
-    ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
-    ImGui::SetWindowFontScale(font_scale1);
-
-    ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Shop");
-
-    // Handle Gold
-    gui_text = "Gold: " + std::to_string(0);
-    ImGui::Text(gui_text.c_str());
-
-    ImGui::Spacing();
-
-    ImGui::Text("Refill Health");
-    if (ImGui::Button("50 Gold", buttons_size1)) {
-        cout << "Refill Health" << endl;
-    }
-
-    ImGui::Spacing();
-
-    ImGui::Text("Increase Max Health");
-    if (ImGui::Button("100 Gold", buttons_size1)) {
-        cout << "Increase Max Health" << endl;
-    }
-
-    ImGui::Spacing();
-
-    ImGui::Text("Increase Max Speed");
-    if (ImGui::Button("25 Gold", buttons_size1)) {
-        cout << "Increase Max Speed" << endl;
-    }
-
-    ImGui::Spacing();
-
-    ImGui::Text("X2 Gold");
-    if (ImGui::Button("100 Gold", buttons_size1)) {
-        cout << "Increase Max Speed" << endl;
-    }
-    
-    ImGui::Spacing();
-    ImGui::Spacing();
-
-    if (ImGui::Button("Back", buttons_size1)) {
-        menu_index = MainMenu;
-    }
-
-    ImGui::End();
-}
-
-void BasicScene::HallOfFameMenuHandler() {
-    int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
-    bool* pOpen = nullptr;
-    string gui_text;
-
-    ImGui::Begin("Menu", pOpen, flags);
-    ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
-    //ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
-    ImGui::SetWindowSize(ImVec2(width, height), ImGuiCond_Always);
-    ImGui::SetWindowFontScale(font_scale1);
-
-    ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Hall of Fame");
-
-    Spacing(10);
-
-    ImGui::Text("1.  AAA - 1000");
-    ImGui::Text("2.  AAA - 900");
-    ImGui::Text("3.  AAA - 800");
-    ImGui::Text("4.  AAA - 700");
-    ImGui::Text("5.  AAA - 600");
-    ImGui::Text("6.  AAA - 500");
-    ImGui::Text("7.  AAA - 400");
-    ImGui::Text("8.  AAA - 300");
-    ImGui::Text("9.  AAA - 200");
-    ImGui::Text("10. AAA - 100");
-
-    ImGui::Spacing();
-    ImGui::Spacing();
-
-    if (ImGui::Button("Back", buttons_size1)) {
-        menu_index = MainMenu;
-    }
-
-    ImGui::End();
-}
-
-void BasicScene::CreditsMenuHandler() {
-    int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
-    bool* pOpen = nullptr;
-    string gui_text;
-
-    ImGui::Begin("Menu", pOpen, flags);
-    ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
-    //ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
-    ImGui::SetWindowSize(ImVec2(width, height), ImGuiCond_Always);
-    ImGui::SetWindowFontScale(font_scale1);
-
-    ImGui::SetCursorPosX(text_position1);
-    ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Credits");
-
-    Spacing(10);
-
-    ImGui::SetCursorPosX(text_position3);
-    ImGui::Text("Created by: Ofir Gilad");
-
-    Spacing(5);
-
-    ImGui::SetCursorPosX(text_position3);
-    ImGui::Text("Course Teacher: Tamir Grossinger");
-
-    Spacing(5);
-
-    ImGui::SetCursorPosX(text_position3);
-    ImGui::Text("Game Engine: OpenGL");
-
-    Spacing(5);
-
-    ImGui::SetCursorPosX(text_position3);
-    if (payed_credits == true) {
-        ImGui::Text("Honorable Contributor: You");
-    }
-    else {
-        if (ImGui::Button("Contribute Credit")) {
-            payed_credits = true;
-        }
-    }
-
-    Spacing(10);
-
-    ImGui::SetCursorPosX(text_position2);
-    if (ImGui::Button("Back", buttons_size1)) {
-        menu_index = MainMenu;
-    }
-
-    ImGui::End();
-}
-
 
 void BasicScene::Spacing(int number_of_spacing) {
     for (int i = 0; i < number_of_spacing; i++) {
