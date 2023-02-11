@@ -51,18 +51,22 @@ public:
     void RollLeft();
     void RollRight();
 
+    void SkinningInit();
     void Skinning();
 
 
     std::vector<std::shared_ptr<cg3d::Model>> GetBones() { return snake_bones; }
+    Eigen::Vector3f GetBonePosition(int bone_id, int position);
 
 private:
     void UpdateCameraView();
     
-    void InitBonesData();
-    void RestartSnake();
-    void CalculateWeight(Eigen::MatrixXd& V, double min_z);
+    //void InitBonesData();
+    //void RestartSnake();
+    void CalculateWeight();
+
     
+
 
     vector<std::shared_ptr<Camera>> camera_list;
     std::shared_ptr<Movable> root;
@@ -76,9 +80,10 @@ private:
     float snake_length = 0;
 
 
-    vector<igl::AABB<Eigen::MatrixXd, 3>> bones_trees;
-    std::vector<Eigen::MatrixXi> F_bones;
-    std::vector<Eigen::MatrixXd> V_bones;
+    // Skinning Part
+    typedef
+        std::vector<Eigen::Quaterniond, Eigen::aligned_allocator<Eigen::Quaterniond>>
+        RotationList;
 
     // W - weights matrix
     // BE - Edges between joints
@@ -86,26 +91,24 @@ private:
     // P - parents
     // M - weights per vertex per joint matrix
     // U - new vertices position after skinning
-    Eigen::MatrixXd V, W, C, M, U;
+    Eigen::MatrixXd C, V, W, M, U;
     Eigen::MatrixXi F, BE;
+    Eigen::MatrixXi UF;
 
-    vector<int> P;
+    //vector<int> P;
+    Eigen::VectorXi P;
 
-    typedef
-        std::vector<Eigen::Quaterniond, Eigen::aligned_allocator<Eigen::Quaterniond>> 
-        RotationList;
+    std::vector<RotationList > poses; // rotations of joints for animation
+    double anim_t = 0.0;
+    double anim_t_dir = 0.015;
+
 
     // Propagate relative rotations via FK to retrieve absolute transformations
     // vQ - rotations of joints
     // vT - translation of joints
-    RotationList vQ;
-    vector<Eigen::Vector3d> vT;
+    //RotationList vQ;
+    //vector<Eigen::Vector3d> vT;
     vector<Eigen::Vector3d> vC;
-
-    // Also deform skeleton edges
-    Eigen::MatrixXd CT;
-    Eigen::MatrixXi BET;
-
 
     Eigen::MatrixXd VN, FN, T;
 };
