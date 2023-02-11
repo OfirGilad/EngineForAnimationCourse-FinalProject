@@ -431,7 +431,20 @@ void BasicScene::LoginMenuHandler() {
     ImGui::SetWindowFontScale(font_scale1);
 
     ImGui::SetCursorPosX(text_position1);
-    ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Snake 3D");
+    ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "S");
+    ImGui::SameLine();
+    ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "n");
+    ImGui::SameLine();
+    ImGui::TextColored(ImVec4(0.0, 0.0, 1.0, 1.0), "a");
+    ImGui::SameLine();
+    ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "k");
+    ImGui::SameLine();
+    ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "e");
+    ImGui::SameLine();
+    ImGui::TextColored(ImVec4(0.0, 0.0, 1.0, 1.0), " 3");
+    ImGui::SameLine();
+    ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "D");
+
 
     ImGui::SetCursorPosX(text_position2);
     if (display_new_game) {
@@ -445,9 +458,11 @@ void BasicScene::LoginMenuHandler() {
         ImGui::Text("Your Name: ");
 
         ImGui::SetCursorPosX(text_position2);
-        ImGui::InputText("", name, IM_ARRAYSIZE(name));
+        //ImGui::InputTextMultiline("", name, IM_ARRAYSIZE(name), ImVec2(200 * (width / 4), 35 * (height / 8)));
+        ImGui::InputTextMultiline("", name, IM_ARRAYSIZE(name), ImVec2((width / 4), (height / 16)));
 
         ImGui::SetCursorPosX(text_position2);
+
         if (ImGui::Button("Start New Game", buttons_size1)) {
             display_new_game = true;
             user_name = name;
@@ -456,15 +471,29 @@ void BasicScene::LoginMenuHandler() {
     }
 
     ImGui::SetCursorPosX(text_position2);
-    if (ImGui::Button("Continue Game", buttons_size1)) {
-        // If load detected
-        display_new_game = true;
-        menu_index = MainMenu;
+    if (display_new_game) {
+        if (ImGui::Button("Continue Game", buttons_size1)) {
+            // If load detected
+            display_new_game = true;
+            menu_index = MainMenu;
+        }
+    }
+    else {
+        if (ImGui::Button("Cancel", buttons_size1)) {
+            display_new_game = true;
+        }
+    }
+
+    if (display_new_game) {
+        ImGui::SetCursorPosX(text_position2);
+        if (ImGui::Button("Credits", buttons_size1)) {
+            menu_index = CreditsMenu;
+        }
     }
 
     ImGui::SetCursorPosX(text_position2);
-    if (ImGui::Button("Credits", buttons_size1)) {
-        menu_index = CreditsMenu;
+    if (ImGui::Button("Exit", buttons_size1)) {
+        glfwSetWindowShouldClose(window, GLFW_TRUE);
     }
 
     ImGui::End();
@@ -528,8 +557,8 @@ void BasicScene::MainMenuHandler() {
     ImGui::Spacing();
 
     ImGui::SetCursorPosX(text_position2);
-    if (ImGui::Button("Exit", buttons_size1)) {
-        glfwSetWindowShouldClose(window, GLFW_TRUE);
+    if (ImGui::Button("Logout", buttons_size1)) {
+        menu_index = LoginMenu;
     }
     
     ImGui::End();
