@@ -60,7 +60,7 @@ void Snake::InitSnake(int num_of_bones)
 
     // Building snake model
     snake_body = Model::Create("snake", snakeMesh, snake_material);
-    snake_body->Scale(Vector3f(1, 1, number_of_bones));
+    //snake_body->Scale(Vector3f(1, 1, number_of_bones));
     auto mesh = snake_body->GetMeshList();
     V = mesh[0]->data[0].vertices;
     F = mesh[0]->data[0].faces;
@@ -187,20 +187,32 @@ void Snake::UpdateCameraView()
     //CalculateWeight(V, min_z);
 //}
 
-//void Snake::RestartSnake() {
-    ////viewer->data(0).set_vertices(V);
-    //Eigen::Vector3d min = V.colwise().minCoeff();
-    //Eigen::Vector3d max = V.colwise().maxCoeff();
-    //double min_z = min[2];
-    //float max_z = max[2];
-    //Eigen::Vector3d pos(0, 0, min_z);
-    //Eigen::MatrixXd points(17, 3);
-    //for (int i = 0; i < number_of_bones + 1; i++) {
-    //    vC[i] = pos;
-    //    vT[i] = pos;
-    //    points.row(i) = pos;
-    //    pos = pos + Eigen::Vector3d(0, 0, bone_size);
-    //}
+void Snake::RestartData() {
+    vT.resize(number_of_bones + 1);
+    vQ.resize(number_of_bones + 1, Eigen::Quaterniond::Identity());
+
+    //viewer->data(0).set_vertices(V);
+    Eigen::Vector3d min = V.colwise().minCoeff();
+    Eigen::Vector3d max = V.colwise().maxCoeff();
+    double min_z = min[2];
+    float max_z = max[2];
+    Eigen::Vector3d pos;
+    Eigen::MatrixXd points(17, 3);
+    for (int i = 0; i < number_of_bones; i++) {
+        //vC[i] = pos;
+        pos = GetBonePosition(i, -1).cast<double>();
+        vT[i] = pos;
+        points.row(i) = pos;
+        //pos = pos + Eigen::Vector3d(0, 0, bone_size);
+    }
+
+    pos = GetBonePosition(last_index, 1).cast<double>();
+    vT[number_of_bones] = pos;
+    points.row(number_of_bones) = pos;
+
+
+    //pos = pos + Eigen::Vector3d(0, 0, bone_size);
+
     //for (int i = 1; i < number_of_bones + 1; i++) {
     //    /*viewer->data_list[i].resetTranslation();
     //    viewer->data_list[i].SetCenterOfRotation(Eigen::Vector3d(0, 0, min_z + (i - 1) * bone_size));
@@ -212,11 +224,9 @@ void Snake::UpdateCameraView()
     //for (int i = 1; i < number_of_bones + 1; i++) {
     //    CT.row(i * 2 - 1) = vC[i];
     //}
-//}
+}
 
 ///
-
-
 
 void Snake::CalculateWeight() 
 {
@@ -307,9 +317,12 @@ void Snake::Skinning() {
     // Propagate relative rotations via FK to retrieve absolute transformations
     // vQ - rotations of joints
     // vT - translation of joints
-    RotationList vQ;
-    vector<Vector3d> vT;
-    igl::forward_kinematics(C, BE, P, anim_pose, vQ, vT); // Crash here
+    //RotationList vQ;
+    //vector<Vector3d> vT;
+    //igl::forward_kinematics(C, BE, P, anim_pose, vQ, vT); // Crash here
+
+    RestartData();
+
     const int dim = C.cols();
     Eigen::MatrixXd T(BE.rows() * (dim + 1), dim);
 
@@ -329,21 +342,19 @@ void Snake::Skinning() {
     //move joints according to T, returns new position in CT and BET
     igl::deform_skeleton(C, BE, T, CT, BET);
 
-    
-    igl::opengl::glfw::Viewer viewer;
-    viewer.data().set_mesh(V, F);
-    viewer.data().set_vertices(U);
-    viewer.data().set_edges(CT, BET, Eigen::RowVector3d(70. / 255., 252. / 255., 167. / 255.));
-    viewer.data().compute_normals();
+    //viewer.data().set_mesh(V, F);
+    //viewer.data().set_vertices(U);
+    //viewer.data().set_edges(CT, BET, Eigen::RowVector3d(70. / 255., 252. / 255., 167. / 255.));
+    //viewer.data().compute_normals();
 
-    U = viewer.data().V;
-    UF = viewer.data().F;
+    //U = viewer.data().V;
+    //UF = viewer.data().F;
     
-    igl::per_vertex_normals(U, UF, VN);
+    igl::per_vertex_normals(U, F, VN);
     T = Eigen::MatrixXd::Zero(U.rows(), 2);
     auto mesh = snake_body->GetMeshList();
     mesh[0]->data.pop_back();
-    mesh[0]->data.push_back({ U, UF, VN, T });
+    mesh[0]->data.push_back({ U, F, VN, T });
     snake_body->SetMeshList(mesh);
     snake_body->Translate(0, Scene::Axis::Z);
 
@@ -354,7 +365,7 @@ void Snake::Skinning() {
     //    vC[i] = vT[i];
 
     //for (int i = 1; i < numberOfJoints + 1; i++)
-        //viewer->data_list[i].SetTranslation(CT.row(2 * i - 1));
+    //    viewer->data_list[i].SetTranslation(CT.row(2 * i - 1));
 }
 
 

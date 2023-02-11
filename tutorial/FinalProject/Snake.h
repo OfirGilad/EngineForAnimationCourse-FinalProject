@@ -62,7 +62,7 @@ private:
     void UpdateCameraView();
     
     //void InitBonesData();
-    //void RestartSnake();
+    void RestartData();
     void CalculateWeight();
 
     
@@ -102,12 +102,14 @@ private:
     double anim_t = 0.0;
     double anim_t_dir = 0.015;
 
+    //igl::opengl::glfw::Viewer viewer;
+
 
     // Propagate relative rotations via FK to retrieve absolute transformations
     // vQ - rotations of joints
     // vT - translation of joints
-    //RotationList vQ;
-    //vector<Eigen::Vector3d> vT;
+    RotationList vQ;
+    vector<Eigen::Vector3d> vT;
     vector<Eigen::Vector3d> vC;
 
     Eigen::MatrixXd VN, FN, T;
