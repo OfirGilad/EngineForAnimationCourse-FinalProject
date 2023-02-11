@@ -389,9 +389,15 @@ void BasicScene::MenuManager() {
     height = viewport->height;
     buttons_size1 = ImVec2(width / 4, height / 8);
     font_scale1 = (2.f * width) / 800.f;
+    text_position1 = width * 0.4f;
+    text_position2 = width * 0.35f;
+    text_position3 = width * 0.3f;
 
     switch (menu_index)
     {
+        case LoginMenu:
+            LoginMenuHandler();
+            break;
         case MainMenu:
             MainMenuHandler();
             break;
@@ -413,6 +419,58 @@ void BasicScene::MenuManager() {
     }
 }
 
+void BasicScene::LoginMenuHandler() {
+    int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
+    bool* pOpen = nullptr;
+    string gui_text;
+
+    ImGui::Begin("Menu", pOpen, flags);
+    ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
+    ImGui::SetWindowSize(ImVec2(width, height), ImGuiCond_Always);
+    //ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
+    ImGui::SetWindowFontScale(font_scale1);
+
+    ImGui::SetCursorPosX(text_position1);
+    ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Snake 3D");
+
+    ImGui::SetCursorPosX(text_position2);
+    if (display_new_game) {
+        if (ImGui::Button("New Game", buttons_size1)) {
+            display_new_game = false;
+        }
+    }
+    else {
+        static char name[20] = "";
+
+        ImGui::Text("Your Name: ");
+
+        ImGui::SetCursorPosX(text_position2);
+        ImGui::InputText("", name, IM_ARRAYSIZE(name));
+
+        ImGui::SetCursorPosX(text_position2);
+        if (ImGui::Button("Start New Game", buttons_size1)) {
+            display_new_game = true;
+            user_name = name;
+            menu_index = MainMenu;
+        }
+    }
+
+    ImGui::SetCursorPosX(text_position2);
+    if (ImGui::Button("Continue Game", buttons_size1)) {
+        // If load detected
+        display_new_game = true;
+        menu_index = MainMenu;
+    }
+
+    ImGui::SetCursorPosX(text_position2);
+    if (ImGui::Button("Credits", buttons_size1)) {
+        menu_index = CreditsMenu;
+    }
+
+    ImGui::End();
+
+}
+
 void BasicScene::MainMenuHandler() {
     int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
     bool* pOpen = nullptr;
@@ -420,19 +478,26 @@ void BasicScene::MainMenuHandler() {
 
     ImGui::Begin("Menu", pOpen, flags);
     ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
-    //ImGui::SetWindowSize(ImVec2(width, height), ImGuiCond_Always);
-    ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
+    ImGui::SetWindowSize(ImVec2(width, height), ImGuiCond_Always);
+    //ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
     ImGui::SetWindowFontScale(font_scale1);
 
+    ImGui::SetCursorPosX(text_position1);
     ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Main Menu");
+
+    // Handel User name
+    gui_text = "Welcome back, " + user_name;
+    ImGui::SetCursorPosX(text_position2);
+    ImGui::Text(gui_text.c_str());
 
     // Handle Gold
     gui_text = "Gold: " + std::to_string(0);
+    ImGui::SetCursorPosX(text_position2);
     ImGui::Text(gui_text.c_str());
 
     ImGui::Spacing();
 
-    // Move to stage selection menu
+    ImGui::SetCursorPosX(text_position2);
     if (ImGui::Button("Shop", buttons_size1)) {
         menu_index = ShopMenu;
     }
@@ -440,18 +505,21 @@ void BasicScene::MainMenuHandler() {
     ImGui::Spacing();
 
     // Move to stage selection menu
+    ImGui::SetCursorPosX(text_position2);
     if (ImGui::Button("Select Stage", buttons_size1)) {
         menu_index = StageSelectionMenu;
     }
 
     ImGui::Spacing();
 
+    ImGui::SetCursorPosX(text_position2);
     if (ImGui::Button("Hall Of Fame", buttons_size1)) {
         menu_index = HallOfFameMenu;
     }
 
     ImGui::Spacing();
 
+    ImGui::SetCursorPosX(text_position2);
     if (ImGui::Button("Credits", buttons_size1)) {
         menu_index = CreditsMenu;
     }
@@ -459,6 +527,7 @@ void BasicScene::MainMenuHandler() {
     ImGui::Spacing();
     ImGui::Spacing();
 
+    ImGui::SetCursorPosX(text_position2);
     if (ImGui::Button("Exit", buttons_size1)) {
         glfwSetWindowShouldClose(window, GLFW_TRUE);
     }
@@ -646,10 +715,13 @@ void BasicScene::HallOfFameMenuHandler() {
 
     ImGui::Begin("Menu", pOpen, flags);
     ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
-    ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
+    //ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
+    ImGui::SetWindowSize(ImVec2(width, height), ImGuiCond_Always);
     ImGui::SetWindowFontScale(font_scale1);
 
     ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Hall of Fame");
+
+    Spacing(10);
 
     ImGui::Text("1.  AAA - 1000");
     ImGui::Text("2.  AAA - 900");
@@ -679,23 +751,31 @@ void BasicScene::CreditsMenuHandler() {
 
     ImGui::Begin("Menu", pOpen, flags);
     ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
-    ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
+    //ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
+    ImGui::SetWindowSize(ImVec2(width, height), ImGuiCond_Always);
     ImGui::SetWindowFontScale(font_scale1);
 
+    ImGui::SetCursorPosX(text_position1);
     ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Credits");
 
+    Spacing(10);
+
+    ImGui::SetCursorPosX(text_position3);
     ImGui::Text("Created by: Ofir Gilad");
 
-    ImGui::Spacing();
+    Spacing(5);
 
+    ImGui::SetCursorPosX(text_position3);
     ImGui::Text("Course Teacher: Tamir Grossinger");
 
-    ImGui::Spacing();
+    Spacing(5);
 
+    ImGui::SetCursorPosX(text_position3);
     ImGui::Text("Game Engine: OpenGL");
 
-    ImGui::Spacing();
+    Spacing(5);
 
+    ImGui::SetCursorPosX(text_position3);
     if (payed_credits == true) {
         ImGui::Text("Honorable Contributor: You");
     }
@@ -705,12 +785,19 @@ void BasicScene::CreditsMenuHandler() {
         }
     }
 
-    ImGui::Spacing();
-    ImGui::Spacing();
+    Spacing(10);
 
+    ImGui::SetCursorPosX(text_position2);
     if (ImGui::Button("Back", buttons_size1)) {
         menu_index = MainMenu;
     }
 
     ImGui::End();
+}
+
+
+void BasicScene::Spacing(int number_of_spacing) {
+    for (int i = 0; i < number_of_spacing; i++) {
+        ImGui::Spacing();
+    }
 }

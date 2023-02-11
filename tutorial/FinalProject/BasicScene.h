@@ -33,8 +33,9 @@ public:
 
     // Menu Managmenet
     void MenuManager();
-    enum MenuMapping { MainMenu, StageSelectionMenu, GameMenu, ShopMenu, HallOfFameMenu, CreditsMenu };
+    enum MenuMapping { LoginMenu, MainMenu, StageSelectionMenu, GameMenu, ShopMenu, HallOfFameMenu, CreditsMenu };
 
+    void LoginMenuHandler();
     void MainMenuHandler();
     void StageSelectionMenuHandler();
     void GameMenuHandler();
@@ -48,6 +49,9 @@ public:
 
 private:
     void BuildImGui() override;
+
+    void Spacing(int number_of_spacing);
+
     cg3d::Viewport* viewport = nullptr;
 
 
@@ -79,9 +83,12 @@ private:
     // Menu Params
     int width, height;
     ImVec2 buttons_size1;
-    float font_scale1;
+    float font_scale1, text_position1, text_position2, text_position3;
 
-    int menu_index = 0;
+    int menu_index = LoginMenu;
     int display_keys = 0;
     bool payed_credits = false;
+    bool display_new_game = true;
+
+    string user_name = "Unknown User";
 };
