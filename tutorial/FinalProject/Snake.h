@@ -58,7 +58,6 @@ public:
 
 private:
     void UpdateCameraView();
-    void InitCollisionBoxes();
     
     void InitBonesData();
     void RestartSnake();

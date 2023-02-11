@@ -7,6 +7,7 @@
 
 #include "Snake.h"
 #include "SceneWithImGui.h"
+#include "imgui.h"
 
 
 class BasicScene : public cg3d::SceneWithImGui
@@ -77,6 +78,8 @@ private:
 
     // Menu Params
     int width, height;
+    ImVec2 buttons_size1;
+    float font_scale1;
 
     int menu_index = 0;
     int display_keys = 0;

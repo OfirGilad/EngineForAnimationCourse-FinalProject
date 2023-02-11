@@ -30,7 +30,6 @@
 
 // #include "AutoMorphingModel.h"
 
-#include "imgui.h"
 #include "file_dialog_open.h"
 #include "GLFW/glfw3.h"
 
@@ -170,6 +169,9 @@ void BasicScene::ScrollCallback(Viewport* viewport, int x, int y, int xoffset, i
     //    cameraToutAtPress = camera->GetTout();
     //}
 
+    // Handle ImGui Menu
+    if (ImGui::GetIO().WantCaptureMouse) return;
+
     // Enable scrolling only for global camera
     if (camera_index == 0) {
         camera->Translate({ 0, 0, -float(yoffset) });
@@ -179,6 +181,9 @@ void BasicScene::ScrollCallback(Viewport* viewport, int x, int y, int xoffset, i
 
 void BasicScene::CursorPosCallback(Viewport* viewport, int x, int y, bool dragging, int* buttonState)
 {
+    // Handle ImGui Menu
+    if (ImGui::GetIO().WantCaptureMouse) return;
+
     if (dragging) {
         auto system = camera->GetRotation().transpose() * GetRotation();
         auto moveCoeff = camera->CalcMoveCoeff(pickedModelDepth, viewport->width);
@@ -382,6 +387,8 @@ void BasicScene::InitRotationModes() {
 void BasicScene::MenuManager() {
     width = viewport->width;
     height = viewport->height;
+    buttons_size1 = ImVec2(width / 4, height / 8);
+    font_scale1 = (2.f * width) / 800.f;
 
     switch (menu_index)
     {
@@ -415,6 +422,8 @@ void BasicScene::MainMenuHandler() {
     ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
     //ImGui::SetWindowSize(ImVec2(width, height), ImGuiCond_Always);
     ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
+    ImGui::SetWindowFontScale(font_scale1);
+
     ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Main Menu");
 
     // Handle Gold
@@ -424,33 +433,33 @@ void BasicScene::MainMenuHandler() {
     ImGui::Spacing();
 
     // Move to stage selection menu
-    if (ImGui::Button("Shop", ImVec2(width/4, height/8))) {
+    if (ImGui::Button("Shop", buttons_size1)) {
         menu_index = ShopMenu;
     }
 
     ImGui::Spacing();
 
     // Move to stage selection menu
-    if (ImGui::Button("Select Stage", ImVec2(width / 4, height / 8))) {
+    if (ImGui::Button("Select Stage", buttons_size1)) {
         menu_index = StageSelectionMenu;
     }
 
     ImGui::Spacing();
 
-    if (ImGui::Button("Hall Of Fame", ImVec2(width / 4, height / 8))) {
+    if (ImGui::Button("Hall Of Fame", buttons_size1)) {
         menu_index = HallOfFameMenu;
     }
 
     ImGui::Spacing();
 
-    if (ImGui::Button("Credits", ImVec2(width / 4, height / 8))) {
+    if (ImGui::Button("Credits", buttons_size1)) {
         menu_index = CreditsMenu;
     }
 
     ImGui::Spacing();
     ImGui::Spacing();
 
-    if (ImGui::Button("Exit", ImVec2(width / 4, height / 8))) {
+    if (ImGui::Button("Exit", buttons_size1)) {
         glfwSetWindowShouldClose(window, GLFW_TRUE);
     }
     
@@ -465,6 +474,8 @@ void BasicScene::StageSelectionMenuHandler() {
     ImGui::Begin("Menu", pOpen, flags);
     ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
     ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
+    ImGui::SetWindowFontScale(font_scale1);
+
     ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Stage Selection Menu");
 
     // Handle Gold
@@ -478,7 +489,7 @@ void BasicScene::StageSelectionMenuHandler() {
     for (int i = 1; i <= 3; i++) {
         gui_text = "Stage " + std::to_string(i);
 
-        if (ImGui::Button(gui_text.c_str())) {
+        if (ImGui::Button(gui_text.c_str(), buttons_size1)) {
             cout << gui_text.c_str() << endl;
             menu_index = GameMenu;
         }
@@ -487,7 +498,7 @@ void BasicScene::StageSelectionMenuHandler() {
     ImGui::Spacing();
     ImGui::Spacing();
 
-    if (ImGui::Button("Back")) {
+    if (ImGui::Button("Back", buttons_size1)) {
         menu_index = MainMenu;
     }
     ImGui::End();
@@ -501,6 +512,8 @@ void BasicScene::GameMenuHandler() {
     ImGui::Begin("Menu", pOpen, flags);
     ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
     ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
+    //ImGui::SetWindowFontScale(font_scale1);
+
     ImGui::TextColored(ImVec4(0.0, 0.5, 1.0, 1.0), "Game Menu");
 
     // Handle Gold
@@ -519,14 +532,14 @@ void BasicScene::GameMenuHandler() {
     ImGui::Text("Camera List: ");
     for (int i = 0; i < camera_list.size(); i++) {
         ImGui::SameLine(0);
-        bool selectedCamera = camera_list[i] == camera;
-        if (selectedCamera) {
+        bool selected_camera = camera_list[i] == camera;
+        if (selected_camera) {
             ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetStyleColorVec4(ImGuiCol_ButtonActive));
         }
         if (ImGui::Button(std::to_string(i + 1).c_str())) {
             SetCamera(i);
         }
-        if (selectedCamera) {
+        if (selected_camera) {
             ImGui::PopStyleColor();
         }
     }
@@ -580,6 +593,8 @@ void BasicScene::ShopMenuHandler() {
     ImGui::Begin("Menu", pOpen, flags);
     ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
     ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
+    ImGui::SetWindowFontScale(font_scale1);
+
     ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Shop");
 
     // Handle Gold
@@ -589,35 +604,35 @@ void BasicScene::ShopMenuHandler() {
     ImGui::Spacing();
 
     ImGui::Text("Refill Health");
-    if (ImGui::Button("50 Gold")) {
+    if (ImGui::Button("50 Gold", buttons_size1)) {
         cout << "Refill Health" << endl;
     }
 
     ImGui::Spacing();
 
     ImGui::Text("Increase Max Health");
-    if (ImGui::Button("100 Gold")) {
+    if (ImGui::Button("100 Gold", buttons_size1)) {
         cout << "Increase Max Health" << endl;
     }
 
     ImGui::Spacing();
 
     ImGui::Text("Increase Max Speed");
-    if (ImGui::Button("25 Gold")) {
+    if (ImGui::Button("25 Gold", buttons_size1)) {
         cout << "Increase Max Speed" << endl;
     }
 
     ImGui::Spacing();
 
     ImGui::Text("X2 Gold");
-    if (ImGui::Button("100 Gold")) {
+    if (ImGui::Button("100 Gold", buttons_size1)) {
         cout << "Increase Max Speed" << endl;
     }
     
     ImGui::Spacing();
     ImGui::Spacing();
 
-    if (ImGui::Button("Back")) {
+    if (ImGui::Button("Back", buttons_size1)) {
         menu_index = MainMenu;
     }
 
@@ -632,6 +647,8 @@ void BasicScene::HallOfFameMenuHandler() {
     ImGui::Begin("Menu", pOpen, flags);
     ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
     ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
+    ImGui::SetWindowFontScale(font_scale1);
+
     ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Hall of Fame");
 
     ImGui::Text("1.  AAA - 1000");
@@ -648,7 +665,7 @@ void BasicScene::HallOfFameMenuHandler() {
     ImGui::Spacing();
     ImGui::Spacing();
 
-    if (ImGui::Button("Back")) {
+    if (ImGui::Button("Back", buttons_size1)) {
         menu_index = MainMenu;
     }
 
@@ -663,6 +680,8 @@ void BasicScene::CreditsMenuHandler() {
     ImGui::Begin("Menu", pOpen, flags);
     ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
     ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
+    ImGui::SetWindowFontScale(font_scale1);
+
     ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Credits");
 
     ImGui::Text("Created by: Ofir Gilad");
@@ -689,7 +708,7 @@ void BasicScene::CreditsMenuHandler() {
     ImGui::Spacing();
     ImGui::Spacing();
 
-    if (ImGui::Button("Back")) {
+    if (ImGui::Button("Back", buttons_size1)) {
         menu_index = MainMenu;
     }
 
