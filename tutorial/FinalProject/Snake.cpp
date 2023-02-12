@@ -65,7 +65,7 @@ void Snake::InitSnake(int num_of_bones)
     V = mesh[0]->data[0].vertices;
     F = mesh[0]->data[0].faces;
     root->AddChild(snake_body);
-    snake_body->Translate((bone_size * number_of_bones)/2.f, Scene::Axis::Z);
+    //snake_body->Translate((bone_size * number_of_bones)/2.f, Scene::Axis::Z);
 
     UpdateCameraView();
     //InitBonesData();

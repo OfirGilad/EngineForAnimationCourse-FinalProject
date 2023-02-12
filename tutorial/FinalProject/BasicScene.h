@@ -84,7 +84,7 @@ private:
     // Menu Params
     int width, height;
     ImVec2 buttons_size1, buttons_size2;
-    float font_scale1, text_position1, text_position2, text_position3;
+    float font_scale1, font_scale2, text_position1, text_position2, text_position3;
 
     int menu_index = LoginMenu;
     int display_keys = 0;

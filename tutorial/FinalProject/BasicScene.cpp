@@ -217,7 +217,7 @@ void BasicScene::CursorPosCallback(Viewport* viewport, int x, int y, bool draggi
 void BasicScene::KeyCallback(Viewport* viewport, int x, int y, int key, int scancode, int action, int mods)
 {
     // Handle ImGui Menu
-    if (ImGui::GetIO().WantCaptureMouse) return;
+    if (ImGui::GetIO().WantCaptureKeyboard) return;
 
     auto system = camera->GetRotation().transpose();
 
@@ -393,6 +393,7 @@ void BasicScene::MenuManager() {
     buttons_size1 = ImVec2(width / 4, height / 8);
     buttons_size2 = ImVec2(width / 4, height / 16);
     font_scale1 = (2.f * width) / 800.f;
+    font_scale2 = (1.f * width) / 800.f;
     text_position1 = width * 0.4f;
     text_position2 = width * 0.35f;
     text_position3 = width * 0.3f;
@@ -600,44 +601,55 @@ void BasicScene::ShopMenuHandler() {
     ImGui::SetWindowSize(ImVec2(width, height), ImGuiCond_Always);
     ImGui::SetWindowFontScale(font_scale1);
 
+    ImGui::SetCursorPosX(text_position1);
     ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Shop");
 
     Spacing(10);
 
     // Handle Gold
+    ImGui::SetCursorPosX(text_position2);
     gui_text = "Gold: " + std::to_string(0);
     ImGui::Text(gui_text.c_str());
 
     Spacing(5);
 
+    ImGui::SetCursorPosX(text_position2);
     ImGui::Text("Increase Max Health");
+    ImGui::SetCursorPosX(text_position2);
     if (ImGui::Button("100 Gold", buttons_size2)) {
         cout << "Increase Max Health" << endl;
     }
 
     Spacing(5);
 
+    ImGui::SetCursorPosX(text_position2);
     ImGui::Text("Increase Max Speed");
+    ImGui::SetCursorPosX(text_position2);
     if (ImGui::Button("25 Gold", buttons_size2)) {
         cout << "Increase Max Speed" << endl;
     }
 
     Spacing(5);
 
+    ImGui::SetCursorPosX(text_position2);
     ImGui::Text("Increase Bonuses Duration");
+    ImGui::SetCursorPosX(text_position2);
     if (ImGui::Button("50 Gold", buttons_size2)) {
         cout << "Increase Bonuses Duration" << endl;
     }
 
     Spacing(5);
 
+    ImGui::SetCursorPosX(text_position2);
     ImGui::Text("X2 Gold");
+    ImGui::SetCursorPosX(text_position2);
     if (ImGui::Button("100 Gold", buttons_size2)) {
         cout << "Increase Max Speed" << endl;
     }
 
     Spacing(10);
 
+    ImGui::SetCursorPosX(text_position2);
     if (ImGui::Button("Back", buttons_size1)) {
         menu_index = MainMenu;
     }
@@ -656,27 +668,40 @@ void BasicScene::StatsMenuHandler() {
     ImGui::SetWindowSize(ImVec2(width, height), ImGuiCond_Always);
     ImGui::SetWindowFontScale(font_scale1);
 
+    ImGui::SetCursorPosX(text_position1);
     ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Stats");
 
     Spacing(10);
 
+    ImGui::SetCursorPosX(text_position3);
     ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "Snake Stats");
+    ImGui::SetCursorPosX(text_position3);
     ImGui::Text("Max Health: 100");
+    ImGui::SetCursorPosX(text_position3);
     ImGui::Text("Max Movment Speed: 10");
+    ImGui::SetCursorPosX(text_position3);
     ImGui::Text("Bonuses Duration: 5 sec");
+    ImGui::SetCursorPosX(text_position3);
     ImGui::Text("Gold Multiplier: X1");
 
     Spacing(5);
 
+    ImGui::SetCursorPosX(text_position3);
     ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "Statistics");
+    ImGui::SetCursorPosX(text_position3);
     ImGui::Text("Total Points Earned: 10");
+    ImGui::SetCursorPosX(text_position3);
     ImGui::Text("Total Gold Earned: 10");
+    ImGui::SetCursorPosX(text_position3);
     ImGui::Text("Total Gold Spent: 10");
+    ImGui::SetCursorPosX(text_position3);
     ImGui::Text("Total Boosts Collected: 10");
+    ImGui::SetCursorPosX(text_position3);
     ImGui::Text("Total Deaths: 10");
 
     Spacing(10);
 
+    ImGui::SetCursorPosX(text_position2);
     if (ImGui::Button("Back", buttons_size1)) {
         menu_index = MainMenu;
     }
@@ -695,20 +720,23 @@ void BasicScene::StageSelectionMenuHandler() {
     //ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
     ImGui::SetWindowFontScale(font_scale1);
 
-    ImGui::SetCursorPosX(text_position1);
+    ImGui::SetCursorPosX(text_position3);
     ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Stage Selection Menu");
 
     Spacing(10);
 
     // Handle Gold
+    ImGui::SetCursorPosX(text_position2);
     gui_text = "Gold: " + std::to_string(0);
     ImGui::Text(gui_text.c_str());
 
     Spacing(5);
 
     // Handle Stages
+    ImGui::SetCursorPosX(text_position2);
     ImGui::Text("Select Stage: ");
     for (int i = 1; i <= 3; i++) {
+        ImGui::SetCursorPosX(text_position2);
         gui_text = "Stage " + std::to_string(i);
 
         if (ImGui::Button(gui_text.c_str(), buttons_size1)) {
@@ -719,6 +747,7 @@ void BasicScene::StageSelectionMenuHandler() {
 
     Spacing(10);
 
+    ImGui::SetCursorPosX(text_position2);
     if (ImGui::Button("Back", buttons_size1)) {
         menu_index = MainMenu;
     }
@@ -736,24 +765,35 @@ void BasicScene::HallOfFameMenuHandler() {
     ImGui::SetWindowSize(ImVec2(width, height), ImGuiCond_Always);
     ImGui::SetWindowFontScale(font_scale1);
 
+    ImGui::SetCursorPosX(text_position2);
     ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Hall of Fame");
 
     Spacing(10);
 
+    ImGui::SetCursorPosX(text_position3);
     ImGui::Text("1.  AAA - 1000");
+    ImGui::SetCursorPosX(text_position3);
     ImGui::Text("2.  AAA - 900");
+    ImGui::SetCursorPosX(text_position3);
     ImGui::Text("3.  AAA - 800");
+    ImGui::SetCursorPosX(text_position3);
     ImGui::Text("4.  AAA - 700");
+    ImGui::SetCursorPosX(text_position3);
     ImGui::Text("5.  AAA - 600");
+    ImGui::SetCursorPosX(text_position3);
     ImGui::Text("6.  AAA - 500");
+    ImGui::SetCursorPosX(text_position3);
     ImGui::Text("7.  AAA - 400");
+    ImGui::SetCursorPosX(text_position3);
     ImGui::Text("8.  AAA - 300");
+    ImGui::SetCursorPosX(text_position3);
     ImGui::Text("9.  AAA - 200");
+    ImGui::SetCursorPosX(text_position3);
     ImGui::Text("10. AAA - 100");
 
-    ImGui::Spacing();
-    ImGui::Spacing();
+    Spacing(10);
 
+    ImGui::SetCursorPosX(text_position2);
     if (ImGui::Button("Back", buttons_size1)) {
         menu_index = MainMenu;
     }
@@ -822,18 +862,26 @@ void BasicScene::GameMenuHandler() {
     ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
     ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
     //ImGui::SetWindowFontScale(font_scale1);
+    ImGui::SetWindowFontScale(font_scale2);
 
     ImGui::TextColored(ImVec4(0.0, 0.5, 1.0, 1.0), "Game Menu");
 
-    // Handle Gold
-    gui_text = "Gold: " + std::to_string(0);
-    ImGui::Text(gui_text.c_str());
+    // Handle Health
+    gui_text = "Health: " + std::to_string(100);
+    ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), gui_text.c_str());
 
     ImGui::Spacing();
 
     // Handle Score
     gui_text = "Score: " + std::to_string(0);
-    ImGui::Text(gui_text.c_str());
+    ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), gui_text.c_str());
+
+    ImGui::Spacing();
+
+    // Handle Gold
+    gui_text = "Gold: " + std::to_string(0);
+    ImGui::TextColored(ImVec4(1.0, 1.0, 0.0, 1.0), gui_text.c_str());
+    
 
     ImGui::Spacing();
 
