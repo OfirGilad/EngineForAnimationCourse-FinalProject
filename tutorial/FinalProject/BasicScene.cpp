@@ -462,9 +462,9 @@ void BasicScene::MenuManager() {
 }
 
 void BasicScene::LoginMenuHandler() {
-    if (playing_index != MainMenu) {
+    if (playing_index != LoginMenu) {
         MusicHandler("opening_theme.mp3");
-        playing_index = MainMenu;
+        playing_index = LoginMenu;
     }
 
     int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
@@ -558,7 +558,7 @@ void BasicScene::LoginMenuHandler() {
 
 void BasicScene::MainMenuHandler() {
     if (playing_index != MainMenu) {
-        MusicHandler("opening_theme.mp3");
+        MusicHandler("main_menu.mp3");
         playing_index = MainMenu;
     }
 
@@ -708,7 +708,7 @@ void BasicScene::ShopMenuHandler() {
 
 void BasicScene::StatsMenuHandler() {
     if (playing_index != MainMenu) {
-        MusicHandler("opening_theme.mp3");
+        MusicHandler("main_menu.mp3");
         playing_index = MainMenu;
     }
 
@@ -765,7 +765,7 @@ void BasicScene::StatsMenuHandler() {
 
 void BasicScene::StageSelectionMenuHandler() {
     if (playing_index != MainMenu) {
-        MusicHandler("opening_theme.mp3");
+        MusicHandler("main_menu.mp3");
         playing_index = MainMenu;
     }
 

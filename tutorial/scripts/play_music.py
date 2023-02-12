@@ -8,6 +8,7 @@ def play_music(music_file):
     music_lengths = {
         "credits.mp3": 96,
         "hall_of_fame.mp3": 97,
+        "main_menu.mp3": 108,
         "opening_theme.mp3": 169,
         "shop.mp3": 128,
         "stage1.mp3": 70,
