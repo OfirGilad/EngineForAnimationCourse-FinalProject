@@ -44,6 +44,10 @@ public:
     void CreditsMenuHandler();
     void GameMenuHandler();
 
+    // Music Management
+    void MusicHandler(string music_file);
+    
+
     Snake snake;
 
     std::shared_ptr<cg3d::Model> sphere1;
@@ -93,4 +97,10 @@ private:
     bool user_created = false;
 
     string user_name = "Unknown User";
+
+    // Music Params
+    string python_exe = "python3.8.exe";
+    bool playing = false;
+    int playing_index = -1;
+    int selected_stage = 0;
 };
