@@ -25,7 +25,7 @@ namespace cg3d
         BasicScene* scene;
         Eigen::Quaternionf quaternionx, quaterniony;
         int bone_index = 0;
-        int number_of_bones = 15; // without the first bone
+        int number_of_bones = 0;
         bool bones_found_flag = false;
     };
 }
