@@ -505,15 +505,6 @@ void BasicScene::LoginMenuHandler() {
         }
     }
 
-    Spacing(5);
-
-    if (display_new_game) {
-        ImGui::SetCursorPosX(text_position2);
-        if (ImGui::Button("Credits", buttons_size1)) {
-            menu_index = CreditsMenu;
-        }
-    }
-
     Spacing(10);
 
     ImGui::SetCursorPosX(text_position2);
