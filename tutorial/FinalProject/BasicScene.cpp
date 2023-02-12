@@ -543,7 +543,7 @@ void BasicScene::MainMenuHandler() {
     // Handle Gold
     gui_text = "Gold: " + std::to_string(0);
     ImGui::SetCursorPosX(text_position2);
-    ImGui::Text(gui_text.c_str());
+    ImGui::TextColored(ImVec4(1.0, 1.0, 0.0, 1.0), gui_text.c_str());
 
     Spacing(5);
 
@@ -609,7 +609,7 @@ void BasicScene::ShopMenuHandler() {
     // Handle Gold
     ImGui::SetCursorPosX(text_position2);
     gui_text = "Gold: " + std::to_string(0);
-    ImGui::Text(gui_text.c_str());
+    ImGui::TextColored(ImVec4(1.0, 1.0, 0.0, 1.0), gui_text.c_str());
 
     Spacing(5);
 
@@ -728,7 +728,7 @@ void BasicScene::StageSelectionMenuHandler() {
     // Handle Gold
     ImGui::SetCursorPosX(text_position2);
     gui_text = "Gold: " + std::to_string(0);
-    ImGui::Text(gui_text.c_str());
+    ImGui::TextColored(ImVec4(1.0, 1.0, 0.0, 1.0), gui_text.c_str());
 
     Spacing(5);
 
