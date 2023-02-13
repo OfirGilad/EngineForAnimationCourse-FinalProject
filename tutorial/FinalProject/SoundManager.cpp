@@ -19,7 +19,7 @@ void SoundManager::MusicHandler(string music_file) {
     };
 
     if (player_status) {
-        if (playing == true) {
+        if (playing) {
             // Kill The Previous Music Player
             playing = false;
             std::string kill_command = "taskkill /f /im " + python_exe;

@@ -9,6 +9,7 @@
 #include "SceneWithImGui.h"
 #include "imgui.h"
 #include "SoundManager.h"
+#include "Stats.h"
 
 
 class BasicScene : public cg3d::SceneWithImGui
@@ -44,27 +45,24 @@ public:
     void HallOfFameMenuHandler();
     void CreditsMenuHandler();
     void GameMenuHandler();  
+    void Spacing(int number_of_spacing);
 
+    // Global Varaiables
     Snake snake;
     SoundManager sound_manager;
+    Stats stats;
 
     std::shared_ptr<cg3d::Model> sphere1;
 
 private:
     void BuildImGui() override;
-
-    void Spacing(int number_of_spacing);
-
     cg3d::Viewport* viewport = nullptr;
-
 
     std::shared_ptr<Movable> root;
     //std::shared_ptr<cg3d::Model> sphere1 ,cube;
     //std::shared_ptr<cg3d::AutoMorphingModel> autoCube;
     std::vector<std::shared_ptr<cg3d::Model>> axis;
     std::shared_ptr<cg3d::Model> cube;
-    int pickedIndex = 0;
-    int tipIndex = 0;
     Eigen::VectorXi EMAP;
     Eigen::MatrixXi F,E,EF,EI;
     Eigen::VectorXi EQ;
@@ -85,14 +83,11 @@ private:
 
     // Menu Params
     int width, height;
-    ImVec2 buttons_size1, buttons_size2;
+    ImVec2 buttons_size1, buttons_size2, window_size1;
     float font_scale1, font_scale2, text_position1, text_position2, text_position3;
 
     int menu_index = LoginMenu;
     int display_keys = 0;
     bool payed_credits = false;
     bool display_new_game = true;
-    bool user_created = false;
-
-    string user_name = "Unknown User";
 };

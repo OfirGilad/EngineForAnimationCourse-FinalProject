@@ -112,6 +112,10 @@ void BasicScene::Init(float fov, int width, int height, float near, float far)
 
     // Init sound manager
     sound_manager = SoundManager();
+
+    // Init stats
+    stats = Stats();
+    stats.InitStats();
 }
 
 void BasicScene::Update(const Program& program, const Eigen::Matrix4f& proj, const Eigen::Matrix4f& view, const Eigen::Matrix4f& model)
@@ -128,7 +132,15 @@ void BasicScene::MouseCallback(Viewport* viewport, int x, int y, int button, int
 {
     // Handle ImGui Menu
     if (ImGui::GetIO().WantCaptureMouse) return;
-    
+
+    // Handle coming back 
+    if (menu_index != GameMenu) {
+        return;
+    }
+    else if ((x < window_size1.x) && (y < window_size1.y)) {
+        return;
+    }
+
     // note: there's a (small) chance the button state here precedes the mouse press/release event
 
     if (action == GLFW_PRESS) { // default mouse button press behavior
@@ -396,6 +408,9 @@ void BasicScene::MenuManager() {
     if (width != 0 && height != 0) {
         buttons_size1 = ImVec2(width / 4, height / 8);
         buttons_size2 = ImVec2(width / 4, height / 16);
+
+        window_size1 = ImVec2((float(width)/float(height)) * 180 , (float(width)/float(height)) * 200);
+
         font_scale1 = (2.f * width) / 800.f;
         font_scale2 = (1.f * width) / 800.f;
         text_position1 = width * 0.4f;
@@ -484,8 +499,7 @@ void BasicScene::LoginMenuHandler() {
         ImGui::SetCursorPosX(text_position2);
         if (ImGui::Button("Start New Game", buttons_size1)) {
             display_new_game = true;
-            user_name = name;
-            user_created = true;
+            stats.NewGame(name);
             menu_index = MainMenu;
         }
     }
@@ -494,7 +508,7 @@ void BasicScene::LoginMenuHandler() {
 
     ImGui::SetCursorPosX(text_position2);
     if (display_new_game) {
-        if (user_created == false) {
+        if (!stats.save_data_available) {
             ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled));
 
             if (ImGui::Button("Continue Game", buttons_size1)) {
@@ -549,7 +563,7 @@ void BasicScene::MainMenuHandler() {
     Spacing(5);
 
     // Handel User name
-    gui_text = "Welcome back, " + user_name;
+    gui_text = "Welcome back, " + stats.user_name;
     ImGui::SetCursorPosX(text_position2);
     ImGui::Text(gui_text.c_str());
 
@@ -599,6 +613,7 @@ void BasicScene::MainMenuHandler() {
 
     ImGui::SetCursorPosX(text_position2);
     if (ImGui::Button("Logout", buttons_size1)) {
+        stats.InitStats();
         menu_index = LoginMenu;
     }
     
@@ -624,7 +639,7 @@ void BasicScene::StageSelectionMenuHandler() {
     ImGui::SetCursorPosX(text_position3);
     ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Stage Selection Menu");
 
-    Spacing(10);
+    Spacing(5);
 
     // Handle Gold
     ImGui::SetCursorPosX(text_position2);
@@ -679,7 +694,7 @@ void BasicScene::ShopMenuHandler() {
     ImGui::SetCursorPosX(text_position1);
     ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Shop");
 
-    Spacing(10);
+    Spacing(5);
 
     // Handle Gold
     ImGui::SetCursorPosX(text_position2);
@@ -751,33 +766,51 @@ void BasicScene::StatsMenuHandler() {
     ImGui::SetCursorPosX(text_position1);
     ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Stats");
 
-    Spacing(10);
+    Spacing(5);
 
     ImGui::SetCursorPosX(text_position3);
     ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "Snake Stats");
+
     ImGui::SetCursorPosX(text_position3);
-    ImGui::Text("Max Health: 100");
+    gui_text = "Max Health: " + std::to_string(stats.max_health);
+    ImGui::Text(gui_text.c_str());
+
     ImGui::SetCursorPosX(text_position3);
-    ImGui::Text("Max Movment Speed: 10");
+    gui_text = "Max Movement Speed: " + std::to_string(stats.max_movement_speed);
+    ImGui::Text(gui_text.c_str());
+
     ImGui::SetCursorPosX(text_position3);
-    ImGui::Text("Bonuses Duration: 5 sec");
+    gui_text = "Bonuses Duration: " + std::to_string(stats.bonuses_duration) + " sec";
+    ImGui::Text(gui_text.c_str());
+
     ImGui::SetCursorPosX(text_position3);
-    ImGui::Text("Gold Multiplier: X1");
+    gui_text = "Gold Multiplier: X" + std::to_string(stats.gold_multiplier);
+    ImGui::Text(gui_text.c_str());
 
     Spacing(5);
 
     ImGui::SetCursorPosX(text_position3);
     ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "Statistics");
+
     ImGui::SetCursorPosX(text_position3);
-    ImGui::Text("Total Points Earned: 10");
+    gui_text = "Total Points Earned: " + std::to_string(stats.total_points_earned);
+    ImGui::Text(gui_text.c_str());
+
     ImGui::SetCursorPosX(text_position3);
-    ImGui::Text("Total Gold Earned: 10");
+    gui_text = "Total Gold Earned: " + std::to_string(stats.total_gold_earned);
+    ImGui::Text(gui_text.c_str());
+
     ImGui::SetCursorPosX(text_position3);
-    ImGui::Text("Total Gold Spent: 10");
+    gui_text = "Total Gold Spent: " + std::to_string(stats.total_gold_spent);
+    ImGui::Text(gui_text.c_str());
+
     ImGui::SetCursorPosX(text_position3);
-    ImGui::Text("Total Boosts Collected: 10");
+    gui_text = "Total Boosts Collected: " + std::to_string(stats.total_boosts_collected);
+    ImGui::Text(gui_text.c_str());
+
     ImGui::SetCursorPosX(text_position3);
-    ImGui::Text("Total Deaths: 10");
+    gui_text = "Total Deaths: " + std::to_string(stats.total_deaths);
+    ImGui::Text(gui_text.c_str());
 
     Spacing(10);
 
@@ -808,7 +841,7 @@ void BasicScene::HallOfFameMenuHandler() {
     ImGui::SetCursorPosX(text_position2);
     ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Hall of Fame");
 
-    Spacing(10);
+    Spacing(5);
 
     ImGui::SetCursorPosX(text_position3);
     ImGui::Text("1.  AAA - 1000");
@@ -878,8 +911,8 @@ void BasicScene::CreditsMenuHandler() {
     Spacing(5);
 
     ImGui::SetCursorPosX(text_position3);
-    if (payed_credits == true) {
-        gui_text = "Honorable Contributor: " + user_name;
+    if (payed_credits) {
+        gui_text = "Honorable Contributor: " + stats.user_name;
         ImGui::Text(gui_text.c_str());
     }
     else {
@@ -912,7 +945,7 @@ void BasicScene::GameMenuHandler() {
 
     ImGui::Begin("Menu", pOpen, flags);
     ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
-    ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
+    ImGui::SetWindowSize(window_size1, ImGuiCond_Always);
     //ImGui::SetWindowFontScale(font_scale1);
     ImGui::SetWindowFontScale(font_scale2);
 
@@ -979,7 +1012,7 @@ void BasicScene::GameMenuHandler() {
 
     ImGui::Spacing();
 
-    if (ImGui::Button("Pasue")) {
+    if (ImGui::Button("Pause")) {
         animate = false;
         cout << "Pause Game" << endl;
     }
