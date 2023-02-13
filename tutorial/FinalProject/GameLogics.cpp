@@ -394,6 +394,8 @@ bool GameLogics::CollisionCheck(igl::AABB<Eigen::MatrixXd, 3>* object_tree1, igl
         cube2->showFaces = false;
         cube1->showWireframe = true;
         cube2->showWireframe = true;
+        cube1->Translate(Eigen::Vector3f(0, 0, 0));
+        cube2->Translate(Eigen::Vector3f(0, 0, 0));
 
         return true;
     }
