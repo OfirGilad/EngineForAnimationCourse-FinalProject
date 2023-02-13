@@ -116,6 +116,10 @@ void BasicScene::Init(float fov, int width, int height, float near, float far)
     // Init stats
     stats = Stats();
     stats.InitStats();
+
+    // Init leaderboard
+    leaderboard = Leaderboard();
+    leaderboard.InitLeaderboard();
 }
 
 void BasicScene::Update(const Program& program, const Eigen::Matrix4f& proj, const Eigen::Matrix4f& view, const Eigen::Matrix4f& model)
@@ -500,6 +504,7 @@ void BasicScene::LoginMenuHandler() {
         if (ImGui::Button("Start New Game", buttons_size1)) {
             display_new_game = true;
             stats.NewGame(name);
+            leaderboard.ResetLeaderboard();
             menu_index = MainMenu;
         }
     }
@@ -614,6 +619,7 @@ void BasicScene::MainMenuHandler() {
     ImGui::SetCursorPosX(text_position2);
     if (ImGui::Button("Logout", buttons_size1)) {
         stats.InitStats();
+        leaderboard.InitLeaderboard();
         menu_index = LoginMenu;
     }
     
@@ -843,26 +849,30 @@ void BasicScene::HallOfFameMenuHandler() {
 
     Spacing(5);
 
-    ImGui::SetCursorPosX(text_position3);
-    ImGui::Text("1.  AAA - 1000");
-    ImGui::SetCursorPosX(text_position3);
-    ImGui::Text("2.  AAA - 900");
-    ImGui::SetCursorPosX(text_position3);
-    ImGui::Text("3.  AAA - 800");
-    ImGui::SetCursorPosX(text_position3);
-    ImGui::Text("4.  AAA - 700");
-    ImGui::SetCursorPosX(text_position3);
-    ImGui::Text("5.  AAA - 600");
-    ImGui::SetCursorPosX(text_position3);
-    ImGui::Text("6.  AAA - 500");
-    ImGui::SetCursorPosX(text_position3);
-    ImGui::Text("7.  AAA - 400");
-    ImGui::SetCursorPosX(text_position3);
-    ImGui::Text("8.  AAA - 300");
-    ImGui::SetCursorPosX(text_position3);
-    ImGui::Text("9.  AAA - 200");
-    ImGui::SetCursorPosX(text_position3);
-    ImGui::Text("10. AAA - 100");
+    for (int i = 0; i < 10; i++) {
+        ImGui::SetCursorPosX(text_position3);
+        string space = "  ";
+        if (i == 9) {
+            space = " ";
+        }
+        gui_text = to_string(i + 1) + "." + space +            // Place
+            leaderboard.leaderboard_list[i].first + " - " +    // Name
+            to_string(leaderboard.leaderboard_list[i].second); // Score
+
+        
+        if (i == 0) {
+            ImGui::TextColored(ImVec4(201.f / 176.f, 149.f / 255.f, 55.f / 255.f, 1.0), gui_text.c_str());
+        }
+        else if (i == 1) {
+            ImGui::TextColored(ImVec4(180.f / 255.f, 180.f / 255.f, 180.f / 255.f, 1.0), gui_text.c_str());
+        }
+        else if (i == 2) {
+            ImGui::TextColored(ImVec4(173.f / 255.f, 138.f / 255.f, 86.f / 255.f, 1.0), gui_text.c_str());
+        }
+        else {
+            ImGui::Text(gui_text.c_str());
+        }
+    }
 
     Spacing(10);
 

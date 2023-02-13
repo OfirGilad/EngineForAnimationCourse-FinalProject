@@ -10,6 +10,7 @@
 #include "imgui.h"
 #include "SoundManager.h"
 #include "Stats.h"
+#include "Leaderboard.h"
 
 
 class BasicScene : public cg3d::SceneWithImGui
@@ -51,6 +52,7 @@ public:
     Snake snake;
     SoundManager sound_manager;
     Stats stats;
+    Leaderboard leaderboard;
 
     std::shared_ptr<cg3d::Model> sphere1;
 
