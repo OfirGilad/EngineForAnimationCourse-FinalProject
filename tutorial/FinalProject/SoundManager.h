@@ -7,30 +7,26 @@
 
 #endif //ENGINEFORANIMATIONCOURSE_FINALPROJECT_SOUNDMANAGER_H
 
-//#include <irrKlang.h>
 #include <string>
+#include <thread>
+#include <iostream>
 
-//using namespace irrklang;
+using namespace std;
 
 class SoundManager
 {
 public:
-    //SoundManager();
+    SoundManager();
 
-    //void PlayCreditsSound();
-    //void PlayGameOverSound();
-    //void PlayHallOfFameSound();
-    //void PlayHitSound();
-    //void PlayOpeningThemeSound();
-    //void PlayShopSound();
-    //void PlayStageCompleteSound();
-    //void PlayStage1Sound();
-    //void PlayStage2Sound();
-    //void PlayStage3Sound();
+    void MusicHandler(string music_file);
 
-    //void PlayGoldObjectSound();
-    //void PlayHealthObjectSound();
-    //void PlayScoreObjectSound();
+    
+    // Global Indexed
+    int playing_index = -1;
+    int stage_index = 0;
 
-    //ISoundEngine *engine;
+private:
+    // Make sure to set the correct python version
+    string python_exe = "python3.8.exe";
+    bool playing = false;
 };

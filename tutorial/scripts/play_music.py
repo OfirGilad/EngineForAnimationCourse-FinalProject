@@ -8,12 +8,13 @@ def play_music(music_file):
     music_lengths = {
         "credits.mp3": 96,
         "hall_of_fame.mp3": 97,
-        "main_menu.mp3": 108,
+        "main_menu.mp3": 66,
         "opening_theme.mp3": 169,
         "shop.mp3": 128,
         "stage1.mp3": 70,
         "stage2.mp3": 94,
         "stage3.mp3": 170,
+        "stats.mp3": 108,
     }
 
     p = vlc.MediaPlayer(music_file)

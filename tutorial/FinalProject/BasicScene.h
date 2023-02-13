@@ -8,6 +8,7 @@
 #include "Snake.h"
 #include "SceneWithImGui.h"
 #include "imgui.h"
+#include "SoundManager.h"
 
 
 class BasicScene : public cg3d::SceneWithImGui
@@ -33,7 +34,7 @@ public:
 
     // Menu Managmenet
     void MenuManager();
-    enum MenuMapping { LoginMenu, MainMenu, ShopMenu, StatsMenu, StageSelectionMenu, HallOfFameMenu, CreditsMenu, GameMenu };
+    enum MenuMapping { LoginMenu, MainMenu, StageSelectionMenu, ShopMenu, StatsMenu, HallOfFameMenu, CreditsMenu, GameMenu };
 
     void LoginMenuHandler();
     void MainMenuHandler();
@@ -42,13 +43,10 @@ public:
     void StageSelectionMenuHandler();
     void HallOfFameMenuHandler();
     void CreditsMenuHandler();
-    void GameMenuHandler();
-
-    // Music Management
-    void MusicHandler(string music_file);
-    
+    void GameMenuHandler();  
 
     Snake snake;
+    SoundManager sound_manager;
 
     std::shared_ptr<cg3d::Model> sphere1;
 
@@ -97,10 +95,4 @@ private:
     bool user_created = false;
 
     string user_name = "Unknown User";
-
-    // Music Params
-    string python_exe = "python3.8.exe";
-    bool playing = false;
-    int playing_index = -1;
-    int selected_stage = 0;
 };

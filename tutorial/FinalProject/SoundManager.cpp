@@ -4,77 +4,35 @@
 
 #include "SoundManager.h"
 
-//SoundManager::SoundManager() {
-//    engine = createIrrKlangDevice();
-//
-//    if (!engine) {
-//        return;
-//    }
-//}
-//
-//void SoundManager::PlayCreditsSound() {
-//    engine->drop();
-//    engine = createIrrKlangDevice();
-//    engine->play2D("sounds/credits.mp3", true);
-//}
-//
-//void SoundManager::PlayGameOverSound() {
-//
-//    engine->play2D("sounds/game_over.mp3", false);
-//}
-//
-//void SoundManager::PlayGoldObjectSound() {
-//    engine->play2D("sounds/gold_object.mp3", false);
-//}
-//
-//void SoundManager::PlayHallOfFameSound() {
-//    engine->drop();
-//    engine = createIrrKlangDevice();
-//    engine->play2D("sounds/hall_of_fame.mp3", true);
-//}
-//
-//void SoundManager::PlayHealthObjectSound() {
-//    engine->play2D("sounds/health_object.mp3", false);
-//}
-//
-//void SoundManager::PlayHitSound() {
-//    engine->play2D("sounds/hit.mp3", false);
-//}
-//
-//void SoundManager::PlayOpeningThemeSound() {
-//    engine->drop();
-//    engine = createIrrKlangDevice();
-//    engine->play2D("sounds/opening_theme.mp3", true);
-//}
-//
-//void SoundManager::PlayScoreObjectSound() {
-//    engine->play2D("sounds/score_object.mp3", false);
-//}
-//
-//void SoundManager::PlayShopSound() {
-//    engine->drop();
-//    engine = createIrrKlangDevice();
-//    engine->play2D("sounds/shop.mp3", true);
-//}
-//
-//void SoundManager::PlayStageCompleteSound() {
-//    engine->play2D("sounds/stage_complete.mp3", false);
-//}
-//
-//void SoundManager::PlayStage1Sound() {
-//    engine->drop();
-//    engine = createIrrKlangDevice();
-//    engine->play2D("sounds/stage1.mp3", true);
-//}
-//
-//void SoundManager::PlayStage2Sound() {
-//    engine->drop();
-//    engine = createIrrKlangDevice();
-//    engine->play2D("sounds/stage2.mp3", true);
-//}
-//
-//void SoundManager::PlayStage3Sound() {
-//    engine->drop();
-//    engine = createIrrKlangDevice();
-//    engine->play2D("sounds/stage3.mp3", true);
-//}
+SoundManager::SoundManager() {
+	
+}
+
+void SoundManager::MusicHandler(string music_file) {
+    // Calling a script to play the music
+    const auto& playMusic = [&](std::string music_file) {
+        std::string command = "python ../tutorial/scripts/play_music.py \"" + music_file + "\"";
+        int result = system(command.c_str());
+        if (result != 0) {
+            std::cerr << "Error running command: " << command << std::endl;
+        }
+    };
+
+    if (playing == true) {
+        // Kill The Previous Music Player
+        playing = false;
+        std::string kill_command = "taskkill /f /im " + python_exe;
+        int result = system(kill_command.c_str());
+
+        // Play New Music
+        playing = true;
+        std::thread t1(playMusic, music_file);
+        t1.detach();
+    }
+    else {
+        // Play Music For The First Time
+        playing = true;
+        std::thread t1(playMusic, music_file);
+        t1.detach();
+    }
+}

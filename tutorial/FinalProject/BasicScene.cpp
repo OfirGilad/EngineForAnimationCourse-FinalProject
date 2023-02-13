@@ -109,6 +109,9 @@ void BasicScene::Init(float fov, int width, int height, float near, float far)
     // Init snake
     snake = Snake(root, camera_list);
     snake.InitSnake(number_of_bones);
+
+    // Init sound manager
+    sound_manager = SoundManager();
 }
 
 void BasicScene::Update(const Program& program, const Eigen::Matrix4f& proj, const Eigen::Matrix4f& view, const Eigen::Matrix4f& model)
@@ -325,38 +328,6 @@ void BasicScene::KeyCallback(Viewport* viewport, int x, int y, int key, int scan
     }
 }
 
-#include <thread>
-
-void BasicScene::MusicHandler(string music_file) {
-
-    const auto& playMusic = [&](std::string music_file) {
-        std::string command = "python ../tutorial/scripts/play_music.py \"" + music_file + "\"";
-        int result = system(command.c_str());
-        if (result != 0) {
-            std::cerr << "Error running command: " << command << std::endl;
-        }
-    };
-
-    if (playing == true) {
-        playing = false;
-        std::string kill_command = "taskkill /f /im " + python_exe;
-        system(kill_command.c_str());
-
-        // Play New Music
-        playing = true;
-        //std::string music_file = "stage1.mp3";
-        std::thread t1(playMusic, music_file);
-        t1.detach();
-    }
-    else {
-        // Play First Music
-        playing = true;
-        //std::string music_file = "stage1.mp3";
-        std::thread t1(playMusic, music_file);
-        t1.detach();
-    }
-}
-
 // Game Menu
 void BasicScene::BuildImGui() {
     MenuManager();
@@ -462,9 +433,9 @@ void BasicScene::MenuManager() {
 }
 
 void BasicScene::LoginMenuHandler() {
-    if (playing_index != LoginMenu) {
-        MusicHandler("opening_theme.mp3");
-        playing_index = LoginMenu;
+    if (sound_manager.playing_index != LoginMenu) {
+        sound_manager.MusicHandler("opening_theme.mp3");
+        sound_manager.playing_index = LoginMenu;
     }
 
     int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
@@ -557,9 +528,9 @@ void BasicScene::LoginMenuHandler() {
 }
 
 void BasicScene::MainMenuHandler() {
-    if (playing_index != MainMenu) {
-        MusicHandler("main_menu.mp3");
-        playing_index = MainMenu;
+    if (sound_manager.playing_index != MainMenu) {
+        sound_manager.MusicHandler("main_menu.mp3");
+        sound_manager.playing_index = MainMenu;
     }
 
     int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
@@ -592,6 +563,13 @@ void BasicScene::MainMenuHandler() {
     Spacing(5);
 
     ImGui::SetCursorPosX(text_position2);
+    if (ImGui::Button("Select Stage", buttons_size2)) {
+        menu_index = StageSelectionMenu;
+    }
+
+    Spacing(5);
+
+    ImGui::SetCursorPosX(text_position2);
     if (ImGui::Button("Shop", buttons_size2)) {
         menu_index = ShopMenu;
     }
@@ -601,13 +579,6 @@ void BasicScene::MainMenuHandler() {
     ImGui::SetCursorPosX(text_position2);
     if (ImGui::Button("Stats", buttons_size2)) {
         menu_index = StatsMenu;
-    }
-
-    Spacing(5);
-
-    ImGui::SetCursorPosX(text_position2);
-    if (ImGui::Button("Select Stage", buttons_size2)) {
-        menu_index = StageSelectionMenu;
     }
 
     Spacing(5);
@@ -634,10 +605,65 @@ void BasicScene::MainMenuHandler() {
     ImGui::End();
 }
 
+void BasicScene::StageSelectionMenuHandler() {
+    if (sound_manager.playing_index != MainMenu) {
+        sound_manager.MusicHandler("main_menu.mp3");
+        sound_manager.playing_index = MainMenu;
+    }
+
+    int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
+    bool* pOpen = nullptr;
+    string gui_text;
+
+    ImGui::Begin("Menu", pOpen, flags);
+    ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
+    ImGui::SetWindowSize(ImVec2(width, height), ImGuiCond_Always);
+    //ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
+    ImGui::SetWindowFontScale(font_scale1);
+
+    ImGui::SetCursorPosX(text_position3);
+    ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Stage Selection Menu");
+
+    Spacing(10);
+
+    // Handle Gold
+    ImGui::SetCursorPosX(text_position2);
+    gui_text = "Gold: " + std::to_string(0);
+    ImGui::TextColored(ImVec4(1.0, 1.0, 0.0, 1.0), gui_text.c_str());
+
+    Spacing(5);
+
+    // Handle Stages
+    ImGui::SetCursorPosX(text_position2);
+    ImGui::Text("Select Stage: ");
+
+    // Stages buttons
+    for (int i = 1; i <= 3; i++) {
+        Spacing(5);
+
+        ImGui::SetCursorPosX(text_position2);
+        gui_text = "Stage " + std::to_string(i);
+
+        if (ImGui::Button(gui_text.c_str(), buttons_size1)) {
+            cout << gui_text.c_str() << endl;
+            sound_manager.stage_index = i;
+            menu_index = GameMenu;
+        }
+    }
+
+    Spacing(10);
+
+    ImGui::SetCursorPosX(text_position2);
+    if (ImGui::Button("Back", buttons_size1)) {
+        menu_index = MainMenu;
+    }
+    ImGui::End();
+}
+
 void BasicScene::ShopMenuHandler() {
-    if (playing_index != ShopMenu) {
-        MusicHandler("shop.mp3");
-        playing_index = ShopMenu;
+    if (sound_manager.playing_index != ShopMenu) {
+        sound_manager.MusicHandler("shop.mp3");
+        sound_manager.playing_index = ShopMenu;
     }
 
     int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
@@ -707,9 +733,9 @@ void BasicScene::ShopMenuHandler() {
 }
 
 void BasicScene::StatsMenuHandler() {
-    if (playing_index != MainMenu) {
-        MusicHandler("main_menu.mp3");
-        playing_index = MainMenu;
+    if (sound_manager.playing_index != StatsMenu) {
+        sound_manager.MusicHandler("stats.mp3");
+        sound_manager.playing_index = StatsMenu;
     }
 
     int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
@@ -763,61 +789,10 @@ void BasicScene::StatsMenuHandler() {
     ImGui::End();
 }
 
-void BasicScene::StageSelectionMenuHandler() {
-    if (playing_index != MainMenu) {
-        MusicHandler("main_menu.mp3");
-        playing_index = MainMenu;
-    }
-
-    int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
-    bool* pOpen = nullptr;
-    string gui_text;
-
-    ImGui::Begin("Menu", pOpen, flags);
-    ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
-    ImGui::SetWindowSize(ImVec2(width, height), ImGuiCond_Always);
-    //ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
-    ImGui::SetWindowFontScale(font_scale1);
-
-    ImGui::SetCursorPosX(text_position3);
-    ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Stage Selection Menu");
-
-    Spacing(10);
-
-    // Handle Gold
-    ImGui::SetCursorPosX(text_position2);
-    gui_text = "Gold: " + std::to_string(0);
-    ImGui::TextColored(ImVec4(1.0, 1.0, 0.0, 1.0), gui_text.c_str());
-
-    Spacing(5);
-
-    // Handle Stages
-    ImGui::SetCursorPosX(text_position2);
-    ImGui::Text("Select Stage: ");
-    for (int i = 1; i <= 3; i++) {
-        ImGui::SetCursorPosX(text_position2);
-        gui_text = "Stage " + std::to_string(i);
-
-        if (ImGui::Button(gui_text.c_str(), buttons_size1)) {
-            cout << gui_text.c_str() << endl;
-            selected_stage = i;
-            menu_index = GameMenu;
-        }
-    }
-
-    Spacing(10);
-
-    ImGui::SetCursorPosX(text_position2);
-    if (ImGui::Button("Back", buttons_size1)) {
-        menu_index = MainMenu;
-    }
-    ImGui::End();
-}
-
 void BasicScene::HallOfFameMenuHandler() {
-    if (playing_index != HallOfFameMenu) {
-        MusicHandler("hall_of_fame.mp3");
-        playing_index = HallOfFameMenu;
+    if (sound_manager.playing_index != HallOfFameMenu) {
+        sound_manager.MusicHandler("hall_of_fame.mp3");
+        sound_manager.playing_index = HallOfFameMenu;
     }
 
     int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
@@ -867,9 +842,9 @@ void BasicScene::HallOfFameMenuHandler() {
 }
 
 void BasicScene::CreditsMenuHandler() {
-    if (playing_index != CreditsMenu) {
-        MusicHandler("credits.mp3");
-        playing_index = CreditsMenu;
+    if (sound_manager.playing_index != CreditsMenu) {
+        sound_manager.MusicHandler("credits.mp3");
+        sound_manager.playing_index = CreditsMenu;
     }
 
     int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
@@ -925,10 +900,10 @@ void BasicScene::CreditsMenuHandler() {
 
 void BasicScene::GameMenuHandler() {
     string stage_music;
-    if (playing_index != -selected_stage) {
-        stage_music = "stage" + std::to_string(selected_stage) + ".mp3";
-        MusicHandler(stage_music);
-        playing_index = -selected_stage;
+    if (sound_manager.playing_index != -sound_manager.stage_index) {
+        stage_music = "stage" + std::to_string(sound_manager.stage_index) + ".mp3";
+        sound_manager.MusicHandler(stage_music);
+        sound_manager.playing_index = -sound_manager.stage_index;
     }
 
     int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
