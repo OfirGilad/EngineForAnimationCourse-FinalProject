@@ -21,22 +21,15 @@ void Snake::InitSnake(int num_of_bones)
     last_index = number_of_bones - 1;
     snake_length = bone_size * number_of_bones;
 
-    // Creating meshes
-    auto cylMesh{ IglLoader::MeshFromFiles("cyl_igl", "data/zcylinder.obj") };
-    auto snakeMesh{ IglLoader::MeshFromFiles("cyl_igl", "data/snake1.obj") };
-
     // Creating textures
-    auto program = std::make_shared<Program>("shaders/phongShader");
-    auto material{ std::make_shared<Material>("material", program) }; // empty material
-    auto snake_material{ std::make_shared<Material>("snake_material", program) }; // empty material
-
-    material->AddTexture(0, "textures/box0.bmp", 2);
+    auto program = std::make_shared<Program>("shaders/basicShader");
+    auto snake_material = std::make_shared<Material>("snake_material", program);
     snake_material->AddTexture(0, "textures/snake.jpg", 2);
 
-    // Building bones models
+    // Creating bone meshes
     float scaleFactor = 1;
     int i = 0;
-    snake_bones.push_back(Model::Create("bone " + to_string(i), cylMesh, material));
+    snake_bones.push_back(ObjLoader::ModelFromObj("bone " + to_string(i), "data/zcylinder.obj", snake_material));
     snake_bones[i]->Scale(scaleFactor, Scene::Axis::X);
     snake_bones[i]->SetCenter(Eigen::Vector3f(0, 0, -(bone_size / 2) *scaleFactor));
     snake_bones[i]->showWireframe = true;
@@ -46,7 +39,7 @@ void Snake::InitSnake(int num_of_bones)
 
     while(i < number_of_bones)
     {
-        snake_bones.push_back(Model::Create("bone " + to_string(i), cylMesh, material));
+        snake_bones.push_back(ObjLoader::ModelFromObj("bone " + to_string(i), "data/zcylinder.obj", snake_material));
         snake_bones[i]->Scale(scaleFactor, Scene::Axis::X);
         snake_bones[i]->Translate(bone_size * scaleFactor, Scene::Axis::Z);
         snake_bones[i]->SetCenter(Eigen::Vector3f(0, 0, -(bone_size / 2) * scaleFactor));
@@ -58,8 +51,8 @@ void Snake::InitSnake(int num_of_bones)
     }
     snake_bones[first_index]->Translate({ 0,0,(bone_size / 2) * scaleFactor });
 
-    // Building snake model
-    snake_body = Model::Create("snake", snakeMesh, snake_material);
+    // Creating snake meshe
+    snake_body = ObjLoader::ModelFromObj("snake", "data/snake1.obj", snake_material);
     //snake_body->Scale(Vector3f(1, 1, number_of_bones));
     auto mesh = snake_body->GetMeshList();
     V = mesh[0]->data[0].vertices;
@@ -87,56 +80,31 @@ void Snake::MoveUp()
 void Snake::MoveDown()
 {
     snake_bones[first_index]->Rotate(-0.1f, Scene::Axis::X);
-
     snake_bones[first_index + 1]->Rotate(0.1f, Scene::Axis::X);
-
-    /*for (int i = first_index + 1; i <= last_index; i++) {
-        snake_bones[i]->Rotate(0.1f, Scene::Axis::X);
-    }*/
 }
 
 void Snake::MoveLeft()
 {
     snake_bones[first_index]->Rotate(0.1f, Scene::Axis::Y);
-
     snake_bones[first_index + 1]->Rotate(-0.1f, Scene::Axis::Y);
-
-    /*for (int i = first_index + 1; i <= last_index; i++) {
-        snake_bones[i]->Rotate(-0.1f, Scene::Axis::Y);
-    }*/
 }
 
 void Snake::MoveRight()
 {
     snake_bones[first_index]->Rotate(-0.1f, Scene::Axis::Y);
-
     snake_bones[first_index + 1]->Rotate(0.1f, Scene::Axis::Y);
-
-    /*for (int i = first_index + 1; i <= last_index; i++) {
-        snake_bones[i]->Rotate(0.1f, Scene::Axis::Y);
-    }*/
 }
 
 void Snake::RollLeft()
 {
     snake_bones[first_index]->Rotate(0.1f, Scene::Axis::Z);
-
     snake_bones[first_index + 1]->Rotate(-0.1f, Scene::Axis::Z);
-
-    /*for (int i = first_index + 1; i <= last_index; i++) {
-        snake_bones[i]->Rotate(-0.1f, Scene::Axis::Z);
-    }*/
 }
 
 void Snake::RollRight()
 {
     snake_bones[first_index]->Rotate(-0.1f, Scene::Axis::Z);
-
     snake_bones[first_index + 1]->Rotate(0.1f, Scene::Axis::Z);
-
-    /*for (int i = first_index + 1; i <= last_index; i++) {
-        snake_bones[i]->Rotate(0.1f, Scene::Axis::Z);
-    }*/
 }
 
 

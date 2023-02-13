@@ -10,6 +10,7 @@
 #pragma once
 #include "Scene.h"
 #include "IglMeshLoader.h"
+#include "ObjLoader.h"
 
 #include "igl/AABB.h"
 
