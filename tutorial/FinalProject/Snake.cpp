@@ -32,8 +32,7 @@ void Snake::InitSnake(int num_of_bones)
     snake_bones.push_back(ObjLoader::ModelFromObj("bone " + to_string(i), "data/zcylinder.obj", snake_material));
     snake_bones[i]->Scale(scaleFactor, Scene::Axis::X);
     snake_bones[i]->SetCenter(Eigen::Vector3f(0, 0, -(bone_size / 2) *scaleFactor));
-    snake_bones[i]->showWireframe = true;
-    snake_bones[i]->showFaces = false;
+    snake_bones[i]->showWireframe = false;
     root->AddChild(snake_bones[i]);
     i++;
 
@@ -43,9 +42,7 @@ void Snake::InitSnake(int num_of_bones)
         snake_bones[i]->Scale(scaleFactor, Scene::Axis::X);
         snake_bones[i]->Translate(bone_size * scaleFactor, Scene::Axis::Z);
         snake_bones[i]->SetCenter(Eigen::Vector3f(0, 0, -(bone_size / 2) * scaleFactor));
-        snake_bones[i]->showWireframe = true;
-
-        snake_bones[i]->showFaces = false;
+        snake_bones[i]->showWireframe = false;
         snake_bones[i - 1]->AddChild(snake_bones[i]);
         i++;
     }
