@@ -26,6 +26,5 @@ namespace cg3d
         Eigen::Quaternionf quaternionx, quaterniony;
         int bone_index = 0;
         int number_of_bones = 0;
-        bool bones_found_flag = false;
     };
 }

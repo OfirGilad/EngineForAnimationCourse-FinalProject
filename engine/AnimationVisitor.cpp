@@ -29,8 +29,6 @@ namespace cg3d
         {
             if (model->name.find("bone") != std::string::npos)
             {
-                bones_found_flag = true;
-
                 if (model->name == std::string("bone 0"))
                 {
                     model->TranslateInSystem(system, Eigen::Vector3f(0, 0, -0.1f));
