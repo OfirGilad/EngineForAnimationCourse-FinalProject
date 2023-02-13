@@ -56,7 +56,7 @@ public:
     Stats stats;
     Leaderboard leaderboard;
 
-    // Bounding boxes for CollisionDetectionVisitor
+    // Collision boxes for CollisionDetectionVisitor
     std::shared_ptr<cg3d::Model> cube1, cube2;
     std::shared_ptr<cg3d::Model> sphere1;
 

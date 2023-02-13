@@ -32,6 +32,11 @@ namespace cg3d
                     bool collision_check = collision_logic.CollisionCheck(snake_head->GetAABBTree(), current_game_object->GetAABBTree(), 0);
 
                     if (collision_check) {
+                        // Remove Collision Boxes
+                        snake_head->RemoveChild(cube1);
+                        current_game_object->RemoveChild(cube2);
+
+                        // Handle Object Event
                         object_handler.InitObjectHandler(current_game_object->name, scene);
                         object_handler.HandleCollision();
                         scene->root->RemoveChild(current_game_object);

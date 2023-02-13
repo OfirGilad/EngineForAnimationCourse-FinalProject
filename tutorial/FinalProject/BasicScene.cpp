@@ -105,7 +105,7 @@ void BasicScene::Init(float fov, int width, int height, float near, float far)
     camera->Translate(camera_translation);
     camera->RotateByDegree(degree, Axis::X);
 
-    // Bounding boxes for CollisionDetectionVisitor
+    // Collision boxes for CollisionDetectionVisitor
     InitBoundingBoxes();
 
     // Init camera rotations modes
