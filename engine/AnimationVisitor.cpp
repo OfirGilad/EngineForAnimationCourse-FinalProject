@@ -38,9 +38,9 @@ namespace cg3d
                 }
                 else {
                     std::string curr_bone_name = std::string("bone ") + std::to_string(bone_index + 1);
-                    //std::string prev_bone_name = std::string("bone ") + std::to_string(bone_index);
 
                     if (model->name == "bone 1" && bone_index == 0) {
+                        //Rotate Forward
                         vector2x = model->Tout.rotation() * vector1x;
                         quaternionx = Eigen::Quaternionf::FromTwoVectors(vector2x, vector1x);
                         quaternionx = quaternionx.slerp(0.95, Eigen::Quaternionf::Identity());
@@ -54,16 +54,15 @@ namespace cg3d
                         bone_index = (bone_index + 1) % number_of_bones;
                     }
                     else if (model->name == curr_bone_name) {
-                        //quaternion = quaternion.conjugate().slerp(0.9, Eigen::Quaternionf::Identity());
-
+                        //Rotate Backward
                         quaternionx = quaternionx.conjugate();
                         model->Rotate(quaternionx);
 
                         quaterniony = quaterniony.conjugate();
                         model->Rotate(quaterniony);
 
-                        //
 
+                        //Rotate Forward
                         vector2x = model->Tout.rotation() * vector1x;
                         quaternionx = Eigen::Quaternionf::FromTwoVectors(vector2x, vector1x);
                         quaternionx = quaternionx.slerp(0.95, Eigen::Quaternionf::Identity());
@@ -76,7 +75,6 @@ namespace cg3d
                         
                         bone_index = (bone_index + 1) % number_of_bones;
                     }
-                    
                 }
                 Visitor::Visit(model); // draw children first
             }
