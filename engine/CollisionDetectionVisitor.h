@@ -12,6 +12,7 @@
 #include <vector>
 #include "../tutorial/FinalProject/BasicScene.h"
 #include "../tutorial/FinalProject/GameLogics.h"
+#include "../tutorial/FinalProject/GameObjects.h"
 
 #include <AABB.h>
 #include "igl/read_triangle_mesh.cpp"
@@ -33,5 +34,6 @@ namespace cg3d
         BasicScene* scene;
         GameLogics collision_logic;
         std::shared_ptr<cg3d::Model> cube1, cube2;
+        ObjectHandler object_handler;
     };
 }

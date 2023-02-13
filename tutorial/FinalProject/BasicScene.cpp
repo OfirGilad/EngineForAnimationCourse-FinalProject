@@ -79,12 +79,14 @@ void BasicScene::Init(float fov, int width, int height, float near, float far)
     auto cylMesh{IglLoader::MeshFromFiles("cyl_igl", "data/zcylinder.obj")};
     auto snakeMesh{ IglLoader::MeshFromFiles("cyl_igl", "data/snake1.obj") };
     //auto cubeMesh{IglLoader::MeshFromFiles("cube_igl","data/cube_old.obj")};
-    sphere1 = Model::Create( "sphere",sphereMesh, material);    
     //cube = Model::Create( "cube", cubeMesh, material);
-    
-    root->AddChild(sphere1);
 
-    sphere1->Translate(-distance, Axis::Z);
+
+    sphere1 = Model::Create("HealthObject" ,sphereMesh, material);
+    root->AddChild(sphere1);
+    sphere1->Translate(-10, Axis::Z);
+    stage_objects.push_back(sphere1);
+    number_of_objects = 1;
 
     //Axis
     Eigen::MatrixXd vertices(6,3);
@@ -98,7 +100,7 @@ void BasicScene::Init(float fov, int width, int height, float near, float far)
     axis[0]->mode = 1;   
     axis[0]->Scale(4,Axis::XYZ);
     root->AddChild(axis[0]);
-
+    
     // Camera Setup
     camera->Translate(camera_translation);
     camera->RotateByDegree(degree, Axis::X);
@@ -681,6 +683,7 @@ void BasicScene::StageSelectionMenuHandler() {
             cout << gui_text.c_str() << endl;
             sound_manager.stage_index = i;
             menu_index = GameMenu;
+            selected_stage = i;
         }
     }
 

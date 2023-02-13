@@ -60,19 +60,19 @@ public:
     std::shared_ptr<cg3d::Model> cube1, cube2;
     std::shared_ptr<cg3d::Model> sphere1;
 
+    // Stage Parameters
+    std::shared_ptr<Movable> root;
+    int selected_stage = 0;
+    std::vector<std::shared_ptr<cg3d::Model>> stage_objects;
+    int number_of_objects = 0;
+
 private:
     void BuildImGui() override;
     cg3d::Viewport* viewport = nullptr;
 
-    std::shared_ptr<Movable> root;
-    //std::shared_ptr<cg3d::AutoMorphingModel> autoCube;
+    // Scene
     std::vector<std::shared_ptr<cg3d::Model>> axis;
     std::shared_ptr<cg3d::Model> cube;
-    Eigen::VectorXi EMAP;
-    Eigen::MatrixXi F,E,EF,EI;
-    Eigen::VectorXi EQ;
-    // If an edge were collapsed, we'd collapse it to these points:
-    Eigen::MatrixXd V, C, N, T, points,edges,colors;
 
     // Camera Params
     int distance = 50;

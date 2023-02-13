@@ -11,24 +11,36 @@ namespace cg3d
 {
     void CollisionDetectionVisitor::Run(cg3d::Scene* _scene, cg3d::Camera* camera)
     {
-        scene = (BasicScene*) _scene;
         collision_logic = GameLogics();
-        Visitor::Run(scene, camera);
+        object_handler = ObjectHandler();
+        Visitor::Run(_scene, camera);
     }
 
     void CollisionDetectionVisitor::Visit(Scene* _scene) {
+        scene = (BasicScene*) _scene;
         std::shared_ptr<cg3d::Model> snake_head = scene->snake.GetBones()[0];
 
         if (scene->IsAnimate())
         {
             CheckSelfCollision();
 
-            collision_logic.InitCollisionDetection(snake_head, scene->sphere1, scene->cube1, scene->cube2);
-            bool collision_check = collision_logic.CollisionCheck(snake_head->GetAABBTree(), scene->sphere1->GetAABBTree(), 0);
+            if (scene->number_of_objects != 0) {
+                for (int i = 0; i < scene->number_of_objects; i++) {
+                    std::shared_ptr<cg3d::Model> current_game_object = scene->stage_objects[i];
 
-            if (collision_check) {
-                cout << "Collision" << endl;
-                scene->SetAnimate(false);
+                    collision_logic.InitCollisionDetection(snake_head, current_game_object, scene->cube1, scene->cube2);
+                    bool collision_check = collision_logic.CollisionCheck(snake_head->GetAABBTree(), current_game_object->GetAABBTree(), 0);
+
+                    if (collision_check) {
+                        object_handler.InitObjectHandler(current_game_object->name, scene);
+                        object_handler.HandleCollision();
+                        scene->root->RemoveChild(current_game_object);
+                        scene->stage_objects.erase(scene->stage_objects.begin() + i);
+                        scene->number_of_objects--;
+
+                        cout << "Collision" << endl;
+                    }
+                }
             }
         }
     }

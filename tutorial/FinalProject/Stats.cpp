@@ -55,7 +55,7 @@ void Stats::NewGame(string name) {
 
     // Snake stats
     max_health = 100;
-    max_movement_speed = 10;
+    max_movement_speed = 1;
     bonuses_duration = 5;
     gold_multiplier = 1;
 
