@@ -99,9 +99,12 @@ void BasicScene::Init(float fov, int width, int height, float near, float far)
     axis[0]->Scale(4,Axis::XYZ);
     root->AddChild(axis[0]);
 
-    camera->Translate(distance, Axis::Z);
-    camera->Translate(10, Axis::Y);
-    camera->RotateByDegree(-10, Axis::X);
+    // Camera Setup
+    camera->Translate(camera_translation);
+    camera->RotateByDegree(degree, Axis::X);
+
+    // Bounding boxes for CollisionDetectionVisitor
+    InitBoundingBoxes();
 
     // Init camera rotations modes
     InitRotationModes();
@@ -402,6 +405,15 @@ void BasicScene::InitRotationModes() {
     //sub_translation_modes3.push_back({ distance, Axis::Y });
     //sub_translation_modes3.push_back({ distance, Axis::X });
     translation_modes.push_back(sub_translation_modes3);
+}
+
+void BasicScene::InitBoundingBoxes() {
+    auto program = std::make_shared<Program>("shaders/basicShader");
+    auto material{ std::make_shared<Material>("material", program) }; // empty material
+    auto cubeMesh1{ IglLoader::MeshFromFiles("cube1", "data/cube.off") };
+    auto cubeMesh2{ IglLoader::MeshFromFiles("cube2", "data/cube.off") };
+    cube1 = Model::Create("cube1", cubeMesh1, material);
+    cube2 = Model::Create("cube2", cubeMesh1, material);
 }
 
 

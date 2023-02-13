@@ -311,9 +311,11 @@ bool GameLogics::new_collapse_edge(int object_index)
 
 // Collision Detection
 
-void GameLogics::InitCollisionDetection(std::shared_ptr<cg3d::Model>model1, std::shared_ptr<cg3d::Model> model2) {
+void GameLogics::InitCollisionDetection(std::shared_ptr<cg3d::Model>model1, std::shared_ptr<cg3d::Model> model2, std::shared_ptr<cg3d::Model> cube1, std::shared_ptr<cg3d::Model> cube2) {
     this->model1 = model1;
     this->model2 = model2;
+    this->cube1 = cube1;
+    this->cube2 = cube2;
 }
 
 void GameLogics::AlignedBoxTransformer(Eigen::AlignedBox<double, 3>& aligned_box, std::shared_ptr<cg3d::Model> cube_model)
@@ -384,14 +386,14 @@ bool GameLogics::CollisionCheck(igl::AABB<Eigen::MatrixXd, 3>* object_tree1, igl
 
     // If the boxes intersect than creating each object's smallest bounding box
     if (object_tree1->is_leaf() && object_tree2->is_leaf()) {
-        //AlignedBoxTransformer(object_tree1->m_box, object1_hit_cube);
-        //AlignedBoxTransformer(object_tree2->m_box, object2_hit_cube);
-        //autoModel1->AddChild(object1_hit_cube);
-        //autoModel2->AddChild(object2_hit_cube);
-        //object1_hit_cube->showFaces = false;
-        //object2_hit_cube->showFaces = false;
-        //object1_hit_cube->showWireframe = true;
-        //object2_hit_cube->showWireframe = true;
+        AlignedBoxTransformer(object_tree1->m_box, cube1);
+        AlignedBoxTransformer(object_tree2->m_box, cube2);
+        model1->AddChild(cube1);
+        model2->AddChild(cube2);
+        cube1->showFaces = false;
+        cube2->showFaces = false;
+        cube1->showWireframe = true;
+        cube2->showWireframe = true;
 
         return true;
     }
@@ -434,7 +436,7 @@ bool GameLogics::BoxesIntersectionCheck(Eigen::AlignedBox<double, 3>& aligned_bo
     // Matrix D
     Eigen::Vector4d CenterA = Eigen::Vector4d(aligned_box1.center()[0], aligned_box1.center()[1], aligned_box1.center()[2], 1);
     Eigen::Vector4d CenterB = Eigen::Vector4d(aligned_box2.center()[0], aligned_box2.center()[1], aligned_box2.center()[2], 1);
-    Eigen::Vector4d D4d = model2->GetTransform().cast<double>() * CenterB - model1->GetTransform().cast<double>() * CenterA;
+    Eigen::Vector4d D4d = model2->GetAggregatedTransform().cast<double>() * CenterB - model1->GetAggregatedTransform().cast<double>() * CenterA;
     Eigen::Vector3d D = D4d.head(3);
 
     float R0, R1, R;

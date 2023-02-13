@@ -37,7 +37,7 @@ public:
 
 
     // Collision Detection
-    void InitCollisionDetection(std::shared_ptr<cg3d::Model>model1, std::shared_ptr<cg3d::Model> model2);
+    void InitCollisionDetection(std::shared_ptr<cg3d::Model>model1, std::shared_ptr<cg3d::Model> model2, std::shared_ptr<cg3d::Model> cub1, std::shared_ptr<cg3d::Model> cube2);
     void AlignedBoxTransformer(Eigen::AlignedBox<double, 3>& aligned_box, std::shared_ptr<cg3d::Model> cube_model);
     bool CollisionCheck(igl::AABB<Eigen::MatrixXd, 3>* aligned_box1, igl::AABB<Eigen::MatrixXd, 3>* aligned_box2, int level);
     bool BoxesIntersectionCheck(Eigen::AlignedBox<double, 3>& aligned_box1, Eigen::AlignedBox<double, 3>& aligned_box2);
@@ -79,7 +79,7 @@ private:
 
 
     // Collision Detection
-    std::shared_ptr<cg3d::Model> model1, model2;
+    std::shared_ptr<cg3d::Model> model1, model2, cube1, cube2;
 
 
     // Inverse Kinematics

@@ -34,6 +34,8 @@ public:
     void SwitchView();
     void InitRotationModes();
 
+    void InitBoundingBoxes();
+
     // Menu Managmenet
     void MenuManager();
     enum MenuMapping { LoginMenu, MainMenu, StageSelectionMenu, ShopMenu, StatsMenu, HallOfFameMenu, CreditsMenu, GameMenu };
@@ -54,6 +56,8 @@ public:
     Stats stats;
     Leaderboard leaderboard;
 
+    // Bounding boxes for CollisionDetectionVisitor
+    std::shared_ptr<cg3d::Model> cube1, cube2;
     std::shared_ptr<cg3d::Model> sphere1;
 
 private:
@@ -61,7 +65,6 @@ private:
     cg3d::Viewport* viewport = nullptr;
 
     std::shared_ptr<Movable> root;
-    //std::shared_ptr<cg3d::Model> sphere1 ,cube;
     //std::shared_ptr<cg3d::AutoMorphingModel> autoCube;
     std::vector<std::shared_ptr<cg3d::Model>> axis;
     std::shared_ptr<cg3d::Model> cube;
@@ -71,7 +74,10 @@ private:
     // If an edge were collapsed, we'd collapse it to these points:
     Eigen::MatrixXd V, C, N, T, points,edges,colors;
 
+    // Camera Params
     int distance = 50;
+    int degree = -15;
+    Eigen::Vector3f camera_translation = Eigen::Vector3f(0, 15, 50);
 
     // Snake Params
     int number_of_bones = 16;

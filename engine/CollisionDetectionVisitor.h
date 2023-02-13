@@ -28,7 +28,10 @@ namespace cg3d
         void Visit(Scene* scene) override;
 
     private:
+        void CheckSelfCollision();
+
         BasicScene* scene;
         GameLogics collision_logic;
+        std::shared_ptr<cg3d::Model> cube1, cube2;
     };
 }
