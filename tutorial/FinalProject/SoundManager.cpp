@@ -18,21 +18,23 @@ void SoundManager::MusicHandler(string music_file) {
         }
     };
 
-    if (playing == true) {
-        // Kill The Previous Music Player
-        playing = false;
-        std::string kill_command = "taskkill /f /im " + python_exe;
-        int result = system(kill_command.c_str());
+    if (player_status) {
+        if (playing == true) {
+            // Kill The Previous Music Player
+            playing = false;
+            std::string kill_command = "taskkill /f /im " + python_exe;
+            int result = system(kill_command.c_str());
 
-        // Play New Music
-        playing = true;
-        std::thread t1(playMusic, music_file);
-        t1.detach();
-    }
-    else {
-        // Play Music For The First Time
-        playing = true;
-        std::thread t1(playMusic, music_file);
-        t1.detach();
+            // Play New Music
+            playing = true;
+            std::thread t1(playMusic, music_file);
+            t1.detach();
+        }
+        else {
+            // Play Music For The First Time
+            playing = true;
+            std::thread t1(playMusic, music_file);
+            t1.detach();
+        }
     }
 }
