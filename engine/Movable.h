@@ -91,6 +91,9 @@ public:
     std::vector<std::shared_ptr<Movable>> children;
     std::weak_ptr<Movable> parent;
     std::weak_ptr<Movable> scene;
+
+    // New Code
+    Eigen::Vector3f scale_vector = Eigen::Vector3f(1, 1, 1);
 };
 
 } // namespace cg3d

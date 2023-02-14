@@ -188,6 +188,9 @@ void Movable::Scale(float factor, Axis axis)
     );
 
     Scale(scaleVec);
+
+    // New Code
+    scale_vector = Eigen::Vector3f(scale_vector.x() * scaleVec.x(), scale_vector.y() * scaleVec.y(), scale_vector.z() * scaleVec.z());
 }
 
 void Movable::Scale(const Eigen::Vector3f& scaleVec)
@@ -195,11 +198,17 @@ void Movable::Scale(const Eigen::Vector3f& scaleVec)
     if (isStatic) return;
     Tin.scale(scaleVec);
     PropagateTransform();
+
+    // New Code
+    scale_vector = Eigen::Vector3f(scale_vector.x() * scaleVec.x(), scale_vector.y() * scaleVec.y(), scale_vector.z() * scaleVec.z());
 }
 
 void Movable::Scale(float factor)
 {
     Scale(factor, Axis::XYZ);
+
+    // New Code
+    scale_vector = Eigen::Vector3f(scale_vector.x() * factor, scale_vector.y() * factor, scale_vector.z() * factor);
 }
 
 Eigen::Affine3f Movable::GetRotation(const Eigen::Matrix4f& _transform)

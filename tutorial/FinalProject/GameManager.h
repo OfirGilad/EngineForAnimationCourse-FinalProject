@@ -36,9 +36,14 @@ public:
     // Stage Builder
     std::shared_ptr<Movable> root;
     std::vector<std::shared_ptr<Camera>> camera_list;
-    std::shared_ptr<cg3d::Model> background, axis, sphere1;
+    std::shared_ptr<cg3d::Model> background, axis, temp_object1, temp_object2;
 
-    std::vector<std::shared_ptr<cg3d::Model>> health_object;
+    std::vector<std::shared_ptr<cg3d::Model>> health_objects;
+    std::vector<std::shared_ptr<cg3d::Model>> score_objects;
+    std::vector<std::shared_ptr<cg3d::Model>> gold_objects;
+    std::vector<std::shared_ptr<cg3d::Model>> bonus_objects;
+    std::vector<std::shared_ptr<cg3d::Model>> obstacle_objects;
+
 
     std::vector<std::shared_ptr<cg3d::Model>> stage_objects;
     int number_of_objects = 0;
@@ -50,6 +55,7 @@ public:
 
     // Snake
     Snake snake;
+    int number_of_bones = 16;
 
     // Sound Manager
     SoundManager sound_manager;
@@ -68,10 +74,7 @@ private:
     void InitBackground();
     void InitAxis();
 
-
-    // Snake Params
-    int number_of_bones = 16;
-
+    void BuildGameObjects();
 
     // Stage Builder
     int objective_score;
