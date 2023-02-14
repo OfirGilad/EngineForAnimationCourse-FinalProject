@@ -62,6 +62,19 @@ void Snake::InitSnake(int num_of_bones)
     //SkinningInit();
 }
 
+
+void Snake::ShowSnake() {
+    for (int i = 0; i < number_of_bones; i++) {
+        snake_bones[i]->isHidden = false;
+    }
+}
+
+void Snake::HideSnake() {
+    for (int i = 0; i < number_of_bones; i++) {
+        snake_bones[i]->isHidden = true;
+    }
+}
+
 // Snake Movement
 void Snake::MoveUp()
 {

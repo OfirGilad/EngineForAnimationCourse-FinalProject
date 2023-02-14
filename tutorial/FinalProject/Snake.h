@@ -45,6 +45,10 @@ public:
     Snake(std::shared_ptr<Movable> root, vector<std::shared_ptr<Camera>> camera_list);
     void InitSnake(int num_of_bones);
 
+    void ShowSnake();
+    void HideSnake();
+
+
     void MoveUp();
     void MoveDown();
     void MoveLeft();
@@ -67,8 +71,6 @@ private:
     void CalculateWeight();
 
     
-
-
     vector<std::shared_ptr<Camera>> camera_list;
     std::shared_ptr<Movable> root;
     std::vector<std::shared_ptr<cg3d::Model>> snake_bones;

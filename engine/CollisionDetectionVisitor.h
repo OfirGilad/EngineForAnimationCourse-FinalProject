@@ -30,8 +30,12 @@ namespace cg3d
 
     private:
         bool CheckSelfCollision();
+        bool CheckBackgoroundCollision();
+
         GameManager* game_manager;
         GameLogics collision_logic;
         ObjectHandler object_handler;
+
+        Eigen::Vector3f backgound_cube_space = Eigen::Vector3f(60, 60, 60);
     };
 }

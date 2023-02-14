@@ -12,30 +12,30 @@ void GameManager::InitGameManager(std::shared_ptr<Movable> _root, std::vector<st
     // Init Collision Boxes
     InitCollisionBoxes();
 
+    // Init Snake
+    snake = Snake(root, camera_list);
+    snake.InitSnake(number_of_bones);
+    snake.HideSnake();
+
     // Init Sound Manager
     sound_manager = SoundManager();
 
-    // Init stats
+    // Init Stats
     stats = Stats();
     stats.InitStats();
 
-    // Init leaderboard
+    // Init Leaderboard
     leaderboard = Leaderboard();
     leaderboard.InitLeaderboard();
 }
 
-void GameManager::InitStage(int stage_number)
+void GameManager::LoadStage(int stage_number)
 {
     // Set Select Stage
     selected_stage = stage_number;
 
-    auto daylight{ std::make_shared<Material>("daylight", "shaders/cubemapShader") };
-    daylight->AddTexture(0, "textures/cubemaps/Daylight Box_", 3);
-    auto background{ Model::Create("background", Mesh::Cube(), daylight) };
-    root->AddChild(background);
-    background->Scale(120, Movable::Axis::XYZ);
-    background->SetPickable(false);
-    background->SetStatic();
+    InitBackground();
+    InitAxis();
 
     auto program = std::make_shared<Program>("shaders/phongShader");
     auto material{ std::make_shared<Material>("material", program) }; // empty material
@@ -47,26 +47,16 @@ void GameManager::InitStage(int stage_number)
     stage_objects.push_back(sphere1);
     number_of_objects = 1;
 
-    auto program1 = std::make_shared<Program>("shaders/pickingShader");
-    auto material1{ std::make_shared<Material>("material", program1) }; // empty material
+    
+    snake.ShowSnake();
+}
 
-    //Axis
-    Eigen::MatrixXd vertices(6, 3);
-    vertices << -1, 0, 0, 1, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, -1, 0, 0, 1;
-    Eigen::MatrixXi faces(3, 2);
-    faces << 0, 1, 2, 3, 4, 5;
-    Eigen::MatrixXd vertexNormals = Eigen::MatrixXd::Ones(6, 3);
-    Eigen::MatrixXd textureCoords = Eigen::MatrixXd::Ones(6, 2);
-    std::shared_ptr<Mesh> coordsys = std::make_shared<Mesh>("coordsys", vertices, faces, vertexNormals, textureCoords);
-    axis.push_back(Model::Create("axis", coordsys, material1));
-    axis[0]->mode = 1;
-    axis[0]->Scale(4, Movable::Axis::XYZ);
-    root->AddChild(axis[0]);
-
-
-    // Init snake
-    snake = Snake(root, camera_list);
-    snake.InitSnake(number_of_bones);
+void GameManager::UnloadStage() {
+    root->RemoveChild(background);
+    root->RemoveChild(axis);
+    snake.HideSnake();
+    
+    // And unload all other objects
 }
 
 
@@ -77,4 +67,33 @@ void GameManager::InitCollisionBoxes() {
     auto cubeMesh2{ IglLoader::MeshFromFiles("cube2", "data/cube.off") };
     cube1 = Model::Create("cube1", cubeMesh1, material);
     cube2 = Model::Create("cube2", cubeMesh1, material);
+}
+
+void GameManager::InitBackground() {
+    auto daylight{ std::make_shared<Material>("daylight", "shaders/cubemapShader") };
+    daylight->AddTexture(0, "textures/cubemaps/Daylight Box_", 3);
+
+    background = Model::Create("background", Mesh::Cube(), daylight);
+    root->AddChild(background);
+    background->Scale(120, Movable::Axis::XYZ);
+    background->SetPickable(false);
+    background->SetStatic();
+}
+
+void GameManager::InitAxis() {
+    auto program = std::make_shared<Program>("shaders/basicShader");
+    auto material{ std::make_shared<Material>("material", program) }; // empty material
+
+    Eigen::MatrixXd vertices(6, 3);
+    vertices << -1, 0, 0, 1, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, -1, 0, 0, 1;
+    Eigen::MatrixXi faces(3, 2);
+    faces << 0, 1, 2, 3, 4, 5;
+    Eigen::MatrixXd vertexNormals = Eigen::MatrixXd::Ones(6, 3);
+    Eigen::MatrixXd textureCoords = Eigen::MatrixXd::Ones(6, 2);
+    std::shared_ptr<Mesh> coordsys = std::make_shared<Mesh>("coordsys", vertices, faces, vertexNormals, textureCoords);
+    axis = Model::Create("axis", coordsys, material);
+    axis->mode = 1;
+    axis->Scale(60, Movable::Axis::XYZ);
+    root->AddChild(axis);
+    axis->Translate(Eigen::Vector3f(0, 0, 0));
 }

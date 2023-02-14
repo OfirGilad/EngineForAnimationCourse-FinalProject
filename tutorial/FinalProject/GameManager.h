@@ -30,20 +30,23 @@ public:
     GameManager() {};
     void InitGameManager(std::shared_ptr<Movable> _root, std::vector<std::shared_ptr<Camera>> _camera_list);
 
-    void InitStage(int stage_number);
+    void LoadStage(int stage_number);
+    void UnloadStage();
 
     // Stage Builder
     std::shared_ptr<Movable> root;
     std::vector<std::shared_ptr<Camera>> camera_list;
+    std::shared_ptr<cg3d::Model> background, axis, sphere1;
 
-    std::shared_ptr<cg3d::Model> sphere1;
-    std::vector<std::shared_ptr<cg3d::Model>> axis;
+    std::vector<std::shared_ptr<cg3d::Model>> health_object;
+
+    std::vector<std::shared_ptr<cg3d::Model>> stage_objects;
+    int number_of_objects = 0;
+    int selected_stage = 0;
 
 
     // CollisionDetectionVisitor Params
     std::shared_ptr<cg3d::Model> cube1, cube2;
-    std::vector<std::shared_ptr<cg3d::Model>> stage_objects;
-    int number_of_objects = 0;
 
     // Snake
     Snake snake;
@@ -57,12 +60,13 @@ public:
     // Leaderboard
     Leaderboard leaderboard;
 
-    // Game Objects
-    int selected_stage = 0;
-
 private:
     // Collision boxes for CollisionDetectionVisitor
     void InitCollisionBoxes();
+
+    // Init Stage
+    void InitBackground();
+    void InitAxis();
 
 
     // Snake Params

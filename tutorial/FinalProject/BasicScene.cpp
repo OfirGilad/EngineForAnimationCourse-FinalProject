@@ -501,7 +501,6 @@ void BasicScene::LoginMenuHandler() {
     }
 
     ImGui::End();
-
 }
 
 void BasicScene::MainMenuHandler() {
@@ -626,8 +625,8 @@ void BasicScene::StageSelectionMenuHandler() {
         if (ImGui::Button(gui_text.c_str(), buttons_size1)) {
             cout << gui_text.c_str() << endl;
             game_manager->sound_manager.stage_index = i;
+            game_manager->LoadStage(i);
             menu_index = GameMenu;
-            game_manager->InitStage(i);
         }
     }
 
@@ -920,6 +919,8 @@ void BasicScene::GameMenuHandler() {
 
     ImGui::TextColored(ImVec4(0.0, 0.5, 1.0, 1.0), "Game Menu");
 
+    Spacing(1);
+
     // Handle Health
     gui_text = "Health: " + std::to_string(100);
     ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), gui_text.c_str());
@@ -930,14 +931,13 @@ void BasicScene::GameMenuHandler() {
     gui_text = "Score: " + std::to_string(0);
     ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), gui_text.c_str());
 
-    ImGui::Spacing();
+    Spacing(1);
 
     // Handle Gold
     gui_text = "Gold: " + std::to_string(0);
     ImGui::TextColored(ImVec4(1.0, 1.0, 0.0, 1.0), gui_text.c_str());
     
-
-    ImGui::Spacing();
+    Spacing(1);
 
     // Handle View
     ImGui::Text("Camera List: ");
@@ -955,7 +955,7 @@ void BasicScene::GameMenuHandler() {
         }
     }
 
-    ImGui::Spacing();
+    Spacing(1);
 
     if (display_keys == 0) {
         if (ImGui::Button("Show Keys")) {
@@ -979,15 +979,14 @@ void BasicScene::GameMenuHandler() {
         ImGui::Text("ESC - Exit game");
     }
 
-    ImGui::Spacing();
+    Spacing(1);
 
     if (ImGui::Button("Pause")) {
         animate = false;
         cout << "Pause Game" << endl;
     }
 
-    ImGui::Spacing();
-    ImGui::Spacing();
+    Spacing(2);
 
     if (ImGui::Button("Back to Main Menu")) {
         menu_index = MainMenu;

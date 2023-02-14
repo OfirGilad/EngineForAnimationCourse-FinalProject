@@ -28,6 +28,11 @@ namespace cg3d
                 cout << "Collision" << endl;
             }
 
+            if (CheckBackgoroundCollision()) {
+                _scene->SetAnimate(false);
+                cout << "Collision" << endl;
+            }
+
             if (game_manager->number_of_objects != 0) {
                 for (int i = 0; i < game_manager->number_of_objects; i++) {
                     std::shared_ptr<cg3d::Model> current_game_object = game_manager->stage_objects[i];
@@ -66,6 +71,17 @@ namespace cg3d
             bool collision_check = collision_logic.CollisionCheck(snake_head->GetAABBTree(), inner_bone->GetAABBTree(), 0);
 
             if (collision_check) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool CollisionDetectionVisitor::CheckBackgoroundCollision() {
+        Eigen::Vector3f snake_head_end = game_manager->snake.GetBonePosition(0, -1);
+
+        for (int i = 0; i < 3; i++) {
+            if (abs(snake_head_end[i]) > backgound_cube_space[i]) {
                 return true;
             }
         }
