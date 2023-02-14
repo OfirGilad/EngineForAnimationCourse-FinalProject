@@ -33,8 +33,8 @@ namespace cg3d
 
                     if (collision_check) {
                         // Remove Collision Boxes
-                        snake_head->RemoveChild(cube1);
-                        current_game_object->RemoveChild(cube2);
+                        snake_head->RemoveChild(scene->cube1);
+                        current_game_object->RemoveChild(scene->cube2);
 
                         // Handle Object Event
                         object_handler.InitObjectHandler(current_game_object->name, scene);
