@@ -23,10 +23,9 @@ namespace cg3d
 
     private:
         BasicScene* scene;
-        GameManager* game_manager;
+        Snake snake;
         Eigen::Quaternionf quaternionx, quaterniony;
         int bone_index = 0;
         int number_of_bones = 0;
-        int delay = 0;
     };
 }

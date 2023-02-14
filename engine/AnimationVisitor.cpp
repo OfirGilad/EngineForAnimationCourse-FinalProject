@@ -11,7 +11,7 @@ namespace cg3d
     void AnimationVisitor::Run(Scene* _scene, Camera* camera)
     {
         scene = (BasicScene *) _scene;
-        game_manager = scene->game_manager;
+        snake = scene->game_manager->snake;
         Visitor::Run(scene, camera);
     }
 
@@ -27,13 +27,14 @@ namespace cg3d
 
         if (scene->GetAnimate())
         {
-            number_of_bones = game_manager->snake.GetBones().size() - 1;
+            number_of_bones = snake.GetBones().size() - 1;
 
             if (model->name.find("bone") != std::string::npos)
             {
                 if (model->name == std::string("bone 0"))
                 {
                     model->TranslateInSystem(system, Eigen::Vector3f(0, 0, -0.1f));
+                    snake.Skinning();
                 }
                 else {
                     std::string curr_bone_name = std::string("bone ") + std::to_string(bone_index + 1);
@@ -77,12 +78,6 @@ namespace cg3d
                 }
                 Visitor::Visit(model); // draw children first
             }
-           /* if (model->name.find("snake")) {
-                delay = (delay + 1) % 5;
-                if (delay == 0) {
-                    game_manager->snake.Skinning();
-                }
-            }*/
         }
     }
 }

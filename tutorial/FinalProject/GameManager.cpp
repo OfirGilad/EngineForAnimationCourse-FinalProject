@@ -15,7 +15,7 @@ void GameManager::InitGameManager(std::shared_ptr<Movable> _root, std::vector<st
     // Init Snake
     snake = Snake(root, camera_list);
     snake.InitSnake(number_of_bones);
-    snake.HideSnake();
+    //snake.HideSnake();
 
     // Init Sound Manager
     sound_manager = SoundManager();
@@ -39,7 +39,7 @@ void GameManager::LoadStage(int stage_number)
 
     BuildGameObjects();
     
-    //snake.ShowSnake();
+    snake.ShowSnake();
 }
 
 void GameManager::UnloadStage() {
