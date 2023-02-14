@@ -241,6 +241,7 @@ void Snake::SkinningInit() {
         Eigen::Vector4f V_i = snake_body->GetAggregatedTransform() * OV_i;
         V.row(i) = Eigen::Vector3d(V_i.x(), V_i.y(), V_i.z());
     }
+    U = V;
 
     // Init C
     C.resize(number_of_bones + 1, 3);
