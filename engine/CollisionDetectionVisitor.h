@@ -29,9 +29,8 @@ namespace cg3d
         void Visit(Scene* scene) override;
 
     private:
-        void CheckSelfCollision();
-
-        BasicScene* scene;
+        bool CheckSelfCollision();
+        GameManager* game_manager;
         GameLogics collision_logic;
         ObjectHandler object_handler;
     };

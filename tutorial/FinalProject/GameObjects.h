@@ -14,18 +14,18 @@
 class GameObject
 {
 public:
-    virtual void InitObject(BasicScene* scene) = 0;
+    virtual void InitObject(GameManager* game_manager) = 0;
     virtual void CollisionWithObject() = 0;
     virtual ~GameObject() {}
 
-    BasicScene* scene;
+    GameManager* game_manager;
     int stage_number;
 };
 
 class HealthObject : public GameObject
 {
 public:
-    void InitObject(BasicScene *scene) override;
+    void InitObject(GameManager* game_manager) override;
     void CollisionWithObject() override;
 
 private:
@@ -35,7 +35,7 @@ private:
 class ScoreObject : public GameObject
 {
 public:
-    void InitObject(BasicScene *scene) override;
+    void InitObject(GameManager* game_manager) override;
     void CollisionWithObject() override;
 
 private:
@@ -45,7 +45,7 @@ private:
 class GoldObject : public GameObject
 {
 public:
-    void InitObject(BasicScene *scene) override;
+    void InitObject(GameManager* game_manager) override;
     void CollisionWithObject() override;
 
 private:
@@ -55,7 +55,7 @@ private:
 class BonusObject : public GameObject
 {
 public:
-    void InitObject(BasicScene *scene) override;
+    void InitObject(GameManager* game_manager) override;
     void CollisionWithObject() override;
 
 private:
@@ -65,7 +65,7 @@ private:
 class ObstacleObject : public GameObject
 {
 public:
-    void InitObject(BasicScene *scene) override;
+    void InitObject(GameManager* game_manager) override;
     void CollisionWithObject() override;
 
 private:
@@ -77,10 +77,10 @@ class ObjectHandler
 {
 public:
     ObjectHandler() {};
-    void InitObjectHandler(string object_name, BasicScene* scene);
+    void InitObjectHandler(string object_name, GameManager* game_manager);
     void HandleCollision();
 
     string object_name;
-    BasicScene* scene;
+    GameManager* game_manager;
     GameObject* game_object;
 };

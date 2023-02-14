@@ -11,7 +11,7 @@ namespace cg3d
     void AnimationVisitor::Run(Scene* _scene, Camera* camera)
     {
         scene = (BasicScene *) _scene;
-        number_of_bones = scene->snake.GetBones().size() - 1;
+        game_manager = scene->game_manager;
         Visitor::Run(scene, camera);
     }
 
@@ -25,14 +25,16 @@ namespace cg3d
         Eigen::Vector3f vector1y = Eigen::Vector3f(0, 1, 0);
         Eigen::Vector3f vector2y;
 
-        if (scene->IsAnimate())
+        if (scene->GetAnimate())
         {
+            number_of_bones = game_manager->snake.GetBones().size() - 1;
+
             if (model->name.find("bone") != std::string::npos)
             {
                 if (model->name == std::string("bone 0"))
                 {
                     model->TranslateInSystem(system, Eigen::Vector3f(0, 0, -0.1f));
-                    //scene->snake.Skinning();
+                    //game_manager->snake.Skinning();
                 }
                 else {
                     std::string curr_bone_name = std::string("bone ") + std::to_string(bone_index + 1);

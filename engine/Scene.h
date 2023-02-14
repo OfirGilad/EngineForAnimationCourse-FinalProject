@@ -48,7 +48,9 @@ public:
     virtual void ViewportSizeCallback(Viewport* viewport);
     virtual void AddViewportCallback(Viewport* viewport) {};
 
-    bool IsAnimate() { return animate; }
+    // New Code
+    bool GetAnimate() { return animate; }
+    void SetAnimate(bool animate) { this->animate = animate; }
 
 protected:
     Renderer* renderer; // required for picking
@@ -56,6 +58,7 @@ protected:
     float pickedModelDepth = 0;
     Eigen::Affine3f pickedToutAtPress, cameraToutAtPress;
 
+    // New Code
     bool animate = false;
 };
 

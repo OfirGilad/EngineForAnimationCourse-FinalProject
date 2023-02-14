@@ -57,74 +57,18 @@ void BasicScene::Init(float fov, int width, int height, float near, float far)
     number_of_cameras = camera_list.size();
 
     AddChild(root = Movable::Create("root")); // a common (invisible) parent object for all the shapes
-    auto daylight{std::make_shared<Material>("daylight", "shaders/cubemapShader")}; 
-    daylight->AddTexture(0, "textures/cubemaps/Daylight Box_", 3);
-    auto background{Model::Create("background", Mesh::Cube(), daylight)};
-    AddChild(background);
-    background->Scale(120, Axis::XYZ);
-    background->SetPickable(false);
-    background->SetStatic();
 
-    root->AddChild(camera_list[1]);
- 
-    auto program = std::make_shared<Program>("shaders/phongShader");
-    auto program1 = std::make_shared<Program>("shaders/pickingShader");
-    
-    auto material{ std::make_shared<Material>("material", program)}; // empty material
-    auto material1{ std::make_shared<Material>("material", program1)}; // empty material
-    //SetNamedObject(cube, Model::Create, Mesh::Cube(), material, shared_from_this());
- 
-    material->AddTexture(0, "textures/box0.bmp", 2);
-    auto sphereMesh{IglLoader::MeshFromFiles("sphere_igl", "data/sphere.obj")};
-    auto cylMesh{IglLoader::MeshFromFiles("cyl_igl", "data/zcylinder.obj")};
-    auto snakeMesh{ IglLoader::MeshFromFiles("cyl_igl", "data/snake1.obj") };
-    //auto cubeMesh{IglLoader::MeshFromFiles("cube_igl","data/cube_old.obj")};
-    //cube = Model::Create( "cube", cubeMesh, material);
-
-
-    sphere1 = Model::Create("HealthObject" ,sphereMesh, material);
-    root->AddChild(sphere1);
-    sphere1->Translate(-10, Axis::Z);
-    stage_objects.push_back(sphere1);
-    number_of_objects = 1;
-
-    //Axis
-    Eigen::MatrixXd vertices(6,3);
-    vertices << -1,0,0,1,0,0,0,-1,0,0,1,0,0,0,-1,0,0,1;
-    Eigen::MatrixXi faces(3,2);
-    faces << 0,1,2,3,4,5;
-    Eigen::MatrixXd vertexNormals = Eigen::MatrixXd::Ones(6,3);
-    Eigen::MatrixXd textureCoords = Eigen::MatrixXd::Ones(6,2);
-    std::shared_ptr<Mesh> coordsys = std::make_shared<Mesh>("coordsys",vertices,faces,vertexNormals,textureCoords);
-    axis.push_back(Model::Create("axis",coordsys,material1));
-    axis[0]->mode = 1;   
-    axis[0]->Scale(4,Axis::XYZ);
-    root->AddChild(axis[0]);
-    
     // Camera Setup
     camera->Translate(camera_translation);
     camera->RotateByDegree(degree, Axis::X);
+ 
 
-    // Collision boxes for CollisionDetectionVisitor
-    InitBoundingBoxes();
+    // Create Game Manager
+    game_manager = new GameManager();
+    game_manager->InitGameManager(root, camera_list);
 
     // Init camera rotations modes
     InitRotationModes();
-
-    // Init snake
-    snake = Snake(root, camera_list);
-    snake.InitSnake(number_of_bones);
-
-    // Init sound manager
-    sound_manager = SoundManager();
-
-    // Init stats
-    stats = Stats();
-    stats.InitStats();
-
-    // Init leaderboard
-    leaderboard = Leaderboard();
-    leaderboard.InitLeaderboard();
 }
 
 void BasicScene::Update(const Program& program, const Eigen::Matrix4f& proj, const Eigen::Matrix4f& view, const Eigen::Matrix4f& model)
@@ -257,23 +201,23 @@ void BasicScene::KeyCallback(Viewport* viewport, int x, int y, int key, int scan
                 glfwSetWindowShouldClose(window, GLFW_TRUE);
                 break;
             case GLFW_KEY_W:
-                if (IsAnimate()) {
-                    snake.MoveUp();
+                if (GetAnimate()) {
+                    game_manager->snake.MoveUp();
                 }
                 break;
             case GLFW_KEY_S:
-                if (IsAnimate()) {
-                    snake.MoveDown();
+                if (GetAnimate()) {
+                    game_manager->snake.MoveDown();
                 }
                 break;
             case GLFW_KEY_A:
-                if (IsAnimate()) {
-                    snake.MoveLeft();
+                if (GetAnimate()) {
+                    game_manager->snake.MoveLeft();
                 }
                 break;
             case GLFW_KEY_D:
-                if (IsAnimate()) {
-                    snake.MoveRight();
+                if (GetAnimate()) {
+                    game_manager->snake.MoveRight();
                 }
                 break;
             case GLFW_KEY_UP:
@@ -313,7 +257,7 @@ void BasicScene::KeyCallback(Viewport* viewport, int x, int y, int key, int scan
                 //    camera->Translate(translation, axis);
                 //}
                 
-                snake.RollLeft();
+                game_manager->snake.RollLeft();
 
                 //camera->TranslateInSystem(system, {-0.1f, 0, 0});
                 break;
@@ -328,7 +272,7 @@ void BasicScene::KeyCallback(Viewport* viewport, int x, int y, int key, int scan
                 //    camera->Translate(translation, axis);
                 //}
 
-                snake.RollRight();
+                game_manager->snake.RollRight();
 
                 //camera->TranslateInSystem(system, {0.1f, 0, 0});
                 break;
@@ -409,14 +353,14 @@ void BasicScene::InitRotationModes() {
     translation_modes.push_back(sub_translation_modes3);
 }
 
-void BasicScene::InitBoundingBoxes() {
-    auto program = std::make_shared<Program>("shaders/basicShader");
-    auto material{ std::make_shared<Material>("material", program) }; // empty material
-    auto cubeMesh1{ IglLoader::MeshFromFiles("cube1", "data/cube.off") };
-    auto cubeMesh2{ IglLoader::MeshFromFiles("cube2", "data/cube.off") };
-    cube1 = Model::Create("cube1", cubeMesh1, material);
-    cube2 = Model::Create("cube2", cubeMesh1, material);
-}
+//void BasicScene::InitBoundingBoxes() {
+//    auto program = std::make_shared<Program>("shaders/basicShader");
+//    auto material{ std::make_shared<Material>("material", program) }; // empty material
+//    auto cubeMesh1{ IglLoader::MeshFromFiles("cube1", "data/cube.off") };
+//    auto cubeMesh2{ IglLoader::MeshFromFiles("cube2", "data/cube.off") };
+//    cube1 = Model::Create("cube1", cubeMesh1, material);
+//    cube2 = Model::Create("cube2", cubeMesh1, material);
+//}
 
 
 // Menu
@@ -466,9 +410,9 @@ void BasicScene::MenuManager() {
 }
 
 void BasicScene::LoginMenuHandler() {
-    if (sound_manager.playing_index != LoginMenu) {
-        sound_manager.MusicHandler("opening_theme.mp3");
-        sound_manager.playing_index = LoginMenu;
+    if (game_manager->sound_manager.playing_index != LoginMenu) {
+        game_manager->sound_manager.MusicHandler("opening_theme.mp3");
+        game_manager->sound_manager.playing_index = LoginMenu;
     }
 
     int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
@@ -517,8 +461,8 @@ void BasicScene::LoginMenuHandler() {
         ImGui::SetCursorPosX(text_position2);
         if (ImGui::Button("Start New Game", buttons_size1)) {
             display_new_game = true;
-            stats.NewGame(name);
-            leaderboard.ResetLeaderboard();
+            game_manager->stats.NewGame(name);
+            game_manager->leaderboard.ResetLeaderboard();
             menu_index = MainMenu;
         }
     }
@@ -527,7 +471,7 @@ void BasicScene::LoginMenuHandler() {
 
     ImGui::SetCursorPosX(text_position2);
     if (display_new_game) {
-        if (!stats.save_data_available) {
+        if (!game_manager->stats.save_data_available) {
             ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled));
 
             if (ImGui::Button("Continue Game", buttons_size1)) {
@@ -561,9 +505,9 @@ void BasicScene::LoginMenuHandler() {
 }
 
 void BasicScene::MainMenuHandler() {
-    if (sound_manager.playing_index != MainMenu) {
-        sound_manager.MusicHandler("main_menu.mp3");
-        sound_manager.playing_index = MainMenu;
+    if (game_manager->sound_manager.playing_index != MainMenu) {
+        game_manager->sound_manager.MusicHandler("main_menu.mp3");
+        game_manager->sound_manager.playing_index = MainMenu;
     }
 
     int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
@@ -582,7 +526,7 @@ void BasicScene::MainMenuHandler() {
     Spacing(5);
 
     // Handel User name
-    gui_text = "Welcome back, " + stats.user_name;
+    gui_text = "Welcome back, " + game_manager->stats.user_name;
     ImGui::SetCursorPosX(text_position2);
     ImGui::Text(gui_text.c_str());
 
@@ -632,8 +576,8 @@ void BasicScene::MainMenuHandler() {
 
     ImGui::SetCursorPosX(text_position2);
     if (ImGui::Button("Logout", buttons_size1)) {
-        stats.InitStats();
-        leaderboard.InitLeaderboard();
+        game_manager->stats.InitStats();
+        game_manager->leaderboard.InitLeaderboard();
         menu_index = LoginMenu;
     }
     
@@ -641,9 +585,9 @@ void BasicScene::MainMenuHandler() {
 }
 
 void BasicScene::StageSelectionMenuHandler() {
-    if (sound_manager.playing_index != MainMenu) {
-        sound_manager.MusicHandler("main_menu.mp3");
-        sound_manager.playing_index = MainMenu;
+    if (game_manager->sound_manager.playing_index != MainMenu) {
+        game_manager->sound_manager.MusicHandler("main_menu.mp3");
+        game_manager->sound_manager.playing_index = MainMenu;
     }
 
     int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
@@ -681,9 +625,9 @@ void BasicScene::StageSelectionMenuHandler() {
 
         if (ImGui::Button(gui_text.c_str(), buttons_size1)) {
             cout << gui_text.c_str() << endl;
-            sound_manager.stage_index = i;
+            game_manager->sound_manager.stage_index = i;
             menu_index = GameMenu;
-            selected_stage = i;
+            game_manager->InitStage(i);
         }
     }
 
@@ -697,9 +641,9 @@ void BasicScene::StageSelectionMenuHandler() {
 }
 
 void BasicScene::ShopMenuHandler() {
-    if (sound_manager.playing_index != ShopMenu) {
-        sound_manager.MusicHandler("shop.mp3");
-        sound_manager.playing_index = ShopMenu;
+    if (game_manager->sound_manager.playing_index != ShopMenu) {
+        game_manager->sound_manager.MusicHandler("shop.mp3");
+        game_manager->sound_manager.playing_index = ShopMenu;
     }
 
     int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
@@ -769,9 +713,9 @@ void BasicScene::ShopMenuHandler() {
 }
 
 void BasicScene::StatsMenuHandler() {
-    if (sound_manager.playing_index != StatsMenu) {
-        sound_manager.MusicHandler("stats.mp3");
-        sound_manager.playing_index = StatsMenu;
+    if (game_manager->sound_manager.playing_index != StatsMenu) {
+        game_manager->sound_manager.MusicHandler("stats.mp3");
+        game_manager->sound_manager.playing_index = StatsMenu;
     }
 
     int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
@@ -793,19 +737,19 @@ void BasicScene::StatsMenuHandler() {
     ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "Snake Stats");
 
     ImGui::SetCursorPosX(text_position3);
-    gui_text = "Max Health: " + std::to_string(stats.max_health);
+    gui_text = "Max Health: " + std::to_string(game_manager->stats.max_health);
     ImGui::Text(gui_text.c_str());
 
     ImGui::SetCursorPosX(text_position3);
-    gui_text = "Max Movement Speed: " + std::to_string(stats.max_movement_speed);
+    gui_text = "Max Movement Speed: " + std::to_string(game_manager->stats.max_movement_speed);
     ImGui::Text(gui_text.c_str());
 
     ImGui::SetCursorPosX(text_position3);
-    gui_text = "Bonuses Duration: " + std::to_string(stats.bonuses_duration) + " sec";
+    gui_text = "Bonuses Duration: " + std::to_string(game_manager->stats.bonuses_duration) + " sec";
     ImGui::Text(gui_text.c_str());
 
     ImGui::SetCursorPosX(text_position3);
-    gui_text = "Gold Multiplier: X" + std::to_string(stats.gold_multiplier);
+    gui_text = "Gold Multiplier: X" + std::to_string(game_manager->stats.gold_multiplier);
     ImGui::Text(gui_text.c_str());
 
     Spacing(5);
@@ -814,23 +758,23 @@ void BasicScene::StatsMenuHandler() {
     ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "Statistics");
 
     ImGui::SetCursorPosX(text_position3);
-    gui_text = "Total Points Earned: " + std::to_string(stats.total_points_earned);
+    gui_text = "Total Points Earned: " + std::to_string(game_manager->stats.total_points_earned);
     ImGui::Text(gui_text.c_str());
 
     ImGui::SetCursorPosX(text_position3);
-    gui_text = "Total Gold Earned: " + std::to_string(stats.total_gold_earned);
+    gui_text = "Total Gold Earned: " + std::to_string(game_manager->stats.total_gold_earned);
     ImGui::Text(gui_text.c_str());
 
     ImGui::SetCursorPosX(text_position3);
-    gui_text = "Total Gold Spent: " + std::to_string(stats.total_gold_spent);
+    gui_text = "Total Gold Spent: " + std::to_string(game_manager->stats.total_gold_spent);
     ImGui::Text(gui_text.c_str());
 
     ImGui::SetCursorPosX(text_position3);
-    gui_text = "Total Boosts Collected: " + std::to_string(stats.total_boosts_collected);
+    gui_text = "Total Boosts Collected: " + std::to_string(game_manager->stats.total_boosts_collected);
     ImGui::Text(gui_text.c_str());
 
     ImGui::SetCursorPosX(text_position3);
-    gui_text = "Total Deaths: " + std::to_string(stats.total_deaths);
+    gui_text = "Total Deaths: " + std::to_string(game_manager->stats.total_deaths);
     ImGui::Text(gui_text.c_str());
 
     Spacing(10);
@@ -844,9 +788,9 @@ void BasicScene::StatsMenuHandler() {
 }
 
 void BasicScene::HallOfFameMenuHandler() {
-    if (sound_manager.playing_index != HallOfFameMenu) {
-        sound_manager.MusicHandler("hall_of_fame.mp3");
-        sound_manager.playing_index = HallOfFameMenu;
+    if (game_manager->sound_manager.playing_index != HallOfFameMenu) {
+        game_manager->sound_manager.MusicHandler("hall_of_fame.mp3");
+        game_manager->sound_manager.playing_index = HallOfFameMenu;
     }
 
     int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
@@ -871,8 +815,8 @@ void BasicScene::HallOfFameMenuHandler() {
             space = " ";
         }
         gui_text = to_string(i + 1) + "." + space +            // Place
-            leaderboard.leaderboard_list[i].first + " - " +    // Name
-            to_string(leaderboard.leaderboard_list[i].second); // Score
+            game_manager->leaderboard.leaderboard_list[i].first + " - " +    // Name
+            to_string(game_manager->leaderboard.leaderboard_list[i].second); // Score
 
         
         if (i == 0) {
@@ -900,9 +844,9 @@ void BasicScene::HallOfFameMenuHandler() {
 }
 
 void BasicScene::CreditsMenuHandler() {
-    if (sound_manager.playing_index != CreditsMenu) {
-        sound_manager.MusicHandler("credits.mp3");
-        sound_manager.playing_index = CreditsMenu;
+    if (game_manager->sound_manager.playing_index != CreditsMenu) {
+        game_manager->sound_manager.MusicHandler("credits.mp3");
+        game_manager->sound_manager.playing_index = CreditsMenu;
     }
 
     int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
@@ -937,7 +881,7 @@ void BasicScene::CreditsMenuHandler() {
 
     ImGui::SetCursorPosX(text_position3);
     if (payed_credits) {
-        gui_text = "Honorable Contributor: " + stats.user_name;
+        gui_text = "Honorable Contributor: " + game_manager->stats.user_name;
         ImGui::Text(gui_text.c_str());
     }
     else {
@@ -958,10 +902,10 @@ void BasicScene::CreditsMenuHandler() {
 
 void BasicScene::GameMenuHandler() {
     string stage_music;
-    if (sound_manager.playing_index != -sound_manager.stage_index) {
-        stage_music = "stage" + std::to_string(sound_manager.stage_index) + ".mp3";
-        sound_manager.MusicHandler(stage_music);
-        sound_manager.playing_index = -sound_manager.stage_index;
+    if (game_manager->sound_manager.playing_index != -game_manager->sound_manager.stage_index) {
+        stage_music = "stage" + std::to_string(game_manager->sound_manager.stage_index) + ".mp3";
+        game_manager->sound_manager.MusicHandler(stage_music);
+        game_manager->sound_manager.playing_index = -game_manager->sound_manager.stage_index;
     }
 
     int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;

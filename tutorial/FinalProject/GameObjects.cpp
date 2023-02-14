@@ -8,29 +8,29 @@
 // ObjectHandler //
 ///////////////////
 
-void ObjectHandler::InitObjectHandler(string object_name, BasicScene *scene) {
+void ObjectHandler::InitObjectHandler(string object_name, GameManager* game_manager) {
     this->object_name = object_name;
-    this->scene = scene;
+    this->game_manager = game_manager;
 
     if (this->object_name == "HealthObject") {
         this->game_object = new HealthObject();
-        this->game_object->InitObject(this->scene);
+        this->game_object->InitObject(this->game_manager);
     }
     if (this->object_name == "ScoreObject") {
         this->game_object = new ScoreObject();
-        this->game_object->InitObject(this->scene);
+        this->game_object->InitObject(this->game_manager);
     }
     if (this->object_name == "GoldObject") {
         this->game_object = new GoldObject();
-        this->game_object->InitObject(this->scene);
+        this->game_object->InitObject(this->game_manager);
     }
     if (this->object_name == "BonusObject") {
         this->game_object = new BonusObject();
-        this->game_object->InitObject(this->scene);
+        this->game_object->InitObject(this->game_manager);
     }
     if (this->object_name == "ObstacleObject") {
         this->game_object = new ObstacleObject();
-        this->game_object->InitObject(this->scene);
+        this->game_object->InitObject(this->game_manager);
     }
 }
 
@@ -43,9 +43,9 @@ void ObjectHandler::HandleCollision() {
 // HealthObject //
 //////////////////
 
-void HealthObject::InitObject(BasicScene* scene) {
-    this->scene = scene;
-    this->stage_number = scene->selected_stage;
+void HealthObject::InitObject(GameManager* game_manager) {
+    this->game_manager = game_manager;
+    this->stage_number = game_manager->selected_stage;
 }
 
 void HealthObject::CollisionWithObject() {
@@ -56,9 +56,9 @@ void HealthObject::CollisionWithObject() {
 // ScoreObject //
 /////////////////
 
-void ScoreObject::InitObject(BasicScene* scene) {
-    this->scene = scene;
-    this->stage_number = scene->selected_stage;
+void ScoreObject::InitObject(GameManager* game_manager) {
+    this->game_manager = game_manager;
+    this->stage_number = game_manager->selected_stage;
 }
 
 void ScoreObject::CollisionWithObject() {
@@ -69,9 +69,9 @@ void ScoreObject::CollisionWithObject() {
 // GoldObject //
 ////////////////
 
-void GoldObject::InitObject(BasicScene* scene) {
-    this->scene = scene;
-    this->stage_number = scene->selected_stage;
+void GoldObject::InitObject(GameManager* game_manager) {
+    this->game_manager = game_manager;
+    this->stage_number = game_manager->selected_stage;
 }
 
 void GoldObject::CollisionWithObject() {
@@ -82,9 +82,9 @@ void GoldObject::CollisionWithObject() {
 // BonusObject //
 /////////////////
 
-void BonusObject::InitObject(BasicScene* scene) {
-    this->scene = scene;
-    this->stage_number = scene->selected_stage;
+void BonusObject::InitObject(GameManager* game_manager) {
+    this->game_manager = game_manager;
+    this->stage_number = game_manager->selected_stage;
 }
 
 void BonusObject::CollisionWithObject() {
@@ -95,9 +95,9 @@ void BonusObject::CollisionWithObject() {
 // ObstacleObject //
 ////////////////////
 
-void ObstacleObject::InitObject(BasicScene* scene) {
-    this->scene = scene;
-    this->stage_number = scene->selected_stage;
+void ObstacleObject::InitObject(GameManager* game_manager) {
+    this->game_manager = game_manager;
+    this->stage_number = game_manager->selected_stage;
 }
 
 void ObstacleObject::CollisionWithObject() {

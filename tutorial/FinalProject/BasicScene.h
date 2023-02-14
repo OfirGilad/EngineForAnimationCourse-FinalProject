@@ -5,13 +5,9 @@
 #include <memory>
 #include <utility>
 
-#include "Snake.h"
 #include "SceneWithImGui.h"
 #include "imgui.h"
-#include "SoundManager.h"
-#include "Stats.h"
-#include "Leaderboard.h"
-
+#include "GameManager.h"
 
 class BasicScene : public cg3d::SceneWithImGui
 {
@@ -24,17 +20,20 @@ public:
     void CursorPosCallback(cg3d::Viewport* viewport, int x, int y, bool dragging, int* buttonState)  override;
     void KeyCallback(cg3d::Viewport* viewport, int x, int y, int key, int scancode, int action, int mods) override;
 
-
+    // SceneWithImGui expend
     void SetCamera(int index);
     void AddViewportCallback(cg3d::Viewport* _viewport) override;
     void ViewportSizeCallback(cg3d::Viewport* _viewport) override;
     
-    void SetAnimate(bool status) { animate = status; }
 
+    // Camera Management
     void SwitchView();
     void InitRotationModes();
 
-    void InitBoundingBoxes();
+
+    // Game Manager
+    GameManager* game_manager;
+
 
     // Menu Managmenet
     void MenuManager();
@@ -50,41 +49,29 @@ public:
     void GameMenuHandler();  
     void Spacing(int number_of_spacing);
 
-    // Global Varaiables
-    Snake snake;
-    SoundManager sound_manager;
-    Stats stats;
-    Leaderboard leaderboard;
-
-    // Collision boxes for CollisionDetectionVisitor
-    std::shared_ptr<cg3d::Model> cube1, cube2;
-    std::shared_ptr<cg3d::Model> sphere1;
-
-    // Stage Parameters
-    std::shared_ptr<Movable> root;
-    int selected_stage = 0;
-    std::vector<std::shared_ptr<cg3d::Model>> stage_objects;
-    int number_of_objects = 0;
 
 private:
     void BuildImGui() override;
     cg3d::Viewport* viewport = nullptr;
 
-    // Scene
-    std::vector<std::shared_ptr<cg3d::Model>> axis;
-    std::shared_ptr<cg3d::Model> cube;
+
+    // Scene root
+    std::shared_ptr<Movable> root;
+
 
     // Camera Params
     int distance = 50;
     int degree = -15;
     Eigen::Vector3f camera_translation = Eigen::Vector3f(0, 15, 50);
 
-    // Snake Params
-    int number_of_bones = 16;
+
+    // Camera list Params
     std::vector<std::shared_ptr<cg3d::Camera>> camera_list{ 2 };
     int camera_index = 0;
     int number_of_cameras = 0;
-    
+
+
+    // View modes
     std::vector<std::vector<std::pair<int, Axis>>> translation_modes;
     int up_down_mode = 0, left_right_mode = 0;
 
