@@ -75,6 +75,7 @@ private:
     void InitAxis();
 
     void BuildGameObjects();
+    void BuildHealthObjects();
 
     // Stage Builder
     int objective_score;
