@@ -34,7 +34,6 @@ namespace cg3d
                 if (model->name == std::string("bone 0"))
                 {
                     model->TranslateInSystem(system, Eigen::Vector3f(0, 0, -0.1f));
-                    //game_manager->snake.Skinning();
                 }
                 else {
                     std::string curr_bone_name = std::string("bone ") + std::to_string(bone_index + 1);
@@ -78,6 +77,12 @@ namespace cg3d
                 }
                 Visitor::Visit(model); // draw children first
             }
+           /* if (model->name.find("snake")) {
+                delay = (delay + 1) % 5;
+                if (delay == 0) {
+                    game_manager->snake.Skinning();
+                }
+            }*/
         }
     }
 }

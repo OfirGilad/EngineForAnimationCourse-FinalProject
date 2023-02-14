@@ -211,20 +211,20 @@ void Snake::CalculateWeight()
     int n = V.rows();
     W = Eigen::MatrixXd::Zero(n, number_of_bones + 1);
 
-    Eigen::Vector3d min_values = V.colwise().minCoeff();
-    double min_z = min_values[2];
+    //Eigen::Vector3d min_values = V.colwise().minCoeff();
+    //double min_z = min_values[2];
 
     for (int i = 0; i < n; i++) 
     {
         double current_z = V.row(i)[2];
 
-        for (int j = 0; j < number_of_bones + 1; j++) 
+        for (int j = 0; j < number_of_bones; j++) 
         {
-            if (current_z >= min_z + bone_size * j && current_z <= min_z + bone_size * (j + 1))
+            if ((current_z >= GetBonePosition(j, -1).z()) && (current_z <= GetBonePosition(j, 1).z()))
             {
-                double res = abs(current_z - (min_z + bone_size * (j + 1))) * 10;
-                W.row(i)[j] = res;
-                W.row(i)[j + 1] = 1 - res;
+                double result = 1 - (abs(GetBonePosition(j, 1).z() - current_z) / bone_size);
+                W.row(i)[j] = result;
+                W.row(i)[j + 1] = 1 - result;
                 break;
             }
         }
@@ -232,6 +232,7 @@ void Snake::CalculateWeight()
 }
 
 #include <igl/directed_edge_parents.h>
+#include <igl/per_vertex_normals.h>
 
 void Snake::SkinningInit() {
     // Init new V
@@ -243,6 +244,15 @@ void Snake::SkinningInit() {
     }
     U = V;
 
+    // Set Snake Mesh new data
+    igl::per_vertex_normals(V, OF, VN);
+    T = Eigen::MatrixXd::Zero(V.rows(), 2);
+    auto mesh = snake_body->GetMeshList();
+    mesh[0]->data.pop_back();
+    mesh[0]->data.push_back({ V, OF, VN, T });
+    snake_body->SetMeshList(mesh);
+    snake_body->SetTransform(Eigen::Matrix4f::Identity());
+
     // Init C
     C.resize(number_of_bones + 1, 3);
     for (int i = 0; i < number_of_bones; i++)
@@ -252,76 +262,51 @@ void Snake::SkinningInit() {
     C.row(number_of_bones) = GetBonePosition(last_index, 1).cast<double>();
 
     // Init BE
-    BE.resize(number_of_bones, 2);
-    for (int i = 0; i < number_of_bones; i++) {
-        BE.row(i) = Vector2i(i, i + 1);
-    }
-
-
-    //igl::directed_edge_parents(BE, P);
-    //RotationList rest_pose;
-    //igl::directed_edge_orientations(C, BE, rest_pose);
-    //poses.resize(4, RotationList(4, Quaterniond::Identity()));
-    //// poses[1] // twist
-    //const Quaterniond twist(AngleAxisd(igl::PI, Vector3d(1, 0, 0)));
-    //poses[1][2] = rest_pose[2] * twist * rest_pose[2].conjugate();
-    //const Quaterniond bend(AngleAxisd(-igl::PI * 0.7, Vector3d(0, 0, 1)));
-    //poses[3][2] = rest_pose[2] * bend * rest_pose[2].conjugate();
+    //BE.resize(number_of_bones, 2);
+    //for (int i = 0; i < number_of_bones; i++) {
+    //    BE.row(i) = Vector2i(i, i + 1);
+    //}
 
     CalculateWeight();
 
-    igl::lbs_matrix(V, W, M);
+    cout << "W" << endl;
+    cout << W << endl;
+    cout << "V" << endl;
+    cout << V << endl;
+    cout << "C" << endl;
+    cout << C << endl;
+
+    //igl::lbs_matrix(V, W, M);
 }
 
 #include "igl/per_vertex_normals.h"
 
 void Snake::Skinning() {
-    // Find pose interval
-    const int begin = (int)floor(anim_t) % poses.size();
-    const int end = (int)(floor(anim_t) + 1) % poses.size();
-    const double t = anim_t - floor(anim_t);
-
-    // Interpolate pose and identity
-    RotationList anim_pose(poses[begin].size());
-    for (int e = 0;e < poses[begin].size();e++)
-    {
-        anim_pose[e] = poses[begin][e].slerp(t, poses[end][e]);
-    }
+  
     // Propagate relative rotations via FK to retrieve absolute transformations
     // vQ - rotations of joints
     // vT - translation of joints
-    //RotationList vQ;
-    //vector<Vector3d> vT;
-    //igl::forward_kinematics(C, BE, P, anim_pose, vQ, vT); // Crash here
 
-    RestartData();
+    vT.resize(number_of_bones + 1);
+    vQ.resize(number_of_bones + 1, Eigen::Quaterniond::Identity());
 
-    const int dim = C.cols();
-    Eigen::MatrixXd T(BE.rows() * (dim + 1), dim);
 
-    for (int e = 0; e < BE.rows(); e++)
-    {
-        Eigen::Affine3d a = Eigen::Affine3d::Identity();
-        a.translate(vT[e]);
-        a.rotate(vQ[e]);
-        T.block(e * (dim + 1), 0, dim + 1, dim) = a.matrix().transpose().block(0, 0, dim + 1, dim);
+    for (int i = 0; i < number_of_bones; i++) {
+        Vector3d X = GetBonePosition(i, -1).cast<double>();
+        Vector3d Y = C.row(i);
+        vT[i] = X - Y;
     }
-    // Compute deformation via LBS as matrix multiplication
+    Vector3d X = GetBonePosition(last_index, 1).cast<double>();
+    Vector3d Y = C.row(last_index + 1);
+
+    vT[last_index + 1] = X - Y;
+
+
+    //// Compute deformation via LBS as matrix multiplication
+
     igl::dqs(V, W, vQ, vT, U);
 
-    // Also deform skeleton edges
-    MatrixXd CT;
-    MatrixXi BET;
-    //move joints according to T, returns new position in CT and BET
-    igl::deform_skeleton(C, BE, T, CT, BET);
-
-    //viewer.data().set_mesh(V, F);
-    //viewer.data().set_vertices(U);
-    //viewer.data().set_edges(CT, BET, Eigen::RowVector3d(70. / 255., 252. / 255., 167. / 255.));
-    //viewer.data().compute_normals();
-
-    //U = viewer.data().V;
-    //UF = viewer.data().F;
+    
     
     igl::per_vertex_normals(U, OF, VN);
     T = Eigen::MatrixXd::Zero(U.rows(), 2);
@@ -329,16 +314,6 @@ void Snake::Skinning() {
     mesh[0]->data.pop_back();
     mesh[0]->data.push_back({ U, OF, VN, T });
     snake_body->SetMeshList(mesh);
-    snake_body->Translate(0, Scene::Axis::Z);
-
-    anim_t += anim_t_dir;
-
-
-    //for (int i = 0; i < number_of_bones + 1; i++)
-    //    vC[i] = vT[i];
-
-    //for (int i = 1; i < numberOfJoints + 1; i++)
-    //    viewer->data_list[i].SetTranslation(CT.row(2 * i - 1));
 }
 
 

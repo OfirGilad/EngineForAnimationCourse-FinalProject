@@ -39,7 +39,7 @@ void GameManager::LoadStage(int stage_number)
 
     BuildGameObjects();
     
-    snake.ShowSnake();
+    //snake.ShowSnake();
 }
 
 void GameManager::UnloadStage() {
