@@ -76,6 +76,7 @@ private:
 
     void BuildGameObjects();
     void BuildHealthObjects();
+    void BuildGoldObjects();
 
     // Stage Builder
     int objective_score;

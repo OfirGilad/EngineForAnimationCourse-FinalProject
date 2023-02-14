@@ -37,35 +37,7 @@ void GameManager::LoadStage(int stage_number)
     InitBackground();
     InitAxis();
 
-    //auto program = std::make_shared<Program>("shaders/basicShader");
-    //auto material{ std::make_shared<Material>("material", program) }; // empty material
-    //auto sphereMesh{ IglLoader::MeshFromFiles("sphere_igl", "../tutorial/objects/heart.obj") };
-    //auto sphereMesh1{ IglLoader::MeshFromFiles("sphere_igl", "data/sphere.obj") };
-    //material->AddTexture(0, "../tutorial/objects/heart.png", 2);
-
-    //temp_object1 = Model::Create("heart", sphereMesh, material);
-    //temp_object2 = Model::Create("HealthObject", sphereMesh1, material);
-    
-
-    
- /*   temp_object1->Translate(0, Movable::Axis::Z);
-
-    root->AddChild(temp_object2);
-
-    temp_object2->AddChild(temp_object1);
-    temp_object2->Scale(Eigen::Vector3f(3.4, 3.4, 3.4));
-    temp_object2->Translate(-15, Movable::Axis::Z);
-
-    temp_object1->Scale(0.3, Movable::Axis::XYZ);
-    temp_object1->Translate(6, Movable::Axis::Y);
-    temp_object1->Translate(-1.5, Movable::Axis::Z);
-    temp_object2->isHidden = true;
-
-
-    stage_objects.push_back(temp_object2);
-    number_of_objects = 1;*/
-
-    BuildHealthObjects();
+    BuildGameObjects();
     
     snake.ShowSnake();
 }
@@ -118,26 +90,19 @@ void GameManager::InitAxis() {
 }
 
 void GameManager::BuildGameObjects() {
-    //// Creating textures
-    //auto program = std::make_shared<Program>("shaders/basicShader");
-    //auto snake_material = std::make_shared<Material>("snake_material", program);
-    //snake_material->AddTexture(0, "textures/snake.jpg", 2);
-
-    //auto snake_bones = ObjLoader::ModelFromObj("HealthObject", "data/zcylinder.obj", snake_material);
+    BuildHealthObjects();
 }
 
 void GameManager::BuildHealthObjects() {
     for (int i = 0; i < 3; i++) {
         // Init materials
         auto program = std::make_shared<Program>("shaders/basicShader");
-        auto material{ std::make_shared<Material>("material", program) }; // empty material
-        auto heart_mesh{ IglLoader::MeshFromFiles("sphere_igl", "../tutorial/objects/heart.obj") };
-        auto box_mesh{ IglLoader::MeshFromFiles("sphere_igl", "data/sphere.obj") };
+        auto material = std::make_shared<Material>("material", program);
         material->AddTexture(0, "../tutorial/objects/heart.png", 2);
 
         // Init meshes
-        temp_object1 = Model::Create("heart", heart_mesh, material);
-        temp_object2 = Model::Create("HealthObject", box_mesh, material);
+        temp_object1 = ObjLoader::ModelFromObj("heart", "../tutorial/objects/heart.obj", material);
+        temp_object2 = ObjLoader::ModelFromObj("HealthObject", "data/sphere.obj", material);
         root->AddChild(temp_object2);
 
         // Setting Positions
@@ -155,4 +120,33 @@ void GameManager::BuildHealthObjects() {
         stage_objects.push_back(temp_object2);
         number_of_objects++;
     }
+}
+
+void GameManager::BuildGoldObjects() {
+    //for (int i = 0; i < 3; i++) {
+    //    // Init materials
+    //    auto program = std::make_shared<Program>("shaders/basicShader");
+    //    auto material = std::make_shared<Material>("material", program);
+    //    material->AddTexture(0, "../tutorial/objects/heart.png", 2);
+
+    //    // Init meshes
+    //    temp_object1 = ObjLoader::ModelFromObj("heart", "../tutorial/objects/heart.obj", material);
+    //    temp_object2 = ObjLoader::ModelFromObj("HealthObject", "data/sphere.obj", material);
+    //    root->AddChild(temp_object2);
+
+    //    // Setting Positions
+    //    temp_object2->AddChild(temp_object1);
+    //    temp_object2->Translate(-10 * (i + 1), Movable::Axis::Z); // Need to generate normally
+
+    //    // Fix Scaling
+    //    temp_object2->Scale(Eigen::Vector3f(3.4, 3.4, 3.4));
+    //    temp_object2->isHidden = true;
+    //    temp_object1->Scale(0.3, Movable::Axis::XYZ);
+    //    temp_object1->Translate(6, Movable::Axis::Y);
+    //    temp_object1->Translate(-1.5, Movable::Axis::Z);
+
+    //    // Adding to Stage objects list
+    //    stage_objects.push_back(temp_object2);
+    //    number_of_objects++;
+    //}
 }
