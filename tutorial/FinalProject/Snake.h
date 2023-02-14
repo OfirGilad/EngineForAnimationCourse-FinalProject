@@ -94,8 +94,8 @@ private:
     // P - parents
     // M - weights per vertex per joint matrix
     // U - new vertices position after skinning
-    Eigen::MatrixXd C, V, W, M, U;
-    Eigen::MatrixXi F, BE;
+    Eigen::MatrixXd C, OV, V, W, M, U;
+    Eigen::MatrixXi OF, BE;
     Eigen::MatrixXi UF;
 
     //vector<int> P;
