@@ -37,6 +37,7 @@ public:
     std::shared_ptr<Movable> root;
     std::vector<std::shared_ptr<Camera>> camera_list;
     std::shared_ptr<cg3d::Model> background, axis, temp_object1, temp_object2;
+    std::shared_ptr<cg3d::Model> health_model, score_model, gold_model, bonus_model, obstacle_model;
 
     std::vector<std::shared_ptr<cg3d::Model>> health_objects;
     std::vector<std::shared_ptr<cg3d::Model>> score_objects;
@@ -66,6 +67,11 @@ public:
     // Leaderboard
     Leaderboard leaderboard;
 
+    // Stage params
+    int current_health;
+    int current_score;
+    int objective_score;
+
 private:
     // Collision boxes for CollisionDetectionVisitor
     void InitCollisionBoxes();
@@ -73,14 +79,14 @@ private:
     // Init Stage
     void InitBackground();
     void InitAxis();
+    void InitStageParameters(bool new_stage);
 
+    // Building Game Objects
+    void InitCustomObject();
     void BuildGameObjects();
     void BuildHealthObjects();
     void BuildScoreObjects();
     void BuildGoldObjects();
     void BuildBonusObjects();
     void BuildObstacleObjects();
-
-    // Stage Builder
-    int objective_score;
 };

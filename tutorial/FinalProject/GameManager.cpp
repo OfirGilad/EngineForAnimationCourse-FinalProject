@@ -35,9 +35,10 @@ void GameManager::LoadStage(int stage_number)
 
     InitBackground();
     InitAxis();
-
+    InitStageParameters(true);
+    InitCustomObject();
     BuildGameObjects();
-    
+
     snake.ShowSnake();
 }
 
@@ -88,6 +89,46 @@ void GameManager::InitAxis() {
     axis->Translate(Eigen::Vector3f(0, 0, 0));
 }
 
+void GameManager::InitStageParameters(bool new_stage) {
+    if (new_stage) {
+        current_health = stats.max_health;
+        current_score = 0;
+    }
+}
+
+void GameManager::InitCustomObject() {
+    auto program = std::make_shared<Program>("shaders/basicShader");
+
+    // health
+    auto material1 = std::make_shared<Material>("material", program);
+    material1->AddTexture(0, "../tutorial/objects/health.png", 2);
+    health_model = ObjLoader::ModelFromObj("health", "../tutorial/objects/health.obj", material1);
+
+    health_model->Scale(0.3, Movable::Axis::XYZ);
+    health_model->Translate(6, Movable::Axis::Y);
+    health_model->Translate(-1.5, Movable::Axis::Z);
+
+    // Score
+    auto material2 = std::make_shared<Material>("material", program);
+    material2->AddTexture(0, "../tutorial/objects/score.jpg", 2);
+    score_model = ObjLoader::ModelFromObj("score", "data/circle.obj", material2);
+
+    // Gold
+    auto material3 = std::make_shared<Material>("material", program);
+    material3->AddTexture(0, "../tutorial/objects/gold.jpg", 2);
+    gold_model = ObjLoader::ModelFromObj("gold", "data/circle.obj", material3);
+
+    // Bonus
+    auto material4 = std::make_shared<Material>("material", program);
+    material4->AddTexture(0, "../tutorial/objects/bonus.jpg", 2);
+    bonus_model = ObjLoader::ModelFromObj("bonus", "data/circle.obj", material4);
+
+    // Obstacle
+    auto material5 = std::make_shared<Material>("material", program);
+    material5->AddTexture(0, "../tutorial/objects/obstacle.jpg", 2);
+    obstacle_model = ObjLoader::ModelFromObj("obstacle", "data/circle.obj", material5);
+}
+
 void GameManager::BuildGameObjects() {
     BuildHealthObjects();
     //BuildScoreObjects();
@@ -98,14 +139,10 @@ void GameManager::BuildGameObjects() {
 
 void GameManager::BuildHealthObjects() {
     for (int i = 0; i < 3; i++) {
-        // Init materials
-        auto program = std::make_shared<Program>("shaders/basicShader");
-        auto material = std::make_shared<Material>("material", program);
-        material->AddTexture(0, "../tutorial/objects/heart.png", 2);
-
         // Init meshes
-        temp_object1 = ObjLoader::ModelFromObj("heart", "../tutorial/objects/heart.obj", material);
-        temp_object2 = Model::Create("HealthObject", Mesh::Cube(), material);
+        temp_object1 = Model::Create("health", health_model->GetMesh(), health_model->material);
+        temp_object1->SetTransform(health_model->GetTransform());
+        temp_object2 = Model::Create("HealthObject", Mesh::Cube(), health_model->material);
         root->AddChild(temp_object2);
 
         // Setting Positions
@@ -115,9 +152,6 @@ void GameManager::BuildHealthObjects() {
         // Fix Scaling
         temp_object2->Scale(Eigen::Vector3f(3.4, 3.4, 3.4));
         temp_object2->isHidden = true;
-        temp_object1->Scale(0.3, Movable::Axis::XYZ);
-        temp_object1->Translate(6, Movable::Axis::Y);
-        temp_object1->Translate(-1.5, Movable::Axis::Z);
         
         // Adding to Stage objects list
         stage_objects.push_back(temp_object2);
@@ -127,26 +161,19 @@ void GameManager::BuildHealthObjects() {
 
 void GameManager::BuildScoreObjects() {
     for (int i = 0; i < 3; i++) {
-        // Init materials
-        auto program = std::make_shared<Program>("shaders/basicShader");
-        auto material = std::make_shared<Material>("material", program);
-        material->AddTexture(0, "../tutorial/objects/green.jpg", 2);
-
         // Init meshes
-        temp_object1 = ObjLoader::ModelFromObj("score", "data/circle.obj", material);
-        temp_object2 = Model::Create("ScoreObject", Mesh::Cube(), material);
+        temp_object1 = Model::Create("score", score_model->GetMesh(), score_model->material);
+        temp_object1->SetTransform(score_model->GetTransform());
+        temp_object2 = Model::Create("ScoreObject", Mesh::Cube(), score_model->material);
         root->AddChild(temp_object2);
 
         // Setting Positions
         temp_object2->AddChild(temp_object1);
-        temp_object2->Translate(-10 * (i + 1), Movable::Axis::Y); // Need to generate normally
+        temp_object2->Translate(-10 * (i + 1), Movable::Axis::Z); // Need to generate normally
 
         // Fix Scaling
         //temp_object2->Scale(Eigen::Vector3f(3.4, 3.4, 3.4));
         temp_object2->isHidden = true;
-        //temp_object1->Scale(0.3, Movable::Axis::XYZ);
-        //temp_object1->Translate(6, Movable::Axis::Y);
-        //temp_object1->Translate(-1.5, Movable::Axis::Z);
 
         // Adding to Stage objects list
         stage_objects.push_back(temp_object2);
@@ -156,26 +183,19 @@ void GameManager::BuildScoreObjects() {
 
 void GameManager::BuildGoldObjects() {
     for (int i = 0; i < 3; i++) {
-        // Init materials
-        auto program = std::make_shared<Program>("shaders/basicShader");
-        auto material = std::make_shared<Material>("material", program);
-        material->AddTexture(0, "../tutorial/objects/gold.jpg", 2);
-
         // Init meshes
-        temp_object1 = ObjLoader::ModelFromObj("gold", "data/circle.obj", material);
-        temp_object2 = Model::Create("GoldObject", Mesh::Cube(), material);
+        temp_object1 = Model::Create("gold", gold_model->GetMesh(), gold_model->material);
+        temp_object1->SetTransform(gold_model->GetTransform());
+        temp_object2 = Model::Create("GoldObject", Mesh::Cube(), gold_model->material);
         root->AddChild(temp_object2);
 
         // Setting Positions
         temp_object2->AddChild(temp_object1);
-        temp_object2->Translate(-10 * (i + 1), Movable::Axis::X); // Need to generate normally
+        temp_object2->Translate(-10 * (i + 1), Movable::Axis::Z); // Need to generate normally
 
         // Fix Scaling
         //temp_object2->Scale(Eigen::Vector3f(3.4, 3.4, 3.4));
         temp_object2->isHidden = true;
-        //temp_object1->Scale(0.3, Movable::Axis::XYZ);
-        //temp_object1->Translate(6, Movable::Axis::Y);
-        //temp_object1->Translate(-1.5, Movable::Axis::Z);
 
         // Adding to Stage objects list
         stage_objects.push_back(temp_object2);
@@ -185,26 +205,19 @@ void GameManager::BuildGoldObjects() {
 
 void GameManager::BuildBonusObjects() {
     for (int i = 0; i < 3; i++) {
-        // Init materials
-        auto program = std::make_shared<Program>("shaders/basicShader");
-        auto material = std::make_shared<Material>("material", program);
-        material->AddTexture(0, "../tutorial/objects/bonus.jpg", 2);
-
         // Init meshes
-        temp_object1 = ObjLoader::ModelFromObj("bonus", "data/circle.obj", material);
-        temp_object2 = Model::Create("BonusObject", Mesh::Cube(), material);
+        temp_object1 = Model::Create("bonus", bonus_model->GetMesh(), bonus_model->material);
+        temp_object1->SetTransform(bonus_model->GetTransform());
+        temp_object2 = Model::Create("BonusObject", Mesh::Cube(), bonus_model->material);
         root->AddChild(temp_object2);
 
         // Setting Positions
         temp_object2->AddChild(temp_object1);
-        temp_object2->Translate(10 * (i + 1), Movable::Axis::X); // Need to generate normally
+        temp_object2->Translate(-10 * (i + 1), Movable::Axis::Z); // Need to generate normally
 
         // Fix Scaling
         //temp_object2->Scale(Eigen::Vector3f(3.4, 3.4, 3.4));
         temp_object2->isHidden = true;
-        //temp_object1->Scale(0.3, Movable::Axis::XYZ);
-        //temp_object1->Translate(6, Movable::Axis::Y);
-        //temp_object1->Translate(-1.5, Movable::Axis::Z);
 
         // Adding to Stage objects list
         stage_objects.push_back(temp_object2);
@@ -214,26 +227,19 @@ void GameManager::BuildBonusObjects() {
 
 void GameManager::BuildObstacleObjects() {
     for (int i = 0; i < 3; i++) {
-        // Init materials
-        auto program = std::make_shared<Program>("shaders/basicShader");
-        auto material = std::make_shared<Material>("material", program);
-        material->AddTexture(0, "../tutorial/objects/obstacle.jpg", 2);
-
         // Init meshes
-        temp_object1 = ObjLoader::ModelFromObj("obstacle", "data/circle.obj", material);
-        temp_object2 = Model::Create("ObstacleObject", Mesh::Cube(), material);
+        temp_object1 = Model::Create("obstacle", obstacle_model->GetMesh(), obstacle_model->material);
+        temp_object1->SetTransform(obstacle_model->GetTransform());
+        temp_object2 = Model::Create("ObstacleObject", Mesh::Cube(), obstacle_model->material);
         root->AddChild(temp_object2);
 
         // Setting Positions
         temp_object2->AddChild(temp_object1);
-        temp_object2->Translate(10 * (i + 1), Movable::Axis::Y); // Need to generate normally
+        temp_object2->Translate(-10 * (i + 1), Movable::Axis::Z); // Need to generate normally
 
         // Fix Scaling
         //temp_object2->Scale(Eigen::Vector3f(3.4, 3.4, 3.4));
         temp_object2->isHidden = true;
-        //temp_object1->Scale(0.3, Movable::Axis::XYZ);
-        //temp_object1->Translate(6, Movable::Axis::Y);
-        //temp_object1->Translate(-1.5, Movable::Axis::Z);
 
         // Adding to Stage objects list
         stage_objects.push_back(temp_object2);
