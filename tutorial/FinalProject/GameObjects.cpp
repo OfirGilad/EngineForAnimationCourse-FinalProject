@@ -88,7 +88,7 @@ void BonusObject::InitObject(GameManager* game_manager) {
 }
 
 void BonusObject::CollisionWithObject() {
-    cout << "HealthObject" << endl;
+    cout << "BonusObject" << endl;
 }
 
 ////////////////////

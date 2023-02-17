@@ -15,7 +15,6 @@ void GameManager::InitGameManager(std::shared_ptr<Movable> _root, std::vector<st
     // Init Snake
     snake = Snake(root, camera_list);
     snake.InitSnake(number_of_bones);
-    //snake.HideSnake();
 
     // Init Sound Manager
     sound_manager = SoundManager();
@@ -90,7 +89,11 @@ void GameManager::InitAxis() {
 }
 
 void GameManager::BuildGameObjects() {
-    BuildHealthObjects();
+    //BuildHealthObjects();
+    //BuildScoreObjects();
+    //BuildGoldObjects();
+    //BuildBonusObjects();
+    BuildObstacleObjects();
 }
 
 void GameManager::BuildHealthObjects() {
@@ -122,31 +125,118 @@ void GameManager::BuildHealthObjects() {
     }
 }
 
+void GameManager::BuildScoreObjects() {
+    for (int i = 0; i < 3; i++) {
+        // Init materials
+        auto program = std::make_shared<Program>("shaders/basicShader");
+        auto material = std::make_shared<Material>("material", program);
+        material->AddTexture(0, "../tutorial/objects/green.jpg", 2);
+
+        // Init meshes
+        temp_object1 = ObjLoader::ModelFromObj("score", "data/circle.obj", material);
+        temp_object2 = ObjLoader::ModelFromObj("ScoreObject", "data/sphere.obj", material);
+        root->AddChild(temp_object2);
+
+        // Setting Positions
+        temp_object2->AddChild(temp_object1);
+        temp_object2->Translate(-10 * (i + 1), Movable::Axis::Z); // Need to generate normally
+
+        // Fix Scaling
+        //temp_object2->Scale(Eigen::Vector3f(3.4, 3.4, 3.4));
+        temp_object2->isHidden = true;
+        //temp_object1->Scale(0.3, Movable::Axis::XYZ);
+        //temp_object1->Translate(6, Movable::Axis::Y);
+        //temp_object1->Translate(-1.5, Movable::Axis::Z);
+
+        // Adding to Stage objects list
+        stage_objects.push_back(temp_object2);
+        number_of_objects++;
+    }
+}
+
 void GameManager::BuildGoldObjects() {
-    //for (int i = 0; i < 3; i++) {
-    //    // Init materials
-    //    auto program = std::make_shared<Program>("shaders/basicShader");
-    //    auto material = std::make_shared<Material>("material", program);
-    //    material->AddTexture(0, "../tutorial/objects/heart.png", 2);
+    for (int i = 0; i < 3; i++) {
+        // Init materials
+        auto program = std::make_shared<Program>("shaders/basicShader");
+        auto material = std::make_shared<Material>("material", program);
+        material->AddTexture(0, "../tutorial/objects/gold.jpg", 2);
 
-    //    // Init meshes
-    //    temp_object1 = ObjLoader::ModelFromObj("heart", "../tutorial/objects/heart.obj", material);
-    //    temp_object2 = ObjLoader::ModelFromObj("HealthObject", "data/sphere.obj", material);
-    //    root->AddChild(temp_object2);
+        // Init meshes
+        temp_object1 = ObjLoader::ModelFromObj("gold", "data/circle.obj", material);
+        temp_object2 = ObjLoader::ModelFromObj("GoldObject", "data/sphere.obj", material);
+        root->AddChild(temp_object2);
 
-    //    // Setting Positions
-    //    temp_object2->AddChild(temp_object1);
-    //    temp_object2->Translate(-10 * (i + 1), Movable::Axis::Z); // Need to generate normally
+        // Setting Positions
+        temp_object2->AddChild(temp_object1);
+        temp_object2->Translate(-10 * (i + 1), Movable::Axis::Z); // Need to generate normally
 
-    //    // Fix Scaling
-    //    temp_object2->Scale(Eigen::Vector3f(3.4, 3.4, 3.4));
-    //    temp_object2->isHidden = true;
-    //    temp_object1->Scale(0.3, Movable::Axis::XYZ);
-    //    temp_object1->Translate(6, Movable::Axis::Y);
-    //    temp_object1->Translate(-1.5, Movable::Axis::Z);
+        // Fix Scaling
+        //temp_object2->Scale(Eigen::Vector3f(3.4, 3.4, 3.4));
+        temp_object2->isHidden = true;
+        //temp_object1->Scale(0.3, Movable::Axis::XYZ);
+        //temp_object1->Translate(6, Movable::Axis::Y);
+        //temp_object1->Translate(-1.5, Movable::Axis::Z);
 
-    //    // Adding to Stage objects list
-    //    stage_objects.push_back(temp_object2);
-    //    number_of_objects++;
-    //}
+        // Adding to Stage objects list
+        stage_objects.push_back(temp_object2);
+        number_of_objects++;
+    }
+}
+
+void GameManager::BuildBonusObjects() {
+    for (int i = 0; i < 3; i++) {
+        // Init materials
+        auto program = std::make_shared<Program>("shaders/basicShader");
+        auto material = std::make_shared<Material>("material", program);
+        material->AddTexture(0, "../tutorial/objects/bonus.jpg", 2);
+
+        // Init meshes
+        temp_object1 = ObjLoader::ModelFromObj("bonus", "data/circle.obj", material);
+        temp_object2 = ObjLoader::ModelFromObj("BonusObject", "data/sphere.obj", material);
+        root->AddChild(temp_object2);
+
+        // Setting Positions
+        temp_object2->AddChild(temp_object1);
+        temp_object2->Translate(-10 * (i + 1), Movable::Axis::Z); // Need to generate normally
+
+        // Fix Scaling
+        //temp_object2->Scale(Eigen::Vector3f(3.4, 3.4, 3.4));
+        temp_object2->isHidden = true;
+        //temp_object1->Scale(0.3, Movable::Axis::XYZ);
+        //temp_object1->Translate(6, Movable::Axis::Y);
+        //temp_object1->Translate(-1.5, Movable::Axis::Z);
+
+        // Adding to Stage objects list
+        stage_objects.push_back(temp_object2);
+        number_of_objects++;
+    }
+}
+
+void GameManager::BuildObstacleObjects() {
+    for (int i = 0; i < 3; i++) {
+        // Init materials
+        auto program = std::make_shared<Program>("shaders/basicShader");
+        auto material = std::make_shared<Material>("material", program);
+        material->AddTexture(0, "../tutorial/objects/obstacle.jpg", 2);
+
+        // Init meshes
+        temp_object1 = ObjLoader::ModelFromObj("obstacle", "data/circle.obj", material);
+        temp_object2 = ObjLoader::ModelFromObj("ObstacleObject", "data/sphere.obj", material);
+        root->AddChild(temp_object2);
+
+        // Setting Positions
+        temp_object2->AddChild(temp_object1);
+        temp_object2->Translate(-10 * (i + 1), Movable::Axis::Z); // Need to generate normally
+
+        // Fix Scaling
+        //temp_object2->Scale(Eigen::Vector3f(3.4, 3.4, 3.4));
+        temp_object2->isHidden = true;
+        //temp_object1->Scale(0.3, Movable::Axis::XYZ);
+        //temp_object1->Translate(6, Movable::Axis::Y);
+        //temp_object1->Translate(-1.5, Movable::Axis::Z);
+
+        // Adding to Stage objects list
+        stage_objects.push_back(temp_object2);
+        number_of_objects++;
+    }
 }
