@@ -29,7 +29,7 @@ public:
     void CollisionWithObject() override;
 
 private:
-    int health_value;
+    int health_value, current_health, max_health;
 };
 
 class ScoreObject : public GameObject

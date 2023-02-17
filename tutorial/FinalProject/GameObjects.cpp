@@ -46,9 +46,19 @@ void ObjectHandler::HandleCollision() {
 void HealthObject::InitObject(GameManager* game_manager) {
     this->game_manager = game_manager;
     this->stage_number = game_manager->selected_stage;
+    this->current_health = game_manager->current_health;
+    this->max_health = game_manager->stats.max_health;
 }
 
 void HealthObject::CollisionWithObject() {
+    health_value = stage_number * 10;
+    if (current_health + health_value > max_health) {
+        current_health = max_health;
+    }
+    else {
+        current_health += health_value;
+    }
+    game_manager->current_health = current_health;
     cout << "HealthObject" << endl;
 }
 

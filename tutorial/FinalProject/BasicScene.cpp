@@ -922,7 +922,7 @@ void BasicScene::GameMenuHandler() {
     Spacing(1);
 
     // Handle Health
-    gui_text = "Health: " + std::to_string(100);
+    gui_text = "Health: " + std::to_string(game_manager->current_health);
     ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), gui_text.c_str());
 
     ImGui::Spacing();
