@@ -371,7 +371,7 @@ void BasicScene::MenuManager() {
         buttons_size1 = ImVec2(width / 4, height / 8);
         buttons_size2 = ImVec2(width / 4, height / 16);
 
-        window_size1 = ImVec2((float(width)/float(height)) * 180 , (float(width)/float(height)) * 200);
+        window_size1 = ImVec2((float(width)) * 0.22 , (float(height)) * 0.3);
 
         font_scale1 = (2.f * width) / 800.f;
         font_scale2 = (1.f * width) / 800.f;
