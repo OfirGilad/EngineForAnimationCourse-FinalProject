@@ -57,3 +57,16 @@ void Leaderboard::ResetLeaderboard() {
     std::ofstream outfile("../tutorial/json/leaderboard.json");
     outfile << leaderboard_data.dump(4) << std::endl;
 }
+
+void Leaderboard::SaveLeaderboard() {
+    // Leaderboard data
+    for (int i = 0; i < 10; i++) {
+        string index = to_string(i);
+
+        leaderboard_data[index]["name"] = leaderboard_list[i].first;
+        leaderboard_data[index]["score"] = leaderboard_list[i].second;
+    }
+
+    std::ofstream outfile("../tutorial/json/leaderboard.json");
+    outfile << leaderboard_data.dump(4) << std::endl;
+}

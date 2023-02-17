@@ -148,7 +148,7 @@ void GameManager::BuildHealthObjects() {
 
         // Setting Positions
         temp_object2->AddChild(temp_object1);
-        temp_object2->Translate(-10 * (i + 1), Movable::Axis::Z); // Need to generate normally
+        temp_object2->Translate(-10 * (i + 1), Movable::Axis::Z); // Need to generate randomly
         
         // Fix Scaling
         temp_object2->Scale(Eigen::Vector3f(3.4, 3.4, 3.4));
@@ -170,7 +170,7 @@ void GameManager::BuildScoreObjects() {
 
         // Setting Positions
         temp_object2->AddChild(temp_object1);
-        temp_object2->Translate(-10 * (i + 1), Movable::Axis::Z); // Need to generate normally
+        temp_object2->Translate(-10 * (i + 1), Movable::Axis::Z); // Need to generate randomly
 
         // Fix Scaling
         //temp_object2->Scale(Eigen::Vector3f(3.4, 3.4, 3.4));
@@ -192,7 +192,7 @@ void GameManager::BuildGoldObjects() {
 
         // Setting Positions
         temp_object2->AddChild(temp_object1);
-        temp_object2->Translate(-10 * (i + 1), Movable::Axis::Z); // Need to generate normally
+        temp_object2->Translate(-10 * (i + 1), Movable::Axis::Z); // Need to generate randomly
 
         // Fix Scaling
         //temp_object2->Scale(Eigen::Vector3f(3.4, 3.4, 3.4));
@@ -214,7 +214,7 @@ void GameManager::BuildBonusObjects() {
 
         // Setting Positions
         temp_object2->AddChild(temp_object1);
-        temp_object2->Translate(-10 * (i + 1), Movable::Axis::Z); // Need to generate normally
+        temp_object2->Translate(-10 * (i + 1), Movable::Axis::Z); // Need to generate randomly
 
         // Fix Scaling
         //temp_object2->Scale(Eigen::Vector3f(3.4, 3.4, 3.4));
@@ -236,7 +236,7 @@ void GameManager::BuildObstacleObjects() {
 
         // Setting Positions
         temp_object2->AddChild(temp_object1);
-        temp_object2->Translate(-10 * (i + 1), Movable::Axis::Z); // Need to generate normally
+        temp_object2->Translate(-10 * (i + 1), Movable::Axis::Z); // Need to generate randomly
 
         // Fix Scaling
         //temp_object2->Scale(Eigen::Vector3f(3.4, 3.4, 3.4));

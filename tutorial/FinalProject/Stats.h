@@ -22,6 +22,7 @@ public:
 
     void InitStats();
     void NewGame(string name);
+    void SaveGame();
 
     bool save_data_available = false;
 

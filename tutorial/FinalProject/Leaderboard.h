@@ -22,6 +22,7 @@ public:
 
     void InitLeaderboard();
     void ResetLeaderboard();
+    void SaveLeaderboard();
 
     bool leaderboard_available = false;
 

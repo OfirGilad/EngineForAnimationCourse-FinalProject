@@ -22,12 +22,14 @@ void Stats::InitStats() {
         user_name = save_data["user_data"]["username"];
         gold = save_data["user_data"]["gold"];
 
+
         // Snake stats
         max_health = save_data["snake_stats"]["max_health"];
         score_multiplier = save_data["snake_stats"]["score_multiplier"];
         gold_multiplier = save_data["snake_stats"]["gold_multiplier"];
         bonuses_duration = save_data["snake_stats"]["bonuses_duration"];
         max_movement_speed = save_data["snake_stats"]["max_movement_speed"];
+
 
         // Statistics
         total_health_points_healed = save_data["statistics"]["total_health_points_healed"];
@@ -54,7 +56,8 @@ void Stats::NewGame(string name) {
     gold = 0;
 
     save_data["user_data"]["username"] = user_name;
-    save_data["user_data"]["gold"] = 0;
+    save_data["user_data"]["gold"] = gold;
+
 
     // Snake stats
     max_health = 100;
@@ -79,6 +82,35 @@ void Stats::NewGame(string name) {
     total_bonuses_collected = 0;
     total_deaths = 0;
 
+    save_data["statistics"]["total_health_points_healed"] = total_health_points_healed;
+    save_data["statistics"]["total_health_points_lost"] = total_health_points_lost;
+    save_data["statistics"]["total_score_points_earned"] = total_score_points_earned;
+    save_data["statistics"]["total_gold_earned"] = total_gold_earned;
+    save_data["statistics"]["total_gold_spent"] = total_gold_spent;
+    save_data["statistics"]["total_bonuses_collected"] = total_bonuses_collected;
+    save_data["statistics"]["total_deaths"] = total_deaths;
+
+
+    std::ofstream outfile("../tutorial/json/savedata.json");
+    outfile << save_data.dump(4) << std::endl;
+}
+
+
+void Stats::SaveGame() {
+    // User data
+    save_data["user_data"]["username"] = user_name;
+    save_data["user_data"]["gold"] = 0;
+
+
+    // Snake stats
+    save_data["snake_stats"]["max_health"] = max_health;
+    save_data["snake_stats"]["score_multiplier"] = score_multiplier;
+    save_data["snake_stats"]["gold_multiplier"] = gold_multiplier;
+    save_data["snake_stats"]["bonuses_duration"] = bonuses_duration;
+    save_data["snake_stats"]["max_movement_speed"] = max_movement_speed;
+
+
+    // Statistics
     save_data["statistics"]["total_health_points_healed"] = total_health_points_healed;
     save_data["statistics"]["total_health_points_lost"] = total_health_points_lost;
     save_data["statistics"]["total_score_points_earned"] = total_score_points_earned;
