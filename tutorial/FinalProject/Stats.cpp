@@ -99,7 +99,7 @@ void Stats::NewGame(string name) {
 void Stats::SaveGame() {
     // User data
     save_data["user_data"]["username"] = user_name;
-    save_data["user_data"]["gold"] = 0;
+    save_data["user_data"]["gold"] = gold;
 
 
     // Snake stats
