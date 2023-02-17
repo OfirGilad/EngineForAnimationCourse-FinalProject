@@ -532,7 +532,7 @@ void BasicScene::MainMenuHandler() {
     Spacing(5);
 
     // Handle Gold
-    gui_text = "Gold: " + std::to_string(0);
+    gui_text = "Gold: " + std::to_string(game_manager->stats.gold);
     ImGui::SetCursorPosX(text_position2);
     ImGui::TextColored(ImVec4(1.0, 1.0, 0.0, 1.0), gui_text.c_str());
 
@@ -606,7 +606,7 @@ void BasicScene::StageSelectionMenuHandler() {
 
     // Handle Gold
     ImGui::SetCursorPosX(text_position2);
-    gui_text = "Gold: " + std::to_string(0);
+    gui_text = "Gold: " + std::to_string(game_manager->stats.gold);
     ImGui::TextColored(ImVec4(1.0, 1.0, 0.0, 1.0), gui_text.c_str());
 
     Spacing(5);
@@ -662,7 +662,7 @@ void BasicScene::ShopMenuHandler() {
 
     // Handle Gold
     ImGui::SetCursorPosX(text_position2);
-    gui_text = "Gold: " + std::to_string(0);
+    gui_text = "Gold: " + std::to_string(game_manager->stats.gold);
     ImGui::TextColored(ImVec4(1.0, 1.0, 0.0, 1.0), gui_text.c_str());
 
     Spacing(5);
@@ -697,8 +697,8 @@ void BasicScene::ShopMenuHandler() {
     ImGui::SetCursorPosX(text_position2);
     ImGui::Text("X2 Gold");
     ImGui::SetCursorPosX(text_position2);
-    if (ImGui::Button("100 Gold", buttons_size2)) {
-        cout << "Increase Max Speed" << endl;
+    if (ImGui::Button("70 Gold", buttons_size2)) {
+        cout << "Increase X2 Gold" << endl;
     }
 
     Spacing(10);
@@ -922,19 +922,19 @@ void BasicScene::GameMenuHandler() {
     Spacing(1);
 
     // Handle Health
-    gui_text = "Health: " + std::to_string(game_manager->current_health);
+    gui_text = "Health: " + std::to_string(game_manager->stats.current_health);
     ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), gui_text.c_str());
 
     ImGui::Spacing();
 
     // Handle Score
-    gui_text = "Score: " + std::to_string(0);
+    gui_text = "Score: " + std::to_string(game_manager->stats.current_score);
     ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), gui_text.c_str());
 
     Spacing(1);
 
     // Handle Gold
-    gui_text = "Gold: " + std::to_string(0);
+    gui_text = "Gold: " + std::to_string(game_manager->stats.gold);
     ImGui::TextColored(ImVec4(1.0, 1.0, 0.0, 1.0), gui_text.c_str());
     
     Spacing(1);

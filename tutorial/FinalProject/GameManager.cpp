@@ -91,9 +91,9 @@ void GameManager::InitAxis() {
 
 void GameManager::InitStageParameters(bool new_stage) {
     if (new_stage) {
-        current_health = stats.max_health;
+        stats.current_health = stats.max_health;
         //current_health = 70;
-        current_score = 0;
+        stats.current_score = 0;
     }
 }
 
@@ -131,9 +131,9 @@ void GameManager::InitCustomObject() {
 }
 
 void GameManager::BuildGameObjects() {
-    BuildHealthObjects();
+    //BuildHealthObjects();
     //BuildScoreObjects();
-    //BuildGoldObjects();
+    BuildGoldObjects();
     //BuildBonusObjects();
     //BuildObstacleObjects();
 }

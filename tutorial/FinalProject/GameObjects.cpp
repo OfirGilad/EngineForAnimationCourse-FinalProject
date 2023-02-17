@@ -46,7 +46,7 @@ void ObjectHandler::HandleCollision() {
 void HealthObject::InitObject(GameManager* game_manager) {
     this->game_manager = game_manager;
     this->stage_number = game_manager->selected_stage;
-    this->current_health = game_manager->current_health;
+    this->current_health = game_manager->stats.current_health;
     this->max_health = game_manager->stats.max_health;
 }
 
@@ -58,7 +58,7 @@ void HealthObject::CollisionWithObject() {
     else {
         current_health += health_value;
     }
-    game_manager->current_health = current_health;
+    game_manager->stats.current_health = current_health;
     cout << "HealthObject" << endl;
 }
 
@@ -69,9 +69,14 @@ void HealthObject::CollisionWithObject() {
 void ScoreObject::InitObject(GameManager* game_manager) {
     this->game_manager = game_manager;
     this->stage_number = game_manager->selected_stage;
+    this->current_score = game_manager->stats.current_score;
 }
 
 void ScoreObject::CollisionWithObject() {
+    score_value = 10 * stage_number;
+    current_score = current_score + score_value;
+    game_manager->stats.current_score = current_score;
+    game_manager->stats.total_points_earned += score_value;
     cout << "ScoreObject" << endl;
 }
 
@@ -82,9 +87,16 @@ void ScoreObject::CollisionWithObject() {
 void GoldObject::InitObject(GameManager* game_manager) {
     this->game_manager = game_manager;
     this->stage_number = game_manager->selected_stage;
+    this->gold = game_manager->stats.gold;
+    this->gold_multiplier = game_manager->stats.gold_multiplier;
 }
 
 void GoldObject::CollisionWithObject() {
+    gold_value = 10 * stage_number * gold_multiplier;
+    gold = gold + gold_value;
+    game_manager->stats.gold = gold;
+    game_manager->stats.total_gold_earned += gold_value;
+    // add to statistics
     cout << "GoldObject" << endl;
 }
 

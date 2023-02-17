@@ -67,11 +67,6 @@ public:
     // Leaderboard
     Leaderboard leaderboard;
 
-    // Stage params
-    int current_health;
-    int current_score;
-    int objective_score;
-
 private:
     // Collision boxes for CollisionDetectionVisitor
     void InitCollisionBoxes();

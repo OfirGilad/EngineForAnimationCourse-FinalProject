@@ -42,6 +42,11 @@ public:
     int total_boosts_collected;
     int total_deaths;
 
+    // Stage stats
+    int current_health;
+    int current_score;
+    int objective_score;
+
 private:
     json save_data;
 };
