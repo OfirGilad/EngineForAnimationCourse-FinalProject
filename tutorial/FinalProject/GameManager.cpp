@@ -89,11 +89,11 @@ void GameManager::InitAxis() {
 }
 
 void GameManager::BuildGameObjects() {
-    //BuildHealthObjects();
+    BuildHealthObjects();
     //BuildScoreObjects();
     //BuildGoldObjects();
     //BuildBonusObjects();
-    BuildObstacleObjects();
+    //BuildObstacleObjects();
 }
 
 void GameManager::BuildHealthObjects() {
@@ -105,7 +105,7 @@ void GameManager::BuildHealthObjects() {
 
         // Init meshes
         temp_object1 = ObjLoader::ModelFromObj("heart", "../tutorial/objects/heart.obj", material);
-        temp_object2 = ObjLoader::ModelFromObj("HealthObject", "data/sphere.obj", material);
+        temp_object2 = Model::Create("HealthObject", Mesh::Cube(), material);
         root->AddChild(temp_object2);
 
         // Setting Positions
@@ -134,12 +134,12 @@ void GameManager::BuildScoreObjects() {
 
         // Init meshes
         temp_object1 = ObjLoader::ModelFromObj("score", "data/circle.obj", material);
-        temp_object2 = ObjLoader::ModelFromObj("ScoreObject", "data/sphere.obj", material);
+        temp_object2 = Model::Create("ScoreObject", Mesh::Cube(), material);
         root->AddChild(temp_object2);
 
         // Setting Positions
         temp_object2->AddChild(temp_object1);
-        temp_object2->Translate(-10 * (i + 1), Movable::Axis::Z); // Need to generate normally
+        temp_object2->Translate(-10 * (i + 1), Movable::Axis::Y); // Need to generate normally
 
         // Fix Scaling
         //temp_object2->Scale(Eigen::Vector3f(3.4, 3.4, 3.4));
@@ -163,12 +163,12 @@ void GameManager::BuildGoldObjects() {
 
         // Init meshes
         temp_object1 = ObjLoader::ModelFromObj("gold", "data/circle.obj", material);
-        temp_object2 = ObjLoader::ModelFromObj("GoldObject", "data/sphere.obj", material);
+        temp_object2 = Model::Create("GoldObject", Mesh::Cube(), material);
         root->AddChild(temp_object2);
 
         // Setting Positions
         temp_object2->AddChild(temp_object1);
-        temp_object2->Translate(-10 * (i + 1), Movable::Axis::Z); // Need to generate normally
+        temp_object2->Translate(-10 * (i + 1), Movable::Axis::X); // Need to generate normally
 
         // Fix Scaling
         //temp_object2->Scale(Eigen::Vector3f(3.4, 3.4, 3.4));
@@ -192,12 +192,12 @@ void GameManager::BuildBonusObjects() {
 
         // Init meshes
         temp_object1 = ObjLoader::ModelFromObj("bonus", "data/circle.obj", material);
-        temp_object2 = ObjLoader::ModelFromObj("BonusObject", "data/sphere.obj", material);
+        temp_object2 = Model::Create("BonusObject", Mesh::Cube(), material);
         root->AddChild(temp_object2);
 
         // Setting Positions
         temp_object2->AddChild(temp_object1);
-        temp_object2->Translate(-10 * (i + 1), Movable::Axis::Z); // Need to generate normally
+        temp_object2->Translate(10 * (i + 1), Movable::Axis::X); // Need to generate normally
 
         // Fix Scaling
         //temp_object2->Scale(Eigen::Vector3f(3.4, 3.4, 3.4));
@@ -221,12 +221,12 @@ void GameManager::BuildObstacleObjects() {
 
         // Init meshes
         temp_object1 = ObjLoader::ModelFromObj("obstacle", "data/circle.obj", material);
-        temp_object2 = ObjLoader::ModelFromObj("ObstacleObject", "data/sphere.obj", material);
+        temp_object2 = Model::Create("ObstacleObject", Mesh::Cube(), material);
         root->AddChild(temp_object2);
 
         // Setting Positions
         temp_object2->AddChild(temp_object1);
-        temp_object2->Translate(-10 * (i + 1), Movable::Axis::Z); // Need to generate normally
+        temp_object2->Translate(10 * (i + 1), Movable::Axis::Y); // Need to generate normally
 
         // Fix Scaling
         //temp_object2->Scale(Eigen::Vector3f(3.4, 3.4, 3.4));

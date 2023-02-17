@@ -25,12 +25,12 @@ namespace cg3d
 
             if (CheckSelfCollision()) {
                 _scene->SetAnimate(false);
-                cout << "Collision" << endl;
+                cout << "Self Collision" << endl;
             }
 
             if (CheckBackgoroundCollision()) {
                 _scene->SetAnimate(false);
-                cout << "Collision" << endl;
+                cout << "Backgound Collision" << endl;
             }
 
             if (game_manager->number_of_objects != 0) {
@@ -51,8 +51,6 @@ namespace cg3d
                         game_manager->root->RemoveChild(current_game_object);
                         game_manager->stage_objects.erase(game_manager->stage_objects.begin() + i);
                         game_manager->number_of_objects--;
-
-                        cout << "Collision" << endl;
                     }
                 }
             }
