@@ -14,7 +14,7 @@
 class GameObject
 {
 public:
-    virtual void InitObject(GameManager* game_manager) = 0;
+    virtual void InitObject(GameManager* game_manager);
     virtual void CollisionWithObject() = 0;
     virtual ~GameObject() {}
 
@@ -25,7 +25,6 @@ public:
 class HealthObject : public GameObject
 {
 public:
-    void InitObject(GameManager* game_manager) override;
     void CollisionWithObject() override;
 
 private:
@@ -35,7 +34,6 @@ private:
 class ScoreObject : public GameObject
 {
 public:
-    void InitObject(GameManager* game_manager) override;
     void CollisionWithObject() override;
 
 private:
@@ -45,7 +43,6 @@ private:
 class GoldObject : public GameObject
 {
 public:
-    void InitObject(GameManager* game_manager) override;
     void CollisionWithObject() override;
 
 private:
@@ -55,7 +52,6 @@ private:
 class BonusObject : public GameObject
 {
 public:
-    void InitObject(GameManager* game_manager) override;
     void CollisionWithObject() override;
 
 private:
@@ -65,11 +61,10 @@ private:
 class ObstacleObject : public GameObject
 {
 public:
-    void InitObject(GameManager* game_manager) override;
     void CollisionWithObject() override;
 
 private:
-    int damage_value;
+    int damage_value, current_health;
 };
 
 

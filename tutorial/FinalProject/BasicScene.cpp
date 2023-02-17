@@ -677,10 +677,19 @@ void BasicScene::ShopMenuHandler() {
     Spacing(5);
 
     ImGui::SetCursorPosX(text_position2);
-    ImGui::Text("Increase Max Speed");
+    ImGui::Text("X2 Score");
     ImGui::SetCursorPosX(text_position2);
-    if (ImGui::Button("25 Gold", buttons_size2)) {
-        cout << "Increase Max Speed" << endl;
+    if (ImGui::Button("60 Gold", buttons_size2)) {
+        cout << "Increase X2 Score" << endl;
+    }
+
+    Spacing(5);
+
+    ImGui::SetCursorPosX(text_position2);
+    ImGui::Text("X2 Gold");
+    ImGui::SetCursorPosX(text_position2);
+    if (ImGui::Button("70 Gold", buttons_size2)) {
+        cout << "Increase X2 Gold" << endl;
     }
 
     Spacing(5);
@@ -695,10 +704,10 @@ void BasicScene::ShopMenuHandler() {
     Spacing(5);
 
     ImGui::SetCursorPosX(text_position2);
-    ImGui::Text("X2 Gold");
+    ImGui::Text("Increase Max Speed");
     ImGui::SetCursorPosX(text_position2);
-    if (ImGui::Button("70 Gold", buttons_size2)) {
-        cout << "Increase X2 Gold" << endl;
+    if (ImGui::Button("25 Gold", buttons_size2)) {
+        cout << "Increase Max Speed" << endl;
     }
 
     Spacing(10);
@@ -740,7 +749,11 @@ void BasicScene::StatsMenuHandler() {
     ImGui::Text(gui_text.c_str());
 
     ImGui::SetCursorPosX(text_position3);
-    gui_text = "Max Movement Speed: " + std::to_string(game_manager->stats.max_movement_speed);
+    gui_text = "Score Multiplier: X" + std::to_string(game_manager->stats.score_multiplier);
+    ImGui::Text(gui_text.c_str());
+
+    ImGui::SetCursorPosX(text_position3);
+    gui_text = "Gold Multiplier: X" + std::to_string(game_manager->stats.gold_multiplier);
     ImGui::Text(gui_text.c_str());
 
     ImGui::SetCursorPosX(text_position3);
@@ -748,7 +761,7 @@ void BasicScene::StatsMenuHandler() {
     ImGui::Text(gui_text.c_str());
 
     ImGui::SetCursorPosX(text_position3);
-    gui_text = "Gold Multiplier: X" + std::to_string(game_manager->stats.gold_multiplier);
+    gui_text = "Max Movement Speed: " + std::to_string(game_manager->stats.max_movement_speed);
     ImGui::Text(gui_text.c_str());
 
     Spacing(5);
@@ -757,7 +770,15 @@ void BasicScene::StatsMenuHandler() {
     ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "Statistics");
 
     ImGui::SetCursorPosX(text_position3);
-    gui_text = "Total Points Earned: " + std::to_string(game_manager->stats.total_points_earned);
+    gui_text = "Total Health Points Healed: " + std::to_string(game_manager->stats.total_health_points_healed);
+    ImGui::Text(gui_text.c_str());
+
+    ImGui::SetCursorPosX(text_position3);
+    gui_text = "Total Health Points Lost: " + std::to_string(game_manager->stats.total_health_points_lost);
+    ImGui::Text(gui_text.c_str());
+
+    ImGui::SetCursorPosX(text_position3);
+    gui_text = "Total Score Points Earned: " + std::to_string(game_manager->stats.total_score_points_earned);
     ImGui::Text(gui_text.c_str());
 
     ImGui::SetCursorPosX(text_position3);
@@ -769,7 +790,7 @@ void BasicScene::StatsMenuHandler() {
     ImGui::Text(gui_text.c_str());
 
     ImGui::SetCursorPosX(text_position3);
-    gui_text = "Total Boosts Collected: " + std::to_string(game_manager->stats.total_boosts_collected);
+    gui_text = "Total Bonuses Collected: " + std::to_string(game_manager->stats.total_bonuses_collected);
     ImGui::Text(gui_text.c_str());
 
     ImGui::SetCursorPosX(text_position3);

@@ -38,27 +38,34 @@ void ObjectHandler::HandleCollision() {
     this->game_object->CollisionWithObject();
 }
 
+////////////////
+// GameObject //
+////////////////
+
+void GameObject::InitObject(GameManager* game_manager) {
+    this->game_manager = game_manager;
+}
 
 //////////////////
 // HealthObject //
 //////////////////
 
-void HealthObject::InitObject(GameManager* game_manager) {
-    this->game_manager = game_manager;
-    this->stage_number = game_manager->selected_stage;
-    this->current_health = game_manager->stats.current_health;
-    this->max_health = game_manager->stats.max_health;
-}
-
 void HealthObject::CollisionWithObject() {
+    // Get required parameters
+    stage_number = game_manager->selected_stage;
+    current_health = game_manager->stats.current_health;
+    max_health = game_manager->stats.max_health;
+
+    // Handle event
     health_value = stage_number * 10;
     if (current_health + health_value > max_health) {
-        current_health = max_health;
+        health_value = max_health - current_health;
     }
-    else {
-        current_health += health_value;
-    }
+    current_health += health_value;
+
+    // Update stats
     game_manager->stats.current_health = current_health;
+    game_manager->stats.total_health_points_healed += health_value;
     cout << "HealthObject" << endl;
 }
 
@@ -66,17 +73,18 @@ void HealthObject::CollisionWithObject() {
 // ScoreObject //
 /////////////////
 
-void ScoreObject::InitObject(GameManager* game_manager) {
-    this->game_manager = game_manager;
-    this->stage_number = game_manager->selected_stage;
-    this->current_score = game_manager->stats.current_score;
-}
-
 void ScoreObject::CollisionWithObject() {
+    // Get required parameters
+    stage_number = game_manager->selected_stage;
+    current_score = game_manager->stats.current_score;
+
+    // Handle event
     score_value = 10 * stage_number;
     current_score = current_score + score_value;
+
+    // Update stats
     game_manager->stats.current_score = current_score;
-    game_manager->stats.total_points_earned += score_value;
+    game_manager->stats.total_score_points_earned += score_value;
     cout << "ScoreObject" << endl;
 }
 
@@ -84,19 +92,19 @@ void ScoreObject::CollisionWithObject() {
 // GoldObject //
 ////////////////
 
-void GoldObject::InitObject(GameManager* game_manager) {
-    this->game_manager = game_manager;
-    this->stage_number = game_manager->selected_stage;
-    this->gold = game_manager->stats.gold;
-    this->gold_multiplier = game_manager->stats.gold_multiplier;
-}
-
 void GoldObject::CollisionWithObject() {
+    // Get required parameters
+    stage_number = game_manager->selected_stage;
+    gold = game_manager->stats.gold;
+    gold_multiplier = game_manager->stats.gold_multiplier;
+
+    // Handle event
     gold_value = 10 * stage_number * gold_multiplier;
     gold = gold + gold_value;
+
+    // Update stats
     game_manager->stats.gold = gold;
     game_manager->stats.total_gold_earned += gold_value;
-    // add to statistics
     cout << "GoldObject" << endl;
 }
 
@@ -104,12 +112,15 @@ void GoldObject::CollisionWithObject() {
 // BonusObject //
 /////////////////
 
-void BonusObject::InitObject(GameManager* game_manager) {
-    this->game_manager = game_manager;
-    this->stage_number = game_manager->selected_stage;
-}
-
 void BonusObject::CollisionWithObject() {
+    // Get required parameters
+    stage_number = game_manager->selected_stage;
+    bonus_duration = game_manager->stats.bonuses_duration;
+
+    // Handle event
+
+    // Update stats
+    game_manager->stats.total_bonuses_collected += 1;
     cout << "BonusObject" << endl;
 }
 
@@ -117,11 +128,20 @@ void BonusObject::CollisionWithObject() {
 // ObstacleObject //
 ////////////////////
 
-void ObstacleObject::InitObject(GameManager* game_manager) {
-    this->game_manager = game_manager;
-    this->stage_number = game_manager->selected_stage;
-}
-
 void ObstacleObject::CollisionWithObject() {
+    // Get required parameters
+    stage_number = game_manager->selected_stage;
+    current_health = game_manager->stats.current_health;
+
+    // Handle event
+    damage_value = 10 * stage_number;
+    if (current_health - damage_value < 0) {
+        damage_value = current_health;
+    }
+    current_health -= damage_value;
+
+    // Update stats
+    game_manager->stats.current_health = current_health;
+    game_manager->stats.total_health_points_lost += damage_value;
     cout << "ObstacleObject" << endl;
 }
