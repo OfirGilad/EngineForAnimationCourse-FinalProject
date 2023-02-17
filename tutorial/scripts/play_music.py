@@ -27,7 +27,6 @@ if __name__ == "__main__":
     music_file = sys.argv[1]
     # Current Directory: ./EngineForAnimationCourse-FinalProject/build
     os.chdir('../tutorial/sounds')
-    print(os.getcwd())
 
     while(True):
         play_music(music_file)

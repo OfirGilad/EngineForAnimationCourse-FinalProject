@@ -66,6 +66,9 @@ void HealthObject::CollisionWithObject() {
     // Update stats
     game_manager->stats.current_health = current_health;
     game_manager->stats.total_health_points_healed += health_value;
+
+    // Handle sound
+    game_manager->sound_manager.SoundHandler("health_object.mp3");
     cout << "HealthObject" << endl;
 }
 
@@ -85,6 +88,9 @@ void ScoreObject::CollisionWithObject() {
     // Update stats
     game_manager->stats.current_score = current_score;
     game_manager->stats.total_score_points_earned += score_value;
+
+    // Handle sound
+    game_manager->sound_manager.SoundHandler("score_object.mp3");
     cout << "ScoreObject" << endl;
 }
 
@@ -105,6 +111,9 @@ void GoldObject::CollisionWithObject() {
     // Update stats
     game_manager->stats.gold = gold;
     game_manager->stats.total_gold_earned += gold_value;
+
+    // Handle sound
+    game_manager->sound_manager.SoundHandler("gold_object.mp3");
     cout << "GoldObject" << endl;
 }
 
@@ -121,6 +130,9 @@ void BonusObject::CollisionWithObject() {
 
     // Update stats
     game_manager->stats.total_bonuses_collected += 1;
+
+    // Handle sound
+    game_manager->sound_manager.SoundHandler("bonus_object.mp3");
     cout << "BonusObject" << endl;
 }
 
@@ -143,5 +155,8 @@ void ObstacleObject::CollisionWithObject() {
     // Update stats
     game_manager->stats.current_health = current_health;
     game_manager->stats.total_health_points_lost += damage_value;
+
+    // Handle sound
+    game_manager->sound_manager.SoundHandler("obstacle_object.mp3");
     cout << "ObstacleObject" << endl;
 }

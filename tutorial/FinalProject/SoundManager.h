@@ -19,7 +19,8 @@ public:
     SoundManager();
 
     void MusicHandler(string music_file);
-
+    void SoundHandler(string sound_file);
+    void StopMusic();
     
     // Global Indexed
     int playing_index = -1;
@@ -28,6 +29,7 @@ public:
 
 private:
     // Make sure to set the correct python version
-    string python_exe = "python3.8.exe";
+    //string python_exe = "python3.8.exe"; //Desktop
+    string python_exe = "python3.10.exe"; //Laptop
     bool playing = false;
 };

@@ -25,11 +25,15 @@ namespace cg3d
 
             if (CheckSelfCollision()) {
                 _scene->SetAnimate(false);
+                game_manager->sound_manager.StopMusic();
+                game_manager->sound_manager.SoundHandler("game_over.mp3");
                 cout << "Self Collision" << endl;
             }
 
             if (CheckBackgoroundCollision()) {
                 _scene->SetAnimate(false);
+                game_manager->sound_manager.StopMusic();
+                game_manager->sound_manager.SoundHandler("game_over.mp3");
                 cout << "Backgound Collision" << endl;
             }
 
