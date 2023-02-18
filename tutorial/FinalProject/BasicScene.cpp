@@ -1123,8 +1123,8 @@ bool BasicScene::ProgramHandler(const Program& program) {
     bool default_behavior = true;
 
     if (program.name == "snake head program") {
-        program.SetUniform4f("lightColor", 0.7f, 0.7f, 0.4f, 0.5f);
-        program.SetUniform4f("Kai", 0.7f, 0.7f, 0.4f, 1.0f);
+        program.SetUniform4f("lightColor", 0.5f, 0.25f, 0.0f, 0.5f);
+        program.SetUniform4f("Kai", 0.5f, 0.25f, 0.0f, 1.0f);
         program.SetUniform4f("Kdi", 0.5f, 0.5f, 0.5f, 1.0f);
         program.SetUniform1f("specular_exponent", 5.0f);
         program.SetUniform4f("light_position", 0.0, -15.0f, 0.0, 1.0f);
@@ -1132,8 +1132,8 @@ bool BasicScene::ProgramHandler(const Program& program) {
         default_behavior = false;
     }
     if (program.name == "snake body program") {
-        program.SetUniform4f("lightColor", 0.7f, 0.7f, 0.4f, 0.5f);
-        program.SetUniform4f("Kai", 0.7f, 0.7f, 0.4f, 1.0f);
+        program.SetUniform4f("lightColor", 0.5f, 0.25f, 0.0f, 0.5f);
+        program.SetUniform4f("Kai", 0.5f, 0.25f, 0.0f, 1.0f);
         program.SetUniform4f("Kdi", 0.5f, 0.5f, 0.5f, 1.0f);
         program.SetUniform1f("specular_exponent", 5.0f);
         program.SetUniform4f("light_position", 0.0, 15.0f, 0.0, 1.0f);
