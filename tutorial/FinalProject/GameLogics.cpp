@@ -390,10 +390,6 @@ bool GameLogics::CollisionCheck(igl::AABB<Eigen::MatrixXd, 3>* object_tree1, igl
         AlignedBoxTransformer(object_tree2->m_box, cube2);
         model1->AddChild(cube1);
         model2->AddChild(cube2);
-        cube1->showFaces = false;
-        cube2->showFaces = false;
-        cube1->showWireframe = true;
-        cube2->showWireframe = true;
         cube1->Translate(Eigen::Vector3f(0, 0, 0));
         cube2->Translate(Eigen::Vector3f(0, 0, 0));
 
@@ -430,8 +426,8 @@ bool GameLogics::BoxesIntersectionCheck(Eigen::AlignedBox<double, 3>& aligned_bo
     // Matrix C (Where: C=A^T*B)
     Eigen::Matrix3d C = A.transpose() * B;
     // Get the lengths of the sides of the bounding box
-    //Eigen::Vector3d a = aligned_box1.sizes() * model1->scale_vector;
-    //Eigen::Vector3d b = aligned_box2.sizes() * model2->scale_vector;
+    //Eigen::Vector3d a = aligned_box1.sizes();
+    //Eigen::Vector3d b = aligned_box2.sizes();
     Eigen::Vector3d a = Eigen::Vector3d(aligned_box1.sizes()[0] * model1->scale_vector[0], aligned_box1.sizes()[1] * model1->scale_vector[1], aligned_box1.sizes()[2] * model1->scale_vector[2]);
     Eigen::Vector3d b = Eigen::Vector3d(aligned_box2.sizes()[0] * model2->scale_vector[0], aligned_box2.sizes()[1] * model2->scale_vector[1], aligned_box2.sizes()[2] * model2->scale_vector[2]);
     a = a / 2;

@@ -37,6 +37,16 @@ void Snake::InitSnake(int num_of_bones)
     snake_bones[i]->isHidden = true;
     i++;
 
+    // Add Snake Head custom mesh
+    auto program1 = std::make_shared<Program>("shaders/basicShader");
+    auto material1 = std::make_shared<Material>("snake_material", program1);
+    material1->AddTexture(0, "textures/carbon.jpg", 2);
+    snake_head = ObjLoader::ModelFromObj("snake head", "../tutorial/objects/snake_head.obj", material1);
+    snake_bones[first_index]->AddChild(snake_head);
+    snake_head->Scale(0.09);
+    snake_head->RotateByDegree(180, Movable::Axis::Y);
+    snake_head->Translate(0.8, Movable::Axis::Z);
+
     while(i < number_of_bones)
     {
         snake_bones.push_back(ObjLoader::ModelFromObj("bone " + to_string(i), "data/zcylinder.obj", snake_material));
@@ -61,7 +71,7 @@ void Snake::ShowSnake() {
         snake_body->isHidden = false;
     }
     else {
-        for (int i = 0; i < number_of_bones; i++) {
+        for (int i = 1; i < number_of_bones; i++) {
             snake_bones[i]->isHidden = false;
         }
     }
@@ -72,10 +82,23 @@ void Snake::HideSnake() {
         snake_body->isHidden = true;
     }
     else {
-        for (int i = 0; i < number_of_bones; i++) {
+        for (int i = 1; i < number_of_bones; i++) {
             snake_bones[i]->isHidden = true;
         }
     }
+}
+
+void Snake::ResetSnakePosition() {
+    snake_bones[first_index]->SetTransform(Matrix4f::Identity());
+
+    /*int i = 1;
+    while (i < number_of_bones)
+    {
+        snake_bones[i]->SetTransform(Matrix4f::Identity());
+        snake_bones[i]->Translate(bone_size, Movable::Axis::Z);
+        i++;
+    }*/
+    Skinning();
 }
 
 // Snake Movement
@@ -120,7 +143,7 @@ void Snake::UpdateCameraView()
 {
     snake_bones[first_index]->AddChild(camera_list[0]);
     snake_bones[first_index]->AddChild(camera_list[1]);
-    Vector3f camera_translation = camera_list[1]->GetRotation() * Vector3f(0, 0.5, 0);
+    Vector3f camera_translation = camera_list[1]->GetRotation() * Vector3f(0, 0.6, 0.8);
     camera_list[1]->Translate(camera_translation);
 }
 

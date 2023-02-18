@@ -47,6 +47,7 @@ public:
 
     void ShowSnake();
     void HideSnake();
+    void ResetSnakePosition();
 
     void MoveUp();
     void MoveDown();
@@ -72,8 +73,8 @@ private:
     
     vector<std::shared_ptr<Camera>> camera_list;
     std::shared_ptr<Movable> root;
-    std::vector<std::shared_ptr<cg3d::Model>> snake_bones;
-    std::shared_ptr <cg3d::Model> snake_body;
+    std::vector<std::shared_ptr<Model>> snake_bones;
+    std::shared_ptr <Model> snake_head, snake_body;
     float bone_size = 1.6;
     int number_of_bones = 0;
     int first_index = 0;

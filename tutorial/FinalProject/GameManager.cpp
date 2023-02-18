@@ -46,7 +46,8 @@ void GameManager::UnloadStage() {
     root->RemoveChild(background);
     root->RemoveChild(axis);
     snake.HideSnake();
-    
+    snake.ResetSnakePosition();
+
     // And unload all other objects
 }
 
@@ -58,6 +59,10 @@ void GameManager::InitCollisionBoxes() {
     auto cubeMesh2{ IglLoader::MeshFromFiles("cube2", "data/cube.off") };
     cube1 = Model::Create("cube1", cubeMesh1, material);
     cube2 = Model::Create("cube2", cubeMesh1, material);
+    cube1->showFaces = false;
+    cube2->showFaces = false;
+    cube1->showWireframe = true;
+    cube2->showWireframe = true;
 }
 
 void GameManager::InitBackground() {

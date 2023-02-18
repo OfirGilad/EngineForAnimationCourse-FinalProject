@@ -1010,6 +1010,7 @@ void BasicScene::GameMenuHandler() {
     Spacing(2);
 
     if (ImGui::Button("Back to Main Menu")) {
+        game_manager->UnloadStage();
         menu_index = MainMenu;
     }
 
