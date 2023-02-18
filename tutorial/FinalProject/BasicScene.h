@@ -37,7 +37,7 @@ public:
 
     // Menu Managmenet
     void MenuManager();
-    enum MenuMapping { LoginMenu, MainMenu, StageSelectionMenu, ShopMenu, StatsMenu, HallOfFameMenu, CreditsMenu, GameMenu };
+    enum MenuMapping { LoginMenu, MainMenu, StageSelectionMenu, ShopMenu, StatsMenu, HallOfFameMenu, CreditsMenu, StageMenu, StageCompletedMenu, StageFailedMenu };
 
     void LoginMenuHandler();
     void MainMenuHandler();
@@ -46,7 +46,9 @@ public:
     void StageSelectionMenuHandler();
     void HallOfFameMenuHandler();
     void CreditsMenuHandler();
-    void GameMenuHandler();  
+    void StageMenuHandler();
+    void StageCompletedMenuHandler();
+    void StageFailedMenuHandler();
     void Spacing(int number_of_spacing);
 
 

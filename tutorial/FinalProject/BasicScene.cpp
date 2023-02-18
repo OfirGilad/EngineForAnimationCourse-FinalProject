@@ -87,7 +87,7 @@ void BasicScene::MouseCallback(Viewport* viewport, int x, int y, int button, int
     if (ImGui::GetIO().WantCaptureMouse) return;
 
     // Handle coming back 
-    if (menu_index != GameMenu) {
+    if (menu_index != StageMenu) {
         return;
     }
     else if ((x < window_size1.x) && (y < window_size1.y)) {
@@ -403,8 +403,14 @@ void BasicScene::MenuManager() {
         case CreditsMenu:
             CreditsMenuHandler();
             break;
-        case GameMenu:
-            GameMenuHandler();
+        case StageMenu:
+            StageMenuHandler();
+            break;
+        case StageCompletedMenu:
+            StageCompletedMenuHandler();
+            break;
+        case StageFailedMenu:
+            StageFailedMenuHandler();
             break;
     }
 }
@@ -626,7 +632,7 @@ void BasicScene::StageSelectionMenuHandler() {
             cout << gui_text.c_str() << endl;
             game_manager->sound_manager.stage_index = i;
             game_manager->LoadStage(i);
-            menu_index = GameMenu;
+            menu_index = StageMenu;
         }
     }
 
@@ -920,7 +926,7 @@ void BasicScene::CreditsMenuHandler() {
     ImGui::End();
 }
 
-void BasicScene::GameMenuHandler() {
+void BasicScene::StageMenuHandler() {
     string stage_music;
     if (game_manager->sound_manager.playing_index != -game_manager->sound_manager.stage_index) {
         stage_music = "stage" + std::to_string(game_manager->sound_manager.stage_index) + ".mp3";
@@ -938,7 +944,13 @@ void BasicScene::GameMenuHandler() {
     //ImGui::SetWindowFontScale(font_scale1);
     ImGui::SetWindowFontScale(font_scale2);
 
-    ImGui::TextColored(ImVec4(0.0, 0.5, 1.0, 1.0), "Game Menu");
+    ImGui::TextColored(ImVec4(1.0, 0.5, 1.0, 1.0), "Stage Menu");
+
+    Spacing(1);
+
+    // Handle Stage
+    gui_text = "Stage: " + std::to_string(game_manager->selected_stage);
+    ImGui::TextColored(ImVec4(0.0, 0.0, 1.0, 1.0), gui_text.c_str());
 
     Spacing(1);
 
@@ -946,7 +958,7 @@ void BasicScene::GameMenuHandler() {
     gui_text = "Health: " + std::to_string(game_manager->stats.current_health);
     ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), gui_text.c_str());
 
-    ImGui::Spacing();
+    Spacing(1);
 
     // Handle Score
     gui_text = "Score: " + std::to_string(game_manager->stats.current_score);
@@ -1013,6 +1025,46 @@ void BasicScene::GameMenuHandler() {
         game_manager->UnloadStage();
         menu_index = MainMenu;
     }
+
+    ImGui::End();
+}
+
+void BasicScene::StageCompletedMenuHandler() {
+    int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
+    bool* pOpen = nullptr;
+    string gui_text;
+
+    ImGui::Begin("Menu", pOpen, flags);
+    ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
+    ImGui::SetWindowSize(window_size1, ImGuiCond_Always);
+    //ImGui::SetWindowFontScale(font_scale1);
+    ImGui::SetWindowFontScale(font_scale2);
+
+    ImGui::TextColored(ImVec4(0.0, 0.5, 1.0, 1.0), "Stage Completed");
+
+    // Continue
+    // Shop
+    // Back to main menu -> Trigger High Score
+
+    ImGui::End();
+}
+
+void BasicScene::StageFailedMenuHandler() {
+    int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
+    bool* pOpen = nullptr;
+    string gui_text;
+
+    ImGui::Begin("Menu", pOpen, flags);
+    ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
+    ImGui::SetWindowSize(window_size1, ImGuiCond_Always);
+    //ImGui::SetWindowFontScale(font_scale1);
+    ImGui::SetWindowFontScale(font_scale2);
+
+    ImGui::TextColored(ImVec4(0.0, 0.5, 1.0, 1.0), "Stage Faild");
+
+    // Retry -> Reset Score
+    // Shop
+    // Back to main menu -> Trigger High Score
 
     ImGui::End();
 }
