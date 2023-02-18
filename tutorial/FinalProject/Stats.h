@@ -31,9 +31,9 @@ public:
     int gold;
 
     // Stage stats
-    int current_health;
-    int current_score;
-    int objective_score;
+    int current_health = 0;
+    int current_score = 0;
+    int objective_score = 0;
 
     // Snake stats
     int max_health;

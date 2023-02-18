@@ -570,6 +570,7 @@ void BasicScene::MainMenuHandler() {
 
     ImGui::SetCursorPosX(text_position2);
     if (ImGui::Button("Shop", buttons_size2)) {
+        last_menu_index = MainMenu;
         menu_index = ShopMenu;
     }
 
@@ -737,7 +738,7 @@ void BasicScene::ShopMenuHandler() {
 
     ImGui::SetCursorPosX(text_position2);
     if (ImGui::Button("Back", buttons_size1)) {
-        menu_index = MainMenu;
+        menu_index = last_menu_index;
     }
 
     ImGui::End();
@@ -1053,19 +1054,68 @@ void BasicScene::StageMenuHandler() {
 }
 
 void BasicScene::StageCompletedMenuHandler() {
+    // Menu with no sound
+    game_manager->sound_manager.StopMusic();
+
     int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
     bool* pOpen = nullptr;
     string gui_text;
 
+    ImVec2 window_pos_x = ImVec2(float(width - 0.25 * width) / 2.f, float(height - 0.4 * height) / 2.f);
+    ImVec2 window_size_x = ImVec2((float(width)) * 0.22, (float(height)) * 0.4);
+
+    float position_x1x = float(width) * 0.045f;
+    float position_x2 = float(width) * 0.03f;
+
+    ImVec2 buttons_size_x = ImVec2(width / 6, height / 16);
+
     ImGui::Begin("Menu", pOpen, flags);
-    ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
-    ImGui::SetWindowSize(window_size1, ImGuiCond_Always);
+    ImGui::SetWindowPos(window_pos_x, ImGuiCond_Always);
+    ImGui::SetWindowSize(window_size_x, ImGuiCond_Always);
     //ImGui::SetWindowFontScale(font_scale1);
     ImGui::SetWindowFontScale(font_scale2);
 
-    ImGui::TextColored(ImVec4(0.0, 0.5, 1.0, 1.0), "Stage Completed");
+    ImGui::SetCursorPosX(position_x1x);
+    ImGui::TextColored(ImVec4(0.0, 1.0, 0.5, 1.0), "Stage Completed");
 
-    // Continue
+    Spacing(5);
+
+    // Handle Score
+    ImGui::SetCursorPosX(position_x2);
+    gui_text = "Score: " + std::to_string(game_manager->stats.current_score);
+    ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), gui_text.c_str());
+
+    Spacing(1);
+
+    // Handle Gold
+    ImGui::SetCursorPosX(position_x2);
+    gui_text = "Gold: " + std::to_string(game_manager->stats.gold);
+    ImGui::TextColored(ImVec4(1.0, 1.0, 0.0, 1.0), gui_text.c_str());
+
+    Spacing(5);
+
+    // If there is no more stages -> Display end game -> Move to credits
+    ImGui::SetCursorPosX(position_x2);
+    if (ImGui::Button("Continue", buttons_size_x)) {
+        menu_index = StageSelectionMenu;
+    }
+
+    Spacing(5);
+
+    ImGui::SetCursorPosX(position_x2);
+    if (ImGui::Button("Shop", buttons_size_x)) {
+        last_menu_index = StageCompletedMenu;
+        menu_index = ShopMenu;
+    }
+
+    Spacing(5);
+
+    ImGui::SetCursorPosX(position_x2);
+    if (ImGui::Button("Back To Main Menu", buttons_size_x)) {
+        menu_index = MainMenu;
+    }
+
+    // Continue -> move to next stage OR trigger end of game -> Trigger High Score (IF END OF GAME)
     // Shop
     // Back to main menu -> Trigger High Score
 
@@ -1073,20 +1123,69 @@ void BasicScene::StageCompletedMenuHandler() {
 }
 
 void BasicScene::StageFailedMenuHandler() {
+    // Menu with no sound
+    game_manager->sound_manager.StopMusic();
+
     int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
     bool* pOpen = nullptr;
     string gui_text;
 
+    ImVec2 window_pos_x = ImVec2(float(width - 0.25 * width) / 2.f, float(height - 0.4 * height) / 2.f);
+    ImVec2 window_size_x = ImVec2((float(width)) * 0.22, (float(height)) * 0.4);
+
+    float position_x1 = float(width) * 0.06f;
+    float position_x2 = float(width) * 0.03f;
+
+    ImVec2 buttons_size_x = ImVec2(width / 6, height / 16);
+
     ImGui::Begin("Menu", pOpen, flags);
-    ImGui::SetWindowPos(ImVec2(0, 0));
-    ImGui::SetWindowSize(window_size1, ImGuiCond_Always);
+    ImGui::SetWindowPos(window_pos_x, ImGuiCond_Always);
+    ImGui::SetWindowSize(window_size_x, ImGuiCond_Always);
     //ImGui::SetWindowFontScale(font_scale1);
     ImGui::SetWindowFontScale(font_scale2);
 
-    ImGui::TextColored(ImVec4(0.0, 0.5, 1.0, 1.0), "Stage Failed");
-    draw();
+    ImGui::SetCursorPosX(position_x1);
+    ImGui::TextColored(ImVec4(1.0, 0.5, 0.0, 1.0), "Stage Failed");
 
-    // Retry -> Reset Score
+    Spacing(5);
+
+    // Handle Score
+    ImGui::SetCursorPosX(position_x2);
+    gui_text = "Score: " + std::to_string(game_manager->stats.current_score);
+    ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), gui_text.c_str());
+
+    Spacing(1);
+
+    // Handle Gold
+    ImGui::SetCursorPosX(position_x2);
+    gui_text = "Gold: " + std::to_string(game_manager->stats.gold);
+    ImGui::TextColored(ImVec4(1.0, 1.0, 0.0, 1.0), gui_text.c_str());
+
+    Spacing(5);
+
+    ImGui::SetCursorPosX(position_x2);
+    if (ImGui::Button("Retry", buttons_size_x)) {
+        menu_index = StageSelectionMenu;
+    }
+
+    Spacing(5);
+
+    ImGui::SetCursorPosX(position_x2);
+    if (ImGui::Button("Shop", buttons_size_x)) {
+        last_menu_index = StageFailedMenu;
+        menu_index = ShopMenu;
+    }
+
+    Spacing(5);
+
+    ImGui::SetCursorPosX(position_x2);
+    if (ImGui::Button("Back To Main Menu", buttons_size_x)) {
+        menu_index = MainMenu;
+    }
+
+    // Display Score
+    // Display Gold
+    // Retry -> -> Trigger High Score -> Sends to stage selection menu
     // Shop
     // Back to main menu -> Trigger High Score
 
@@ -1094,6 +1193,9 @@ void BasicScene::StageFailedMenuHandler() {
 }
 
 void BasicScene::NewHighScoreMenuHandler() {
+    // Menu with no sound
+    game_manager->sound_manager.StopMusic();
+
     int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
     bool* pOpen = nullptr;
     string gui_text;
@@ -1104,11 +1206,35 @@ void BasicScene::NewHighScoreMenuHandler() {
     //ImGui::SetWindowFontScale(font_scale1);
     ImGui::SetWindowFontScale(font_scale2);
 
-    ImGui::TextColored(ImVec4(0.0, 0.5, 1.0, 1.0), "New High Score");
 
-    // Retry -> Reset Score
-    // Shop
-    // Back to main menu -> Trigger High Score
+    ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "N");
+    ImGui::SameLine();
+    ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "e");
+    ImGui::SameLine();
+    ImGui::TextColored(ImVec4(0.0, 0.0, 1.0, 1.0), "w");
+    ImGui::SameLine();
+    ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), " H");
+    ImGui::SameLine();
+    ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "i");
+    ImGui::SameLine();
+    ImGui::TextColored(ImVec4(0.0, 0.0, 1.0, 1.0), "g");
+    ImGui::SameLine();
+    ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "h");
+    ImGui::SameLine();
+    ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), " S");
+    ImGui::SameLine();
+    ImGui::TextColored(ImVec4(0.0, 0.0, 1.0, 1.0), "c");
+    ImGui::SameLine();
+    ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "o");
+    ImGui::SameLine();
+    ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "r");
+    ImGui::SameLine();
+    ImGui::TextColored(ImVec4(0.0, 0.0, 1.0, 1.0), "e");
+
+    // Display score
+    // Text to fill 3 letters
+    // Apply name
+    // Back to main menu 
 
     ImGui::End();
 }

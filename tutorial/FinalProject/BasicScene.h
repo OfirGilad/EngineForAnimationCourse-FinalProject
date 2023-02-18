@@ -99,7 +99,8 @@ private:
     ImVec2 buttons_size1, buttons_size2, window_size1;
     float font_scale1, font_scale2, text_position1, text_position2, text_position3;
 
-    int menu_index = LoginMenu;
+    int menu_index = StageCompletedMenu;
+    int last_menu_index = MainMenu;
     int display_keys = 0;
     bool payed_credits = false;
     bool display_new_game = true;
