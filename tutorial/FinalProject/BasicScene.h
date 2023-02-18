@@ -101,7 +101,12 @@ private:
     bool payed_credits = false;
     bool display_new_game = true;
 
-    // Invalid Parameters Checks
+    // Invalid Checks
+    bool ShopMenu_InvalidGold1 = false;
+    bool ShopMenu_InvalidGold2 = false;
+    bool ShopMenu_InvalidGold3 = false;
+    bool ShopMenu_InvalidGold4 = false;
+    bool ShopMenu_InvalidGold5 = false;
     bool NewHighScoreMenu_InvalidParameter = false;
 
 

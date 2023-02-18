@@ -273,15 +273,33 @@ void BasicScene::KeyCallback(Viewport* viewport, int x, int y, int key, int scan
                 cout << "Gold Debug" << endl;
                 break;
             case GLFW_KEY_EQUAL:
-                if (debug_parameter == 1) game_manager->stats.current_health += 10;
-                if (debug_parameter == 2) game_manager->stats.current_score += 10;
-                if (debug_parameter == 3) game_manager->stats.gold += 10;
+                if (debug_parameter == 1) {
+                    game_manager->stats.current_health += 10;
+                    game_manager->stats.total_health_points_healed += 10;
+                }
+                if (debug_parameter == 2) {
+                    game_manager->stats.current_score += 10;
+                    game_manager->stats.total_score_points_earned += 10;
+                }
+                if (debug_parameter == 3) {
+                    game_manager->stats.gold += 10;
+                    game_manager->stats.total_gold_earned += 10;
+                }
                 cout << "+ Debug" << endl;
                 break;
             case GLFW_KEY_MINUS:
-                if (debug_parameter == 1) game_manager->stats.current_health -= 10;
-                if (debug_parameter == 2) game_manager->stats.current_score -= 10;
-                if (debug_parameter == 3) game_manager->stats.gold -= 10;
+                if (debug_parameter == 1) {
+                    game_manager->stats.current_health -= 10;
+                    game_manager->stats.total_health_points_lost += 10;
+                }
+                if (debug_parameter == 2) {
+                    game_manager->stats.current_score -= 10;
+                    // No event
+                }
+                if (debug_parameter == 3) {
+                    game_manager->stats.gold -= 10;
+                    game_manager->stats.total_gold_spent += 10;
+                }
                 cout << "- Debug" << endl;
                 break;
         }
@@ -623,6 +641,7 @@ void BasicScene::ShopMenuHandler() {
     int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
     bool* pOpen = nullptr;
     string gui_text;
+    int item1_cost, item2_cost, item3_cost, item4_cost, item5_cost;
 
     ImGui::Begin("Menu", pOpen, flags);
     ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
@@ -637,16 +656,38 @@ void BasicScene::ShopMenuHandler() {
 
     // Handle Gold
     ImGui::SetCursorPosX(text_position2);
-    gui_text = "Gold: " + std::to_string(game_manager->stats.gold);
+    int gold = game_manager->stats.gold;
+    gui_text = "Gold: " + std::to_string(gold);
     ImGui::TextColored(ImVec4(1.0, 1.0, 0.0, 1.0), gui_text.c_str());
 
     Spacing(5);
 
     ImGui::SetCursorPosX(text_position2);
-    ImGui::Text("Increase Max Health");
+    int max_health = game_manager->stats.max_health;
+    gui_text = "Increase Max Health (Current: " + to_string(max_health) + ")";
+    ImGui::Text(gui_text.c_str());
+
     ImGui::SetCursorPosX(text_position2);
-    if (ImGui::Button("100 Gold", buttons_size2)) {
-        cout << "Increase Max Health" << endl;
+    item1_cost = max_health;
+    gui_text = to_string(item1_cost) + " Gold###1";
+    if (ImGui::Button(gui_text.c_str(), buttons_size2)) {
+        if (gold >= item1_cost) {
+            game_manager->stats.max_health += 10;
+            game_manager->stats.gold -= item1_cost;
+            game_manager->stats.total_gold_spent += item1_cost;
+            cout << "Increase Max Health" << endl;
+        }
+        else {
+            ShopMenu_InvalidGold1 = true;
+            ShopMenu_InvalidGold2 = false;
+            ShopMenu_InvalidGold3 = false;
+            ShopMenu_InvalidGold4 = false;
+            ShopMenu_InvalidGold5 = false;
+        }
+    }
+    if (ShopMenu_InvalidGold1) {
+        ImGui::SetCursorPosX(text_position2);
+        ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "You don't have enoguh gold!");
     }
 
     Spacing(5);
@@ -654,7 +695,7 @@ void BasicScene::ShopMenuHandler() {
     ImGui::SetCursorPosX(text_position2);
     ImGui::Text("X2 Score");
     ImGui::SetCursorPosX(text_position2);
-    if (ImGui::Button("60 Gold", buttons_size2)) {
+    if (ImGui::Button("100 Gold###2", buttons_size2)) {
         cout << "Increase X2 Score" << endl;
     }
 
@@ -663,7 +704,7 @@ void BasicScene::ShopMenuHandler() {
     ImGui::SetCursorPosX(text_position2);
     ImGui::Text("X2 Gold");
     ImGui::SetCursorPosX(text_position2);
-    if (ImGui::Button("70 Gold", buttons_size2)) {
+    if (ImGui::Button("70 Gold###3", buttons_size2)) {
         cout << "Increase X2 Gold" << endl;
     }
 
@@ -672,7 +713,7 @@ void BasicScene::ShopMenuHandler() {
     ImGui::SetCursorPosX(text_position2);
     ImGui::Text("Increase Bonuses Duration");
     ImGui::SetCursorPosX(text_position2);
-    if (ImGui::Button("50 Gold", buttons_size2)) {
+    if (ImGui::Button("50 Gold###4", buttons_size2)) {
         cout << "Increase Bonuses Duration" << endl;
     }
 
@@ -681,7 +722,7 @@ void BasicScene::ShopMenuHandler() {
     ImGui::SetCursorPosX(text_position2);
     ImGui::Text("Increase Max Speed");
     ImGui::SetCursorPosX(text_position2);
-    if (ImGui::Button("25 Gold", buttons_size2)) {
+    if (ImGui::Button("25 Gold###5", buttons_size2)) {
         cout << "Increase Max Speed" << endl;
     }
 
@@ -975,8 +1016,8 @@ void BasicScene::StageMenuHandler() {
         ImGui::Text("D - Move snake right");
         ImGui::Text("V - Switch view forward");
         ImGui::Text("B - Switch view backward");
-        ImGui::Text("UP - Switch camera view up");
-        ImGui::Text("DOWN - Switch camera view down");
+        ImGui::Text("UP - Increase snake speed");
+        ImGui::Text("DOWN - Decrease snake speed");
         ImGui::Text("LEFT - Rotate snake left");
         ImGui::Text("RIGHT - Rotate snake right");
         ImGui::Text("ESC - Exit game");
@@ -998,6 +1039,7 @@ void BasicScene::StageMenuHandler() {
 
 
     if (game_manager->stats.current_health == 0) {
+        SetAnimate(false);
         game_manager->sound_manager.SoundHandler("game_over.mp3");
         menu_index = StageFailedMenu;
     }
