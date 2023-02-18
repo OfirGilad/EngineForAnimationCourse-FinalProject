@@ -27,7 +27,7 @@ public:
     
 
     // Camera Management
-    void SwitchView();
+    void SwitchView(bool next);
     void InitRotationModes();
 
 
@@ -37,7 +37,19 @@ public:
 
     // Menu Managmenet
     void MenuManager();
-    enum MenuMapping { LoginMenu, MainMenu, StageSelectionMenu, ShopMenu, StatsMenu, HallOfFameMenu, CreditsMenu, StageMenu, StageCompletedMenu, StageFailedMenu };
+    enum MenuMapping { 
+        LoginMenu, 
+        MainMenu, 
+        StageSelectionMenu, 
+        ShopMenu, 
+        StatsMenu, 
+        HallOfFameMenu, 
+        CreditsMenu, 
+        StageMenu, 
+        StageCompletedMenu, 
+        StageFailedMenu, 
+        NewHighScoreMenu
+    };
 
     void LoginMenuHandler();
     void MainMenuHandler();
@@ -49,7 +61,11 @@ public:
     void StageMenuHandler();
     void StageCompletedMenuHandler();
     void StageFailedMenuHandler();
+    void NewHighScoreMenuHandler();
     void Spacing(int number_of_spacing);
+
+    // Programs Handler
+    bool ProgramHandler(const Program& program);
 
 
 private:
@@ -68,7 +84,7 @@ private:
 
 
     // Camera list Params
-    std::vector<std::shared_ptr<cg3d::Camera>> camera_list{ 2 };
+    std::vector<std::shared_ptr<cg3d::Camera>> camera_list{ 3 };
     int camera_index = 0;
     int number_of_cameras = 0;
 

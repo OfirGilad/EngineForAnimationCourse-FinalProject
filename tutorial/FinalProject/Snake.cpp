@@ -38,14 +38,14 @@ void Snake::InitSnake(int num_of_bones)
     i++;
 
     // Add Snake Head custom mesh
-    auto program1 = std::make_shared<Program>("shaders/basicShader");
-    auto material1 = std::make_shared<Material>("snake_material", program1);
-    material1->AddTexture(0, "textures/carbon.jpg", 2);
-    snake_head = ObjLoader::ModelFromObj("snake head", "../tutorial/objects/snake_head.obj", material1);
+    auto snake_program = std::make_shared<Program>("shaders/phongShader");
+    auto snake_head_material = std::make_shared<Material>("snake_material", snake_program);
+    snake_head_material->program->name = "snake head program";
+    snake_head = ObjLoader::ModelFromObj("snake head", "../tutorial/objects/snake_head.obj", snake_head_material);
     snake_bones[first_index]->AddChild(snake_head);
     snake_head->Scale(0.09);
     snake_head->RotateByDegree(180, Movable::Axis::Y);
-    snake_head->Translate(0.8, Movable::Axis::Z);
+    snake_head->Translate(0.0, Movable::Axis::Z);
 
     while(i < number_of_bones)
     {
@@ -71,7 +71,7 @@ void Snake::ShowSnake() {
         snake_body->isHidden = false;
     }
     else {
-        for (int i = 1; i < number_of_bones; i++) {
+        for (int i = 0; i < number_of_bones; i++) {
             snake_bones[i]->isHidden = false;
         }
     }
@@ -82,7 +82,7 @@ void Snake::HideSnake() {
         snake_body->isHidden = true;
     }
     else {
-        for (int i = 1; i < number_of_bones; i++) {
+        for (int i = 0; i < number_of_bones; i++) {
             snake_bones[i]->isHidden = true;
         }
     }
@@ -141,10 +141,19 @@ void Snake::RollRight()
 
 void Snake::UpdateCameraView()
 {
+    // Set global view
     snake_bones[first_index]->AddChild(camera_list[0]);
+
+    // Set snake front view
     snake_bones[first_index]->AddChild(camera_list[1]);
-    Vector3f camera_translation = camera_list[1]->GetRotation() * Vector3f(0, 0.6, 0.8);
-    camera_list[1]->Translate(camera_translation);
+    Vector3f camera_translation1 = camera_list[1]->GetRotation() * Vector3f(0, 0.6, 0.6);
+    camera_list[1]->Translate(camera_translation1);
+
+    // Set snake back view
+    snake_bones[first_index]->AddChild(camera_list[2]);
+    Vector3f camera_translation2 = camera_list[2]->GetRotation() * Vector3f(0, 0.6, -4);
+    camera_list[2]->Translate(camera_translation2);
+    camera_list[2]->RotateByDegree(180, Movable::Axis::Y);
 }
 
 
@@ -178,8 +187,9 @@ void Snake::SkinningInit() {
     }
 
     // Create snake mesh
-    auto program = std::make_shared<Program>("shaders/basicShader");
+    auto program = std::make_shared<Program>("shaders/phongShader");
     auto material = std::make_shared<Material>("snake_material", program);
+    material->program->name = "snake body program";
     auto snake_mesh{IglLoader::MeshFromFiles("snake_igl", "data/snake1.obj")};
     snake_body = Model::Create("snake", snake_mesh, material);
     root->AddChild(snake_body);

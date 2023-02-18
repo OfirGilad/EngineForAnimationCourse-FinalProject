@@ -15,7 +15,7 @@ void SoundManager::MusicHandler(string music_file) {
         system(command.c_str());
     };
 
-    if (player_status) {
+    if (player_enabled) {
         if (playing) {
             // Kill The Previous Music Player
             playing = false;
@@ -42,7 +42,7 @@ void SoundManager::SoundHandler(string sound_file) {
         std::string command = "python ../tutorial/scripts/play_sound.py \"" + sound_file + "\"";
         system(command.c_str());
     };
-    if (player_status) {
+    if (player_enabled) {
         std::thread t2(PlaySound, sound_file);
         t2.detach();
     }

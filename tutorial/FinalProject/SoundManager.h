@@ -25,7 +25,7 @@ public:
     // Global Indexed
     int playing_index = -1;
     int stage_index = 0;
-    bool player_status = false;
+    bool player_enabled = false;
 
 private:
     // Make sure to set the correct python version

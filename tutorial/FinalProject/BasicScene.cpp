@@ -51,7 +51,8 @@ void BasicScene::Init(float fov, int width, int height, float near, float far)
     // Set camera list
     camera_list.resize(camera_list.capacity());
     camera_list[0] = Camera::Create("global view", fov, float(width) / height, near, far);
-    camera_list[1] = Camera::Create("snake view", fov, float(width) / height, near, far);
+    camera_list[1] = Camera::Create("snake front view", fov, float(width) / height, near, far);
+    camera_list[2] = Camera::Create("snake back view", fov, float(width) / height, near, far);
 
     camera = camera_list[0];
     number_of_cameras = camera_list.size();
@@ -74,11 +75,15 @@ void BasicScene::Init(float fov, int width, int height, float near, float far)
 void BasicScene::Update(const Program& program, const Eigen::Matrix4f& proj, const Eigen::Matrix4f& view, const Eigen::Matrix4f& model)
 {
     Scene::Update(program, proj, view, model);
-    program.SetUniform4f("lightColor", 0.8f, 0.3f, 0.0f, 0.5f);
-    program.SetUniform4f("Kai", 1.0f, 0.3f, 0.6f, 1.0f);
-    program.SetUniform4f("Kdi", 0.5f, 0.5f, 0.0f, 1.0f);
-    program.SetUniform1f("specular_exponent", 5.0f);
-    program.SetUniform4f("light_position", 0.0, 15.0f, 0.0, 1.0f);
+    
+    // If ProgramHandler finds known program -> skip default setup
+    if (ProgramHandler(program)) {
+        program.SetUniform4f("lightColor", 0.8f, 0.3f, 0.0f, 0.5f);
+        program.SetUniform4f("Kai", 1.0f, 0.3f, 0.6f, 1.0f);
+        program.SetUniform4f("Kdi", 0.5f, 0.5f, 0.0f, 1.0f);
+        program.SetUniform1f("specular_exponent", 5.0f);
+        program.SetUniform4f("light_position", 0.0, 15.0f, 0.0, 1.0f);
+    }
 }
 
 void BasicScene::MouseCallback(Viewport* viewport, int x, int y, int button, int action, int mods, int buttonState[])
@@ -283,7 +288,10 @@ void BasicScene::KeyCallback(Viewport* viewport, int x, int y, int key, int scan
             //    camera->TranslateInSystem(system, {0, 0, -0.1f});
             //    break;
             case GLFW_KEY_V:
-                SwitchView();
+                SwitchView(true);
+                break;
+            case GLFW_KEY_B:
+                SwitchView(false);
                 break;
             case GLFW_KEY_SPACE:
                 this->animate = !this->animate;
@@ -322,9 +330,15 @@ void BasicScene::AddViewportCallback(Viewport* _viewport)
 
 
 
-void BasicScene::SwitchView()
+void BasicScene::SwitchView(bool next)
 {
-    camera_index = (camera_index + 1) % number_of_cameras;
+    if (next) {
+        camera_index = (camera_index + 1) % number_of_cameras;
+    }
+    else {
+        camera_index = (camera_index + 2) % number_of_cameras;
+    }
+    
     camera = camera_list[camera_index];
     viewport->camera = camera;
 }
@@ -411,6 +425,9 @@ void BasicScene::MenuManager() {
             break;
         case StageFailedMenu:
             StageFailedMenuHandler();
+            break;
+        case NewHighScoreMenu:
+            NewHighScoreMenuHandler();
             break;
     }
 }
@@ -1026,6 +1043,12 @@ void BasicScene::StageMenuHandler() {
         menu_index = MainMenu;
     }
 
+
+    if (game_manager->stats.current_health == 0) {
+        game_manager->sound_manager.SoundHandler("game_over.mp3");
+        menu_index = StageFailedMenu;
+    }
+
     ImGui::End();
 }
 
@@ -1055,12 +1078,33 @@ void BasicScene::StageFailedMenuHandler() {
     string gui_text;
 
     ImGui::Begin("Menu", pOpen, flags);
+    ImGui::SetWindowPos(ImVec2(0, 0));
+    ImGui::SetWindowSize(window_size1, ImGuiCond_Always);
+    //ImGui::SetWindowFontScale(font_scale1);
+    ImGui::SetWindowFontScale(font_scale2);
+
+    ImGui::TextColored(ImVec4(0.0, 0.5, 1.0, 1.0), "Stage Failed");
+    draw();
+
+    // Retry -> Reset Score
+    // Shop
+    // Back to main menu -> Trigger High Score
+
+    ImGui::End();
+}
+
+void BasicScene::NewHighScoreMenuHandler() {
+    int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
+    bool* pOpen = nullptr;
+    string gui_text;
+
+    ImGui::Begin("Menu", pOpen, flags);
     ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
     ImGui::SetWindowSize(window_size1, ImGuiCond_Always);
     //ImGui::SetWindowFontScale(font_scale1);
     ImGui::SetWindowFontScale(font_scale2);
 
-    ImGui::TextColored(ImVec4(0.0, 0.5, 1.0, 1.0), "Stage Faild");
+    ImGui::TextColored(ImVec4(0.0, 0.5, 1.0, 1.0), "New High Score");
 
     // Retry -> Reset Score
     // Shop
@@ -1073,4 +1117,29 @@ void BasicScene::Spacing(int number_of_spacing) {
     for (int i = 0; i < number_of_spacing; i++) {
         ImGui::Spacing();
     }
+}
+
+bool BasicScene::ProgramHandler(const Program& program) {
+    bool default_behavior = true;
+
+    if (program.name == "snake head program") {
+        program.SetUniform4f("lightColor", 0.7f, 0.7f, 0.4f, 0.5f);
+        program.SetUniform4f("Kai", 0.7f, 0.7f, 0.4f, 1.0f);
+        program.SetUniform4f("Kdi", 0.5f, 0.5f, 0.5f, 1.0f);
+        program.SetUniform1f("specular_exponent", 5.0f);
+        program.SetUniform4f("light_position", 0.0, -15.0f, 0.0, 1.0f);
+
+        default_behavior = false;
+    }
+    if (program.name == "snake body program") {
+        program.SetUniform4f("lightColor", 0.7f, 0.7f, 0.4f, 0.5f);
+        program.SetUniform4f("Kai", 0.7f, 0.7f, 0.4f, 1.0f);
+        program.SetUniform4f("Kdi", 0.5f, 0.5f, 0.5f, 1.0f);
+        program.SetUniform1f("specular_exponent", 5.0f);
+        program.SetUniform4f("light_position", 0.0, 15.0f, 0.0, 1.0f);
+
+        default_behavior = false;
+    }
+
+    return default_behavior;
 }
