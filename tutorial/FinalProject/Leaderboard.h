@@ -23,6 +23,8 @@ public:
     void InitLeaderboard();
     void ResetLeaderboard();
     void SaveLeaderboard();
+    int CalculateLeaderboardPosition(int score);
+    void AddScoreToLeaderboard(int position, string name, int score);
 
     bool leaderboard_available = false;
 

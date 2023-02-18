@@ -50,6 +50,8 @@ void SoundManager::SoundHandler(string sound_file) {
 
 void SoundManager::StopMusic() {
     if (playing) {
+        playing_index = -1;
+
         // Kill The Previous Music Player
         playing = false;
         std::string kill_command = "taskkill /f /im " + python_exe;

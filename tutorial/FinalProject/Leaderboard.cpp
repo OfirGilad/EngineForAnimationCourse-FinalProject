@@ -70,3 +70,19 @@ void Leaderboard::SaveLeaderboard() {
     std::ofstream outfile("../tutorial/json/leaderboard.json");
     outfile << leaderboard_data.dump(4) << std::endl;
 }
+
+int Leaderboard::CalculateLeaderboardPosition(int score) {
+    for (int i = 0; i < 10; i++) {
+        if (score > leaderboard_list[i].second) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void Leaderboard::AddScoreToLeaderboard(int position, string name, int score) {
+    auto leaderboard_list_iterator = leaderboard_list.begin() + position;
+    // Insert element with value 9 at 4th Position in vector
+    leaderboard_list.insert(leaderboard_list_iterator, { name, score });
+    leaderboard_list.pop_back();
+}

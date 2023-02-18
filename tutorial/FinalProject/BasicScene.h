@@ -99,4 +99,11 @@ private:
     bool display_keys = false;
     bool payed_credits = false;
     bool display_new_game = true;
+
+    // Invalid Parameters Checks
+    bool NewHighScoreMenu_InvalidParameter = false;
+
+
+    // Debug mode
+    int debug_parameter = 1;
 };

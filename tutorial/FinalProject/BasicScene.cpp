@@ -254,9 +254,35 @@ void BasicScene::KeyCallback(Viewport* viewport, int x, int y, int key, int scan
             case GLFW_KEY_B:
                 SwitchView(false);
                 break;
+
+            // Debug Mode Buttons
             case GLFW_KEY_SPACE:
                 this->animate = !this->animate;
                 cout << this->animate << endl;
+                break;
+            case GLFW_KEY_1:
+                debug_parameter = 1;
+                cout << "Health Debug" << endl;
+                break;
+            case GLFW_KEY_2:
+                debug_parameter = 2;
+                cout << "Score Debug" << endl;
+                break;
+            case GLFW_KEY_3:
+                debug_parameter = 3;
+                cout << "Gold Debug" << endl;
+                break;
+            case GLFW_KEY_EQUAL:
+                if (debug_parameter == 1) game_manager->stats.current_health += 10;
+                if (debug_parameter == 2) game_manager->stats.current_score += 10;
+                if (debug_parameter == 3) game_manager->stats.gold += 10;
+                cout << "+ Debug" << endl;
+                break;
+            case GLFW_KEY_MINUS:
+                if (debug_parameter == 1) game_manager->stats.current_health -= 10;
+                if (debug_parameter == 2) game_manager->stats.current_score -= 10;
+                if (debug_parameter == 3) game_manager->stats.gold -= 10;
+                cout << "- Debug" << endl;
                 break;
         }
     }
@@ -1119,15 +1145,24 @@ void BasicScene::StageFailedMenuHandler() {
 }
 
 void BasicScene::NewHighScoreMenuHandler() {
-    // Menu with no sound
-    game_manager->sound_manager.StopMusic();
+    if (game_manager->sound_manager.playing_index != HallOfFameMenu) {
+        game_manager->sound_manager.MusicHandler("hall_of_fame.mp3");
+        game_manager->sound_manager.playing_index = CreditsMenu;
+    }
+
+    int position = game_manager->leaderboard.CalculateLeaderboardPosition(game_manager->stats.current_score);
+    // No new high score found
+    if (position == -1) {
+        menu_index = MainMenu;
+        return;
+    }
 
     int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
     bool* pOpen = nullptr;
     string gui_text;
 
     ImVec2 window_pos_x = ImVec2(float(width - 0.4 * width) / 2.f, float(height - 0.5 * height) / 2.f);
-    ImVec2 window_size_xx = ImVec2((float(width)) * 0.4, (float(height)) * 0.45);
+    ImVec2 window_size_xx = ImVec2((float(width)) * 0.4, (float(height)) * 0.5);
 
     float position_x1xx = float(width) * 0.025f;
     float position_x2 = float(width) * 0.03f;
@@ -1174,15 +1209,14 @@ void BasicScene::NewHighScoreMenuHandler() {
     Spacing(5);
 
     ImGui::SetCursorPosX(position_x1xx);
-    int i = 0;
-    gui_text = to_string(i + 1) + ".";
-    if (i == 0) {
+    gui_text = to_string(position + 1) + ".";
+    if (position == 0) {
         ImGui::TextColored(ImVec4(201.f / 176.f, 149.f / 255.f, 55.f / 255.f, 1.0), gui_text.c_str());
     }
-    else if (i == 1) {
+    else if (position == 1) {
         ImGui::TextColored(ImVec4(180.f / 255.f, 180.f / 255.f, 180.f / 255.f, 1.0), gui_text.c_str());
     }
-    else if (i == 2) {
+    else if (position == 2) {
         ImGui::TextColored(ImVec4(173.f / 255.f, 138.f / 255.f, 86.f / 255.f, 1.0), gui_text.c_str());
     }
     else {
@@ -1201,9 +1235,19 @@ void BasicScene::NewHighScoreMenuHandler() {
 
     ImGui::SetCursorPosX(position_x1xx);
     if (ImGui::Button("Apply", buttons_size_xx)) {
-        //name
-        //game_manager->leaderboard.ResetLeaderboard();
-        menu_index = MainMenu;
+        if (string(name).length() == 3) {
+            NewHighScoreMenu_InvalidParameter = false;
+            game_manager->leaderboard.AddScoreToLeaderboard(position, name, game_manager->stats.current_score);
+            menu_index = MainMenu;
+        }
+        else {
+            NewHighScoreMenu_InvalidParameter = true;
+        }
+    }
+
+    if (NewHighScoreMenu_InvalidParameter) {
+        ImGui::SetCursorPosX(position_x1xx);
+        ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "Invalid Code Name!");
     }
 
     Spacing(5);
@@ -1212,11 +1256,6 @@ void BasicScene::NewHighScoreMenuHandler() {
     if (ImGui::Button("Back To Main Menu", buttons_size_xx)) {
         menu_index = MainMenu;
     }
-
-    // Display score
-    // Text to fill 3 letters
-    // Apply name
-    // Back to main menu 
 
     ImGui::End();
 }
