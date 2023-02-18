@@ -1014,7 +1014,7 @@ void BasicScene::StageCompletedMenuHandler() {
     string gui_text;
 
     ImVec2 window_pos_x = ImVec2(float(width - 0.25 * width) / 2.f, float(height - 0.4 * height) / 2.f);
-    ImVec2 window_size_x = ImVec2((float(width)) * 0.22, (float(height)) * 0.4);
+    ImVec2 window_size_x = ImVec2((float(width)) * 0.22, (float(height)) * 0.42);
 
     float position_x1x = float(width) * 0.045f;
     float position_x2 = float(width) * 0.03f;
@@ -1032,6 +1032,14 @@ void BasicScene::StageCompletedMenuHandler() {
 
     Spacing(5);
 
+    // Handle Stage
+    ImGui::SetCursorPosX(position_x2);
+    int current_stage = game_manager->selected_stage;
+    gui_text = "Stage: " + std::to_string(current_stage);
+    ImGui::TextColored(ImVec4(0.0, 0.0, 1.0, 1.0), gui_text.c_str());
+
+    Spacing(1);
+
     // Handle Score
     ImGui::SetCursorPosX(position_x2);
     gui_text = "Score: " + std::to_string(game_manager->stats.current_score);
@@ -1046,10 +1054,20 @@ void BasicScene::StageCompletedMenuHandler() {
 
     Spacing(5);
 
-    // If there is no more stages -> Display end game -> Move to credits
     ImGui::SetCursorPosX(position_x2);
-    if (ImGui::Button("Continue", buttons_size_x)) {
-        menu_index = StageMenu;
+    if (current_stage == 3) {
+        if (ImGui::Button("End Game", buttons_size_x)) {
+            next_menu_index = CreditsMenu;
+            menu_index = NewHighScoreMenu;
+        }
+    }
+    else {
+        if (ImGui::Button("Continue", buttons_size_x)) {
+            current_stage++;
+            game_manager->sound_manager.stage_index = current_stage;
+            game_manager->LoadStage(current_stage);
+            menu_index = StageMenu;
+        }
     }
 
     Spacing(5);
@@ -1064,12 +1082,9 @@ void BasicScene::StageCompletedMenuHandler() {
 
     ImGui::SetCursorPosX(position_x2);
     if (ImGui::Button("Back To Main Menu", buttons_size_x)) {
-        menu_index = MainMenu;
+        next_menu_index = MainMenu;
+        menu_index = NewHighScoreMenu;
     }
-
-    // Continue -> move to next stage OR trigger end of game -> Trigger High Score (IF END OF GAME)
-    // Shop
-    // Back to main menu -> Trigger High Score
 
     ImGui::End();
 }
@@ -1083,7 +1098,7 @@ void BasicScene::StageFailedMenuHandler() {
     string gui_text;
 
     ImVec2 window_pos_x = ImVec2(float(width - 0.25 * width) / 2.f, float(height - 0.4 * height) / 2.f);
-    ImVec2 window_size_x = ImVec2((float(width)) * 0.22, (float(height)) * 0.4);
+    ImVec2 window_size_x = ImVec2((float(width)) * 0.22, (float(height)) * 0.42);
 
     float position_x1 = float(width) * 0.06f;
     float position_x2 = float(width) * 0.03f;
@@ -1101,6 +1116,13 @@ void BasicScene::StageFailedMenuHandler() {
 
     Spacing(5);
 
+    // Handle Stage
+    ImGui::SetCursorPosX(position_x2);
+    gui_text = "Stage: " + std::to_string(game_manager->selected_stage);
+    ImGui::TextColored(ImVec4(0.0, 0.0, 1.0, 1.0), gui_text.c_str());
+
+    Spacing(1);
+
     // Handle Score
     ImGui::SetCursorPosX(position_x2);
     gui_text = "Score: " + std::to_string(game_manager->stats.current_score);
@@ -1117,7 +1139,8 @@ void BasicScene::StageFailedMenuHandler() {
 
     ImGui::SetCursorPosX(position_x2);
     if (ImGui::Button("Retry", buttons_size_x)) {
-        menu_index = StageSelectionMenu;
+        next_menu_index = StageSelectionMenu;
+        menu_index = NewHighScoreMenu;
     }
 
     Spacing(5);
@@ -1132,14 +1155,9 @@ void BasicScene::StageFailedMenuHandler() {
 
     ImGui::SetCursorPosX(position_x2);
     if (ImGui::Button("Back To Main Menu", buttons_size_x)) {
-        menu_index = MainMenu;
+        next_menu_index = MainMenu;
+        menu_index = NewHighScoreMenu;
     }
-
-    // Display Score
-    // Display Gold
-    // Retry -> -> Trigger High Score -> Sends to stage selection menu
-    // Shop
-    // Back to main menu -> Trigger High Score
 
     ImGui::End();
 }
@@ -1153,7 +1171,7 @@ void BasicScene::NewHighScoreMenuHandler() {
     int position = game_manager->leaderboard.CalculateLeaderboardPosition(game_manager->stats.current_score);
     // No new high score found
     if (position == -1) {
-        menu_index = MainMenu;
+        menu_index = next_menu_index;
         return;
     }
 
@@ -1238,7 +1256,7 @@ void BasicScene::NewHighScoreMenuHandler() {
         if (string(name).length() == 3) {
             NewHighScoreMenu_InvalidParameter = false;
             game_manager->leaderboard.AddScoreToLeaderboard(position, name, game_manager->stats.current_score);
-            menu_index = MainMenu;
+            menu_index = next_menu_index;
         }
         else {
             NewHighScoreMenu_InvalidParameter = true;

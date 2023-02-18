@@ -93,8 +93,9 @@ private:
     ImVec2 buttons_size1, buttons_size2, window_size1;
     float font_scale1, font_scale2, text_position1, text_position2, text_position3;
 
-    int menu_index = NewHighScoreMenu;
-    int last_menu_index = MainMenu;
+    int menu_index = MainMenu;
+    int last_menu_index = MainMenu; // For ShopMenu
+    int next_menu_index = MainMenu; // For NewHighScoreMenu
 
     bool display_keys = false;
     bool payed_credits = false;
