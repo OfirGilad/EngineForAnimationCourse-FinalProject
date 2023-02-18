@@ -26,9 +26,8 @@ public:
     void ViewportSizeCallback(cg3d::Viewport* _viewport) override;
     
 
-    // Camera Management
+    // Camera View Management
     void SwitchView(bool next);
-    void InitRotationModes();
 
 
     // Game Manager
@@ -67,8 +66,8 @@ public:
     // Programs Handler
     bool ProgramHandler(const Program& program);
 
-
 private:
+    // SceneWithImGui expend
     void BuildImGui() override;
     cg3d::Viewport* viewport = nullptr;
 
@@ -77,31 +76,27 @@ private:
     std::shared_ptr<Movable> root;
 
 
-    // Camera Params
+    // Camera parameters
     int distance = 50;
     int degree = -15;
     Eigen::Vector3f camera_translation = Eigen::Vector3f(0, 15, 50);
 
 
-    // Camera list Params
+    // Camera list parameters
     std::vector<std::shared_ptr<cg3d::Camera>> camera_list{ 3 };
     int camera_index = 0;
     int number_of_cameras = 0;
 
 
-    // View modes
-    std::vector<std::vector<std::pair<int, Axis>>> translation_modes;
-    int up_down_mode = 0, left_right_mode = 0;
-
-
-    // Menu Params
+    // Menu parameters
     int width, height;
     ImVec2 buttons_size1, buttons_size2, window_size1;
     float font_scale1, font_scale2, text_position1, text_position2, text_position3;
 
-    int menu_index = StageCompletedMenu;
+    int menu_index = NewHighScoreMenu;
     int last_menu_index = MainMenu;
-    int display_keys = 0;
+
+    bool display_keys = false;
     bool payed_credits = false;
     bool display_new_game = true;
 };

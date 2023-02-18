@@ -59,6 +59,7 @@ void BasicScene::Init(float fov, int width, int height, float near, float far)
 
     AddChild(root = Movable::Create("root")); // a common (invisible) parent object for all the shapes
 
+
     // Camera Setup
     camera->Translate(camera_translation);
     camera->RotateByDegree(degree, Axis::X);
@@ -67,9 +68,6 @@ void BasicScene::Init(float fov, int width, int height, float near, float far)
     // Create Game Manager
     game_manager = new GameManager();
     game_manager->InitGameManager(root, camera_list);
-
-    // Init camera rotations modes
-    InitRotationModes();
 }
 
 void BasicScene::Update(const Program& program, const Eigen::Matrix4f& proj, const Eigen::Matrix4f& view, const Eigen::Matrix4f& model)
@@ -194,11 +192,6 @@ void BasicScene::KeyCallback(Viewport* viewport, int x, int y, int key, int scan
 
     auto system = camera->GetRotation().transpose();
 
-    int translation = translation_modes[up_down_mode][left_right_mode].first;
-    Axis axis = translation_modes[up_down_mode][left_right_mode].second;
-
-    Matrix3f Kp = Matrix3f();
-
     if (action == GLFW_PRESS || action == GLFW_REPEAT) {
         switch (key) // NOLINT(hicpp-multiway-paths-covered)
         {
@@ -226,67 +219,35 @@ void BasicScene::KeyCallback(Viewport* viewport, int x, int y, int key, int scan
                 }
                 break;
             case GLFW_KEY_UP:
-                if ((camera_list[0] == camera) && ((up_down_mode == 0 || up_down_mode == 2) && left_right_mode == 0)) {
-                    camera->Translate(-translation, axis);
-                    camera->RotateByDegree(90, Vector3f(-1, 0, 0));
-                    up_down_mode = (up_down_mode + 1) % 3;
-
-                    translation = translation_modes[up_down_mode][left_right_mode].first;
-                    axis = translation_modes[up_down_mode][left_right_mode].second;
-                    camera->Translate(translation, axis);
+                if (GetAnimate()) {
+                    if (game_manager->stats.current_movement_speed < game_manager->stats.max_movement_speed) {
+                        game_manager->stats.current_movement_speed += 1;
+                    }
+                    else {
+                        cout << "Max movement speed already reached" << endl;
+                    }
                 }
-
-                //camera->TranslateInSystem(system, {0, 0.1f, 0});
                 break;
             case GLFW_KEY_DOWN:
-                if ((camera_list[0] == camera) && ((up_down_mode == 0 || up_down_mode == 1) && left_right_mode == 0)) {
-                    camera->Translate(-translation, axis);
-                    camera->RotateByDegree(90, Vector3f(1, 0, 0));
-                    up_down_mode = (up_down_mode + 2) % 3;
-
-                    translation = translation_modes[up_down_mode][left_right_mode].first;
-                    axis = translation_modes[up_down_mode][left_right_mode].second;
-                    camera->Translate(translation, axis);
+                if (GetAnimate()) {
+                    if (game_manager->stats.current_movement_speed > game_manager->stats.min_movement_speed) {
+                        game_manager->stats.current_movement_speed -= 1;
+                    }
+                    else {
+                        cout << "Min movement speed already reached" << endl;
+                    }
                 }
-
-                //camera->TranslateInSystem(system, {0, -0.1f, 0});
                 break;
             case GLFW_KEY_LEFT:
-                //if ((camera_list[0] == camera) && (up_down_mode == 0)) {
-                //    camera->Translate(-translation, axis);
-                //    camera->RotateByDegree(90, Vector3f(0, -1, 0));
-                //    left_right_mode = (left_right_mode + 1) % 4;
-                //
-                //    translation = translation_modes[up_down_mode][left_right_mode].first;
-                //    axis = translation_modes[up_down_mode][left_right_mode].second;
-                //    camera->Translate(translation, axis);
-                //}
-                
-                game_manager->snake.RollLeft();
-
-                //camera->TranslateInSystem(system, {-0.1f, 0, 0});
+                if (GetAnimate()) {
+                    game_manager->snake.RollLeft();
+                }
                 break;
             case GLFW_KEY_RIGHT:
-                //if ((camera_list[0] == camera) && (up_down_mode == 0)) {
-                //    camera->Translate(-translation, axis);
-                //    camera->RotateByDegree(90, Vector3f(0, 1, 0));
-                //    left_right_mode = (left_right_mode + 3) % 4;
-                //
-                //    translation = translation_modes[up_down_mode][left_right_mode].first;
-                //    axis = translation_modes[up_down_mode][left_right_mode].second;
-                //    camera->Translate(translation, axis);
-                //}
-
-                game_manager->snake.RollRight();
-
-                //camera->TranslateInSystem(system, {0.1f, 0, 0});
+                if (GetAnimate()) {
+                    game_manager->snake.RollRight();
+                }
                 break;
-            //case GLFW_KEY_B:
-            //    camera->TranslateInSystem(system, {0, 0, 0.1f});
-            //    break;
-            //case GLFW_KEY_F:
-            //    camera->TranslateInSystem(system, {0, 0, -0.1f});
-            //    break;
             case GLFW_KEY_V:
                 SwitchView(true);
                 break;
@@ -301,7 +262,6 @@ void BasicScene::KeyCallback(Viewport* viewport, int x, int y, int key, int scan
     }
 }
 
-// Game Menu
 void BasicScene::BuildImGui() {
     MenuManager();
 }
@@ -329,7 +289,6 @@ void BasicScene::AddViewportCallback(Viewport* _viewport)
 }
 
 
-
 void BasicScene::SwitchView(bool next)
 {
     if (next) {
@@ -343,41 +302,7 @@ void BasicScene::SwitchView(bool next)
     viewport->camera = camera;
 }
 
-void BasicScene::InitRotationModes() {
-    // Global camera static view modes:
-    vector<pair<int, Axis>> sub_translation_modes1;
-    sub_translation_modes1.push_back({ distance, Axis::Z });  // Front
-    sub_translation_modes1.push_back({ -distance, Axis::X }); // Right
-    sub_translation_modes1.push_back({ -distance, Axis::Z }); // Back
-    sub_translation_modes1.push_back({ distance, Axis::X });  // Left
-    translation_modes.push_back(sub_translation_modes1);
 
-    vector<pair<int, Axis>> sub_translation_modes2;
-    sub_translation_modes2.push_back({ distance, Axis::Y });  // Top
-    //sub_translation_modes2.push_back({ -distance, Axis::X });
-    //sub_translation_modes2.push_back({ -distance, Axis::X });
-    //sub_translation_modes2.push_back({ distance, Axis::Y });
-    translation_modes.push_back(sub_translation_modes2);
-
-    vector<pair<int, Axis>> sub_translation_modes3;
-    sub_translation_modes3.push_back({ -distance, Axis::Y }); // Bottom
-    //sub_translation_modes3.push_back({ -distance, Axis::X });
-    //sub_translation_modes3.push_back({ distance, Axis::Y });
-    //sub_translation_modes3.push_back({ distance, Axis::X });
-    translation_modes.push_back(sub_translation_modes3);
-}
-
-//void BasicScene::InitBoundingBoxes() {
-//    auto program = std::make_shared<Program>("shaders/basicShader");
-//    auto material{ std::make_shared<Material>("material", program) }; // empty material
-//    auto cubeMesh1{ IglLoader::MeshFromFiles("cube1", "data/cube.off") };
-//    auto cubeMesh2{ IglLoader::MeshFromFiles("cube2", "data/cube.off") };
-//    cube1 = Model::Create("cube1", cubeMesh1, material);
-//    cube2 = Model::Create("cube2", cubeMesh1, material);
-//}
-
-
-// Menu
 void BasicScene::MenuManager() {
     width = viewport->width;
     height = viewport->height;
@@ -475,7 +400,7 @@ void BasicScene::LoginMenuHandler() {
         ImGui::Text("Your Name: ");
 
         ImGui::SetCursorPosX(text_position2);
-        static char name[20] = "";
+        static char name[21] = "";
         //ImGui::InputTextMultiline("", name, IM_ARRAYSIZE(name), ImVec2(200 * (width / 4), 35 * (height / 8)));
         ImGui::InputTextMultiline("", name, IM_ARRAYSIZE(name), ImVec2((width / 4), (height / 16)));
 
@@ -1008,21 +933,22 @@ void BasicScene::StageMenuHandler() {
 
     Spacing(1);
 
-    if (display_keys == 0) {
+    if (!display_keys) {
         if (ImGui::Button("Show Keys")) {
-            display_keys = 1;
+            display_keys = true;
         }
     }
     else {
         if (ImGui::Button("Hide Keys")) {
-            display_keys = 0;
+            display_keys = false;
         }
         ImGui::Text("Keyboard Keys: ");
         ImGui::Text("W - Move snake up");
         ImGui::Text("S - Move snake down");
         ImGui::Text("A - Move snake left");
         ImGui::Text("D - Move snake right");
-        ImGui::Text("V - Switch view");
+        ImGui::Text("V - Switch view forward");
+        ImGui::Text("B - Switch view backward");
         ImGui::Text("UP - Switch camera view up");
         ImGui::Text("DOWN - Switch camera view down");
         ImGui::Text("LEFT - Rotate snake left");
@@ -1039,7 +965,7 @@ void BasicScene::StageMenuHandler() {
 
     Spacing(2);
 
-    if (ImGui::Button("Back to Main Menu")) {
+    if (ImGui::Button("Back To Main Menu")) {
         game_manager->UnloadStage();
         menu_index = MainMenu;
     }
@@ -1097,7 +1023,7 @@ void BasicScene::StageCompletedMenuHandler() {
     // If there is no more stages -> Display end game -> Move to credits
     ImGui::SetCursorPosX(position_x2);
     if (ImGui::Button("Continue", buttons_size_x)) {
-        menu_index = StageSelectionMenu;
+        menu_index = StageMenu;
     }
 
     Spacing(5);
@@ -1200,13 +1126,22 @@ void BasicScene::NewHighScoreMenuHandler() {
     bool* pOpen = nullptr;
     string gui_text;
 
+    ImVec2 window_pos_x = ImVec2(float(width - 0.4 * width) / 2.f, float(height - 0.5 * height) / 2.f);
+    ImVec2 window_size_xx = ImVec2((float(width)) * 0.4, (float(height)) * 0.45);
+
+    float position_x1xx = float(width) * 0.025f;
+    float position_x2 = float(width) * 0.03f;
+
+    ImVec2 buttons_size_xx = ImVec2(width / 3, height / 13);
+
     ImGui::Begin("Menu", pOpen, flags);
-    ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
-    ImGui::SetWindowSize(window_size1, ImGuiCond_Always);
+    ImGui::SetWindowPos(window_pos_x, ImGuiCond_Always);
+    ImGui::SetWindowSize(window_size_xx, ImGuiCond_Always);
     //ImGui::SetWindowFontScale(font_scale1);
-    ImGui::SetWindowFontScale(font_scale2);
+    ImGui::SetWindowFontScale(font_scale1);
 
 
+    ImGui::SetCursorPosX(position_x1xx);
     ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "N");
     ImGui::SameLine();
     ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "e");
@@ -1230,6 +1165,53 @@ void BasicScene::NewHighScoreMenuHandler() {
     ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "r");
     ImGui::SameLine();
     ImGui::TextColored(ImVec4(0.0, 0.0, 1.0, 1.0), "e");
+
+    Spacing(5);
+
+    ImGui::SetCursorPosX(position_x1xx);
+    ImGui::Text("Code Name: ");
+
+    Spacing(5);
+
+    ImGui::SetCursorPosX(position_x1xx);
+    int i = 0;
+    gui_text = to_string(i + 1) + ".";
+    if (i == 0) {
+        ImGui::TextColored(ImVec4(201.f / 176.f, 149.f / 255.f, 55.f / 255.f, 1.0), gui_text.c_str());
+    }
+    else if (i == 1) {
+        ImGui::TextColored(ImVec4(180.f / 255.f, 180.f / 255.f, 180.f / 255.f, 1.0), gui_text.c_str());
+    }
+    else if (i == 2) {
+        ImGui::TextColored(ImVec4(173.f / 255.f, 138.f / 255.f, 86.f / 255.f, 1.0), gui_text.c_str());
+    }
+    else {
+        ImGui::Text(gui_text.c_str());
+    }
+
+    ImGui::SameLine();
+    static char name[4] = "";
+    ImGui::InputTextMultiline("", name, IM_ARRAYSIZE(name), ImVec2((width / 15), (height / 16)));
+
+    ImGui::SameLine();
+    gui_text = "-Score: " + to_string(game_manager->stats.current_score);
+    ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), gui_text.c_str());
+
+    Spacing(5);
+
+    ImGui::SetCursorPosX(position_x1xx);
+    if (ImGui::Button("Apply", buttons_size_xx)) {
+        //name
+        //game_manager->leaderboard.ResetLeaderboard();
+        menu_index = MainMenu;
+    }
+
+    Spacing(5);
+
+    ImGui::SetCursorPosX(position_x1xx);
+    if (ImGui::Button("Back To Main Menu", buttons_size_xx)) {
+        menu_index = MainMenu;
+    }
 
     // Display score
     // Text to fill 3 letters

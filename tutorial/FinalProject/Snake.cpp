@@ -26,7 +26,7 @@ void Snake::InitSnake(int num_of_bones)
     auto snake_material = std::make_shared<Material>("snake_material", program);
     snake_material->AddTexture(0, "textures/snake.jpg", 2);
 
-    // Creating bone meshes
+    // Creating first bone mesh
     float scaleFactor = 1;
     int i = 0;
     snake_bones.push_back(ObjLoader::ModelFromObj("bone " + to_string(i), "data/zcylinder.obj", snake_material));
@@ -37,7 +37,7 @@ void Snake::InitSnake(int num_of_bones)
     snake_bones[i]->isHidden = true;
     i++;
 
-    // Add Snake Head custom mesh
+    // Creating the custom snake head mesh
     auto snake_program = std::make_shared<Program>("shaders/phongShader");
     auto snake_head_material = std::make_shared<Material>("snake_material", snake_program);
     snake_head_material->program->name = "snake head program";
@@ -46,7 +46,9 @@ void Snake::InitSnake(int num_of_bones)
     snake_head->Scale(0.09);
     snake_head->RotateByDegree(180, Movable::Axis::Y);
     snake_head->Translate(0.0, Movable::Axis::Z);
+    snake_head->isHidden = true;
 
+    // Creating the other bone meshes
     while(i < number_of_bones)
     {
         snake_bones.push_back(ObjLoader::ModelFromObj("bone " + to_string(i), "data/zcylinder.obj", snake_material));
@@ -60,8 +62,8 @@ void Snake::InitSnake(int num_of_bones)
     }
     snake_bones[first_index]->Translate({ 0,0,(bone_size / 2) * scaleFactor });
 
+    // Updating camera views and init skinning
     UpdateCameraView();
-
     SkinningInit();
 }
 
@@ -75,6 +77,7 @@ void Snake::ShowSnake() {
             snake_bones[i]->isHidden = false;
         }
     }
+    snake_head->isHidden = false;
 }
 
 void Snake::HideSnake() {
@@ -86,6 +89,7 @@ void Snake::HideSnake() {
             snake_bones[i]->isHidden = true;
         }
     }
+    snake_head->isHidden = true;
 }
 
 void Snake::ResetSnakePosition() {
