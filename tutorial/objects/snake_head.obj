@@ -1,8 +1,5 @@
 # Object Export From Tinkercad Server 2015
 
-mtllib obj.mtl
-
-o obj_0
 v -3.381 		4.111 		9.409
 v -1.716 		4.511 		11.217
 v -3.139 		3.736 		12.126
@@ -7732,6 +7729,3 @@ f 2575 	2574 	1814
 f 2573 	2574 	2575
 f 2571 	2573 	2575
 # 5146 faces
-
- #end of obj_0
-
