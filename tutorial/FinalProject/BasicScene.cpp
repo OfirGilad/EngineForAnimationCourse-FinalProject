@@ -396,19 +396,21 @@ void BasicScene::LoginMenuHandler() {
     }
 
     // Set sizes
-    ImVec2 buttons_size1;
+    ImVec2 buttons_size1, input_text_size1;
     float font_scale1, text_position1, text_position2;
 
     if (width != 0 && height != 0) {
-        buttons_size1 = ImVec2(width / 4, height / 8);
+        buttons_size1 = ImVec2(float(width) / 4.f, float(height) / 8.f);
 
-        font_scale1 = (2.f * width) / 800.f;
+        input_text_size1 = ImVec2((float(width) / 4.f), (float(height) / 16.f));
 
-        text_position1 = width * 0.4f;
-        text_position2 = width * 0.35f;
+        font_scale1 = float(width) / 400.f;
+
+        text_position1 = float(width) * 0.38f;
+        text_position2 = float(width) * 0.35f;
     }
     else {
-        buttons_size1 = ImVec2(1, 1);
+        buttons_size1 = input_text_size1 = ImVec2(1, 1);
         font_scale1 = text_position1 = text_position2 = 1;
     }
 
@@ -420,7 +422,6 @@ void BasicScene::LoginMenuHandler() {
     ImGui::Begin("Menu", pOpen, flags);
     ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
     ImGui::SetWindowSize(ImVec2(width, height), ImGuiCond_Always);
-    //ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
     ImGui::SetWindowFontScale(font_scale1);
 
     ImGui::SetCursorPosX(text_position1);
@@ -452,7 +453,7 @@ void BasicScene::LoginMenuHandler() {
         ImGui::SetCursorPosX(text_position2);
         static char name[21] = "";
         //ImGui::InputTextMultiline("", name, IM_ARRAYSIZE(name), ImVec2(200 * (width / 4), 35 * (height / 8)));
-        ImGui::InputTextMultiline("", name, IM_ARRAYSIZE(name), ImVec2((width / 4), (height / 16)));
+        ImGui::InputTextMultiline("", name, IM_ARRAYSIZE(name), input_text_size1);
 
         Spacing(5);
 
@@ -512,13 +513,13 @@ void BasicScene::MainMenuHandler() {
     float font_scale1, text_position1, text_position2;
 
     if (width != 0 && height != 0) {
-        buttons_size1 = ImVec2(width / 4, height / 8);
-        buttons_size2 = ImVec2(width / 4, height / 14);
+        buttons_size1 = ImVec2(float(width) / 4.f, float(height) / 8.f);
+        buttons_size2 = ImVec2(float(width) / 4.f, float(height) / 14.f);
 
-        font_scale1 = (2.f * width) / 800.f;
+        font_scale1 = float(width) / 400.f;
 
-        text_position1 = width * 0.4f;
-        text_position2 = width * 0.35f;
+        text_position1 = float(width) * 0.4f;
+        text_position2 = float(width) * 0.35f;
     }
     else {
         buttons_size1 = buttons_size2 = ImVec2(1, 1);
@@ -611,12 +612,12 @@ void BasicScene::StageSelectionMenuHandler() {
     float font_scale1, font_scale2, text_position1, text_position2;
 
     if (width != 0 && height != 0) {
-        buttons_size1 = ImVec2(width / 4, height / 8);
+        buttons_size1 = ImVec2(float(width) / 4.f, float(height) / 8.f);
 
-        font_scale1 = (2.f * width) / 800.f;
+        font_scale1 = float(width) / 400.f;
 
-        text_position1 = width * 0.35f;
-        text_position2 = width * 0.3f;
+        text_position1 = float(width) * 0.35f;
+        text_position2 = float(width) * 0.3f;
     }
     else {
         buttons_size1 = ImVec2(1, 1);
@@ -684,14 +685,14 @@ void BasicScene::ShopMenuHandler() {
     float font_scale1, text_position1, text_position2, text_position3;
 
     if (width != 0 && height != 0) {
-        buttons_size1 = ImVec2(width / 4, height / 8);
-        buttons_size2 = ImVec2(width / 4, height / 14);
+        buttons_size1 = ImVec2(float(width) / 4.f, float(height) / 8.f);
+        buttons_size2 = ImVec2(float(width) / 4.f, float(height) / 14.f);
 
-        font_scale1 = (2.f * width) / 800.f;
+        font_scale1 = float(width) / 400.f;
 
-        text_position1 = width * 0.4f;
-        text_position2 = width * 0.35f;
-        text_position3 = width * 0.15f;
+        text_position1 = float(width) * 0.44f;
+        text_position2 = float(width) * 0.35f;
+        text_position3 = float(width) * 0.15f;
     }
     else {
         buttons_size1 = buttons_size2 = ImVec2(1, 1);
@@ -705,7 +706,6 @@ void BasicScene::ShopMenuHandler() {
 
     ImGui::Begin("Menu", pOpen, flags);
     ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
-    //ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
     ImGui::SetWindowSize(ImVec2(width, height), ImGuiCond_Always);
     ImGui::SetWindowFontScale(font_scale1);
 
@@ -902,14 +902,14 @@ void BasicScene::StatsMenuHandler() {
     float font_scale1, text_position1, text_position2, text_position3;
 
     if (width != 0 && height != 0) {
-        buttons_size1 = ImVec2(width / 4, height / 8);
-        buttons_size2 = ImVec2(width / 4, height / 14);
+        buttons_size1 = ImVec2(float(width) / 4.f, float(height) / 8.f);
+        buttons_size2 = ImVec2(float(width) / 4.f, float(height) / 14.f);
 
-        font_scale1 = (2.f * width) / 800.f;
+        font_scale1 = float(width) / 400.f;
 
-        text_position1 = width * 0.4f;
-        text_position2 = width * 0.35f;
-        text_position3 = width * 0.3f;
+        text_position1 = float(width) * 0.4f;
+        text_position2 = float(width) * 0.35f;
+        text_position3 = float(width) * 0.3f;
 
     }
     else {
@@ -923,7 +923,6 @@ void BasicScene::StatsMenuHandler() {
 
     ImGui::Begin("Menu", pOpen, flags);
     ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
-    //ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
     ImGui::SetWindowSize(ImVec2(width, height), ImGuiCond_Always);
     ImGui::SetWindowFontScale(font_scale1);
 
@@ -1009,12 +1008,12 @@ void BasicScene::HallOfFameMenuHandler() {
     float font_scale1, text_position1, text_position2;
 
     if (width != 0 && height != 0) {
-        buttons_size1 = ImVec2(width / 4, height / 8);
+        buttons_size1 = ImVec2(float(width) / 4.f, float(height) / 8.f);
 
-        font_scale1 = (2.f * width) / 800.f;
+        font_scale1 = float(width) / 400.f;
 
-        text_position1 = width * 0.35f;
-        text_position2 = width * 0.3f;
+        text_position1 = float(width) * 0.35f;
+        text_position2 = float(width) * 0.3f;
 
     }
     else {
@@ -1028,7 +1027,6 @@ void BasicScene::HallOfFameMenuHandler() {
 
     ImGui::Begin("Menu", pOpen, flags);
     ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
-    //ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
     ImGui::SetWindowSize(ImVec2(width, height), ImGuiCond_Always);
     ImGui::SetWindowFontScale(font_scale1);
 
@@ -1083,13 +1081,13 @@ void BasicScene::CreditsMenuHandler() {
     float font_scale1, text_position1, text_position2, text_position3;
 
     if (width != 0 && height != 0) {
-        buttons_size1 = ImVec2(width / 4, height / 8);
+        buttons_size1 = ImVec2(float(width) / 4.f, float(height) / 8.f);
 
-        font_scale1 = (2.f * width) / 800.f;
+        font_scale1 = float(width) / 400.f;
 
-        text_position1 = width * 0.4f;
-        text_position2 = width * 0.35f;
-        text_position3 = width * 0.3f;
+        text_position1 = float(width) * 0.4f;
+        text_position2 = float(width) * 0.35f;
+        text_position3 = float(width) * 0.3f;
     }
     else {
         buttons_size1 = ImVec2(1, 1);
@@ -1102,7 +1100,6 @@ void BasicScene::CreditsMenuHandler() {
 
     ImGui::Begin("Menu", pOpen, flags);
     ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
-    //ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
     ImGui::SetWindowSize(ImVec2(width, height), ImGuiCond_Always);
     ImGui::SetWindowFontScale(font_scale1);
 
@@ -1160,13 +1157,14 @@ void BasicScene::StageMenuHandler() {
     float font_scale1, font_scale2, text_position1;
 
     if (width != 0 && height != 0) {
-        window_size1 = ImVec2(width, height * 0.12);
-        buttons_size1 = ImVec2(width / 4, height / 7);
+        window_size1 = ImVec2(float(width), float(height) * 0.12);
 
-        font_scale1 = (2.f * width) / 800.f;
-        font_scale2 = (1.f * width) / 800.f;
+        buttons_size1 = ImVec2(float(width) / 4.f, float(height) / 7.f);
 
-        text_position1 = width * 0.45f;
+        font_scale1 = float(width) / 400.f;
+        font_scale2 = float(width) / 800.f;
+
+        text_position1 = float(width) * 0.45f;
     }
     else {
         buttons_size1 = ImVec2(1, 1);
@@ -1179,9 +1177,7 @@ void BasicScene::StageMenuHandler() {
 
     ImGui::Begin("Menu", pOpen, flags);
     ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
-    //ImGui::SetWindowSize(window_size1, ImGuiCond_Always);
     ImGui::SetWindowSize(window_size1, ImGuiCond_Always);
-    //ImGui::SetWindowFontScale(font_scale1);
     ImGui::SetWindowFontScale(font_scale2);
 
     ImGui::SetCursorPosX(text_position1);
@@ -1280,13 +1276,13 @@ void BasicScene::StageCompletedMenuHandler() {
     float font_scale1, text_position1, text_position2;
 
     if (width != 0 && height != 0) {
-        window_position1 = ImVec2(float(width - 0.25 * width) / 2.f, float(height - 0.4 * height) / 2.f);
+        window_position1 = ImVec2(float(width) * 0.375, float(height) * 0.3);
 
-        window_size1 = ImVec2((float(width)) * 0.22, (float(height)) * 0.42);
+        window_size1 = ImVec2(float(width) * 0.22, float(height) * 0.42);
 
-        buttons_size1 = ImVec2(width / 6, height / 16);
+        buttons_size1 = ImVec2(float(width) / 6.f, float(height) / 16);
 
-        font_scale1 = (1.f * width) / 800.f;
+        font_scale1 = float(width) / 800.f;
 
         text_position1 = float(width) * 0.045f;
         text_position2 = float(width) * 0.03f;
@@ -1303,7 +1299,6 @@ void BasicScene::StageCompletedMenuHandler() {
     ImGui::Begin("Menu", pOpen, flags);
     ImGui::SetWindowPos(window_position1, ImGuiCond_Always);
     ImGui::SetWindowSize(window_size1, ImGuiCond_Always);
-    //ImGui::SetWindowFontScale(font_scale1);
     ImGui::SetWindowFontScale(font_scale1);
 
     ImGui::SetCursorPosX(text_position1);
@@ -1377,13 +1372,13 @@ void BasicScene::StageFailedMenuHandler() {
     float font_scale1, text_position1, text_position2;
 
     if (width != 0 && height != 0) {
-        window_position1 = ImVec2(0.75 * float(width) / 2.f, 0.6 * float(height) / 2.f);
+        window_position1 = ImVec2(float(width) * 0.375, float(height) * 0.3);
 
-        window_size1 = ImVec2((float(width)) * 0.22, (float(height)) * 0.42);
+        window_size1 = ImVec2(float(width) * 0.22, float(height) * 0.42);
 
-        buttons_size1 = ImVec2(width / 6, height / 16);
+        buttons_size1 = ImVec2(float(width) / 6.f, float(height) / 16.f);
 
-        font_scale1 = (1.f * width) / 800.f;
+        font_scale1 = float(width) / 800.f;
 
         text_position1 = float(width) * 0.06f;
         text_position2 = float(width) * 0.03f;
@@ -1400,7 +1395,6 @@ void BasicScene::StageFailedMenuHandler() {
     ImGui::Begin("Menu", pOpen, flags);
     ImGui::SetWindowPos(window_position1, ImGuiCond_Always);
     ImGui::SetWindowSize(window_size1, ImGuiCond_Always);
-    //ImGui::SetWindowFontScale(font_scale1);
     ImGui::SetWindowFontScale(font_scale1);
 
     ImGui::SetCursorPosX(text_position1);
@@ -1465,13 +1459,13 @@ void BasicScene::NewHighScoreMenuHandler() {
     float font_scale1, text_position1;
 
     if (width != 0 && height != 0) {
-        ImVec2 window_position1 = ImVec2(0.6 * float(width) / 2.f, 0.5f * float(height) / 2.f);
+        ImVec2 window_position1 = ImVec2(float(width) * 0.3, float(height) * 0.25);
 
-        ImVec2 window_size1 = ImVec2((float(width)) * 0.4, (float(height)) * 0.5);
+        ImVec2 window_size1 = ImVec2(float(width) * 0.4, float(height) * 0.5);
 
-        ImVec2 buttons_size1 = ImVec2(width / 3, height / 13);
+        ImVec2 buttons_size1 = ImVec2(float(width) / 3.f, float(height) / 13.f);
 
-        font_scale1 = (2.f * width) / 800.f;
+        font_scale1 = float(width) / 400.f;
 
         text_position1 = float(width) * 0.025f;
     }
@@ -1494,7 +1488,6 @@ void BasicScene::NewHighScoreMenuHandler() {
     ImGui::Begin("Menu", pOpen, flags);
     ImGui::SetWindowPos(window_position1, ImGuiCond_Always);
     ImGui::SetWindowSize(window_size1, ImGuiCond_Always);
-    //ImGui::SetWindowFontScale(font_scale1);
     ImGui::SetWindowFontScale(font_scale1);
 
 
