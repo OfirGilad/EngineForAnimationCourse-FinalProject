@@ -77,8 +77,8 @@ private:
 
 
     // Camera parameters
-    int distance = 50;
-    int degree = -15;
+    float distance = 50.f;
+    float degree = -15.f;
     Eigen::Vector3f camera_translation = Eigen::Vector3f(0, 15, 50);
 
 
@@ -89,7 +89,8 @@ private:
 
 
     // Menu parameters
-    int width, height;
+    int width = 1;
+    int height = 1;
 
     int menu_index = MainMenu;
     int last_menu_index = MainMenu; // For ShopMenu

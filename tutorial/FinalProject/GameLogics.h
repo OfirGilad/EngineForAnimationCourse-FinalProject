@@ -90,7 +90,7 @@ private:
     int IK_mode = 0;
     bool animate_CCD = false;
     bool animate_Fabrik = false;
-    float delta = 0.05;
+    float delta = 0.05f;
     float angle_divider = 50.f;
 
     int first_link_id = 0;

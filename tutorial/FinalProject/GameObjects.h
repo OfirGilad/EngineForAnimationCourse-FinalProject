@@ -11,6 +11,7 @@
 #include "Scene.h"
 #include "SoundManager.h"
 #include "Stats.h"
+#include "GameTimer.h"
 
 using namespace cg3d;
 
@@ -19,13 +20,18 @@ class GameObject
 public:
     virtual void InitObject(Stats* stats, SoundManager* sound_manager, std::shared_ptr<Model> model);
     virtual void CollisionWithObject() = 0;
-    virtual void MoveObject() {};
+    //virtual void MoveObject();
+
+    //virtual void SetAlive();
+    //virtual void SetDead();
+
     virtual ~GameObject() {}
 
     Stats* stats;
     SoundManager* sound_manager;
     std::shared_ptr<Model> model;
     int stage_number;
+    GameTimer game_timer;
 };
 
 class HealthObject : public GameObject

@@ -50,7 +50,7 @@ void Snake::InitSnake(int num_of_bones)
     // Creating the custom snake head mesh
     snake_head = ObjLoader::ModelFromObj("snake head", "../tutorial/objects/snake_head.obj", snake_head_material);
     snake_bones[first_index]->AddChild(snake_head);
-    snake_head->Scale(0.09);
+    snake_head->Scale(0.09f);
     snake_head->RotateByDegree(180, Movable::Axis::Y);
     snake_head->Translate(0.0, Movable::Axis::Z);
     snake_head->isHidden = true;
@@ -160,12 +160,12 @@ void Snake::UpdateCameraView()
 
     // Set snake front view
     snake_bones[first_index]->AddChild(camera_list[1]);
-    Vector3f camera_translation1 = camera_list[1]->GetRotation() * Vector3f(0, 0.6, 0.6);
+    Vector3f camera_translation1 = camera_list[1]->GetRotation() * Vector3f(0.f, 0.6f, 0.6f);
     camera_list[1]->Translate(camera_translation1);
 
     // Set snake back view
     snake_bones[first_index]->AddChild(camera_list[2]);
-    Vector3f camera_translation2 = camera_list[2]->GetRotation() * Vector3f(0, 0.6, -4);
+    Vector3f camera_translation2 = camera_list[2]->GetRotation() * Vector3f(0.f, 0.6f, -4.f);
     camera_list[2]->Translate(camera_translation2);
     camera_list[2]->RotateByDegree(180, Movable::Axis::Y);
 }
@@ -173,7 +173,7 @@ void Snake::UpdateCameraView()
 
 void Snake::CalculateWeight() 
 {
-    int n = V.rows();
+    int n = int(V.rows());
     W = Eigen::MatrixXd::Zero(n, number_of_bones + 1);
 
     float snake_length = V.colwise().maxCoeff()[2] - V.colwise().minCoeff()[2];
@@ -292,7 +292,7 @@ void Snake::Skinning()
 // 1 - end
 Eigen::Vector3f Snake::GetBonePosition(int bone_id, int position)
 {
-    Eigen::Vector3f half_length = Eigen::Vector3f(0, 0, 0.8);
+    Eigen::Vector3f half_length = Eigen::Vector3f(0.f, 0.f, 0.8f);
 
     Eigen::Matrix4f bone_transform = snake_bones[bone_id]->GetAggregatedTransform();
     Eigen::Vector3f bone_center = Eigen::Vector3f(bone_transform.col(3).x(), bone_transform.col(3).y(), bone_transform.col(3).z());

@@ -36,18 +36,12 @@ public:
     // Stage Builder
     std::shared_ptr<Movable> root;
     std::vector<std::shared_ptr<Camera>> camera_list;
-    std::shared_ptr<cg3d::Model> background, axis, temp_object1, temp_object2;
-    std::shared_ptr<cg3d::Model> health_model, score_model, gold_model, bonus_model, obstacle_model;
+    std::shared_ptr<cg3d::Model> background, axis, exit, temp_object1, temp_object2;
+    std::shared_ptr<cg3d::Model> health_model, score_model, gold_model, bonus_model, obstacle_model, exit_model;
 
-    std::vector<std::shared_ptr<cg3d::Model>> health_objects;
-    std::vector<std::shared_ptr<cg3d::Model>> score_objects;
-    std::vector<std::shared_ptr<cg3d::Model>> gold_objects;
-    std::vector<std::shared_ptr<cg3d::Model>> bonus_objects;
-    std::vector<std::shared_ptr<cg3d::Model>> obstacle_objects;
-
-    std::vector<GameObject*> stage_objects;
-    int number_of_objects = 0;
-
+    std::vector<GameObject*> all_objects;
+    std::vector<GameObject*> alive_objects;
+    std::vector<GameObject*> dead_objects;
 
     // CollisionDetectionVisitor Params
     std::shared_ptr<cg3d::Model> cube1, cube2;
@@ -57,10 +51,10 @@ public:
     int number_of_bones = 16;
 
     // Sound Manager
-    SoundManager* sound_manager;
+    SoundManager* sound_manager = 0;
 
     // Stats
-    Stats* stats;
+    Stats* stats = 0;
 
     // Leaderboard
     Leaderboard leaderboard;
@@ -78,13 +72,14 @@ private:
     void InitStageParameters(bool new_stage);
 
     // Building Game Objects
-    void InitCustomObject();
+    void InitCustomObjects();
     void BuildGameObjects();
     void BuildHealthObjects();
     void BuildScoreObjects();
     void BuildGoldObjects();
     void BuildBonusObjects();
     void BuildObstacleObjects();
+    void BuildExit();
 
     Eigen::Vector3f GenerateRandomPosition();
 };

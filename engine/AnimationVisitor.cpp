@@ -27,7 +27,7 @@ namespace cg3d
 
         if (scene->GetAnimate())
         {
-            number_of_bones = snake.GetBones().size() - 1;
+            number_of_bones = int(snake.GetBones().size()) - 1;
 
             if (model->name.find("bone") != std::string::npos)
             {

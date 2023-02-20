@@ -38,24 +38,25 @@ namespace cg3d
                 cout << "Backgound Collision" << endl;
             }
 
-            if (game_manager->number_of_objects != 0) {
-                for (int i = 0; i < game_manager->number_of_objects; i++) {
-                    std::shared_ptr<cg3d::Model> current_game_object = game_manager->stage_objects[i]->model;
+            if (game_manager->alive_objects.size() != 0) {
+                for (int i = 0; i < game_manager->alive_objects.size(); i++) {
+                    GameObject* current_game_object = game_manager->alive_objects[i];
 
-                    collision_logic.InitCollisionDetection(snake_head, current_game_object, game_manager->cube1, game_manager->cube2);
-                    bool collision_check = collision_logic.CollisionCheck(snake_head->GetAABBTree(), current_game_object->GetAABBTree(), 0);
+                    collision_logic.InitCollisionDetection(snake_head, current_game_object->model, game_manager->cube1, game_manager->cube2);
+                    bool collision_check = collision_logic.CollisionCheck(snake_head->GetAABBTree(), current_game_object->model->GetAABBTree(), 0);
 
                     if (collision_check) {
                         // Remove Collision Boxes
                         snake_head->RemoveChild(game_manager->cube1);
-                        current_game_object->RemoveChild(game_manager->cube2);
+                        current_game_object->model->RemoveChild(game_manager->cube2);
 
                         // Handle Object Event
-                        //object_handler.InitObjectHandler(current_game_object->name, game_manager);
-                        game_manager->stage_objects[i]->CollisionWithObject();
-                        game_manager->root->RemoveChild(current_game_object);
-                        game_manager->stage_objects.erase(game_manager->stage_objects.begin() + i);
-                        game_manager->number_of_objects--;
+                        current_game_object->CollisionWithObject();
+                        game_manager->root->RemoveChild(current_game_object->model);
+                        game_manager->alive_objects.erase(game_manager->alive_objects.begin() + i);
+                        game_manager->dead_objects.push_back(current_game_object);
+
+                        return;
                     }
                 }
             }
@@ -64,7 +65,7 @@ namespace cg3d
 
     bool CollisionDetectionVisitor::CheckSelfCollision() {
         std::shared_ptr<cg3d::Model> snake_head = game_manager->snake.GetBones()[0];
-        int number_of_bones = game_manager->snake.GetBones().size();
+        int number_of_bones = int(game_manager->snake.GetBones().size());
 
         for (int i = 2; i < number_of_bones; i++)
         {
