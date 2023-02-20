@@ -1273,6 +1273,7 @@ void BasicScene::StageMenuHandler() {
     if (game_manager->stats->current_health == 0) {
         game_manager->sound_manager->StopMusic();
         SetAnimate(false);
+        game_manager->sound_manager->SoundHandler("obstacle_object.mp3");
         game_manager->sound_manager->SoundHandler("game_over.mp3");
         menu_index = StageFailedMenu;
     }

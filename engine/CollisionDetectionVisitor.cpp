@@ -17,25 +17,32 @@ namespace cg3d
 
     void CollisionDetectionVisitor::Visit(Scene* _scene) {
         game_manager = ((BasicScene*)_scene)->game_manager;
-        
+
+        float stage_size = game_manager->stage_size;
+        backgound_cube_space = Eigen::Vector3f(stage_size, stage_size, stage_size);
+
         if (_scene->GetAnimate())
         {
             std::shared_ptr<cg3d::Model> snake_head = game_manager->snake.GetBones()[0];
 
             if (CheckSelfCollision()) {
                 _scene->SetAnimate(false);
-                game_manager->sound_manager->StopMusic();
-                game_manager->sound_manager->SoundHandler("obstacle_object.mp3");
-                game_manager->stats->current_health = 0;
+                int current_health = game_manager->stats->current_health;
+                game_manager->stats->total_health_points_lost += current_health;
+                game_manager->stats->current_health -= current_health;
                 cout << "Self Collision" << endl;
+
+                return;
             }
 
             if (CheckBackgoroundCollision()) {
                 _scene->SetAnimate(false);
-                game_manager->sound_manager->StopMusic();
-                game_manager->sound_manager->SoundHandler("obstacle_object.mp3");
-                game_manager->stats->current_health = 0;
+                int current_health = game_manager->stats->current_health;
+                game_manager->stats->total_health_points_lost += current_health;
+                game_manager->stats->current_health -= current_health;
                 cout << "Backgound Collision" << endl;
+
+                return;
             }
 
             if (game_manager->alive_objects.size() != 0) {

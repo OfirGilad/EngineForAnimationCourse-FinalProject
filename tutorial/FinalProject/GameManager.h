@@ -39,9 +39,12 @@ public:
     std::shared_ptr<cg3d::Model> background, axis, exit, temp_object1, temp_object2;
     std::shared_ptr<cg3d::Model> health_model, score_model, gold_model, bonus_model, obstacle_model, exit_model;
 
-    std::vector<GameObject*> all_objects;
+    std::vector<std::vector<GameObject*>> all_objects;
     std::vector<GameObject*> alive_objects;
     std::vector<GameObject*> dead_objects;
+
+    float base_length = 60.f;
+    float stage_size = 0.f;
 
     // CollisionDetectionVisitor Params
     std::shared_ptr<cg3d::Model> cube1, cube2;
@@ -70,6 +73,7 @@ private:
     void InitBackground();
     void InitAxis();
     void InitStageParameters(bool new_stage);
+    void LoadGameObjects();
 
     // Building Game Objects
     void InitCustomObjects();

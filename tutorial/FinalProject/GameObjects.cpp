@@ -179,9 +179,9 @@ void ExitObject::CollisionWithObject() {
     // Get required parameters
 
     // Handle event
-    stats->stage_completed = true;
 
     // Update stats
+    stats->stage_completed = true;
 
     // Handle sound
     cout << "ExitObject" << endl;

@@ -34,6 +34,6 @@ namespace cg3d
         GameManager* game_manager;
         GameLogics collision_logic;
 
-        Eigen::Vector3f backgound_cube_space = Eigen::Vector3f(60, 60, 60);
+        Eigen::Vector3f backgound_cube_space;
     };
 }

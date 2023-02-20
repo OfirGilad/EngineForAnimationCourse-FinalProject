@@ -45,8 +45,7 @@ void GameManager::LoadStage(int stage_number)
     InitBackground();
     InitAxis();
     InitStageParameters(true);
-
-    
+    LoadGameObjects();
 
     snake.ShowSnake();
 }
@@ -76,17 +75,22 @@ void GameManager::InitCollisionBoxes() {
 }
 
 void GameManager::InitBackground() {
+    int stage_number = stats->selected_stage;
+
     auto daylight{ std::make_shared<Material>("daylight", "shaders/cubemapShader") };
     daylight->AddTexture(0, "textures/cubemaps/Daylight Box_", 3);
 
     background = Model::Create("background", Mesh::Cube(), daylight);
     root->AddChild(background);
-    background->Scale(120, Movable::Axis::XYZ);
+    background->Scale(2 * base_length * stage_number, Movable::Axis::XYZ);
     background->SetPickable(false);
     background->SetStatic();
 }
 
 void GameManager::InitAxis() {
+    int stage_number = stats->selected_stage;
+    stage_size = base_length * stage_number;
+
     auto program = std::make_shared<Program>("shaders/basicShader");
     auto material{ std::make_shared<Material>("material", program) }; // empty material
 
@@ -99,7 +103,7 @@ void GameManager::InitAxis() {
     std::shared_ptr<Mesh> coordsys = std::make_shared<Mesh>("coordsys", vertices, faces, vertexNormals, textureCoords);
     axis = Model::Create("axis", coordsys, material);
     axis->mode = 1;
-    axis->Scale(60, Movable::Axis::XYZ);
+    axis->Scale(stage_size, Movable::Axis::XYZ);
     root->AddChild(axis);
     axis->Translate(Eigen::Vector3f(0, 0, 0));
 }
@@ -109,6 +113,20 @@ void GameManager::InitStageParameters(bool new_stage) {
         stats->current_health = stats->max_health;
         //stats->current_health = 20;
         stats->current_score = 0;
+    }
+}
+
+void GameManager::LoadGameObjects() {
+    int selected_stage = stats->selected_stage;
+
+    for (int i = 0; i < int(all_objects.size()); i++) {
+        for (int j = 0; j < selected_stage; j++) {
+            Eigen::Vector3f original_translation = all_objects[i][j]->model->GetTranslation();
+            all_objects[i][j]->model->Translate(-original_translation);
+            root->AddChild(all_objects[i][j]->model);
+            all_objects[i][j]->model->Translate(GenerateRandomPosition());
+            alive_objects.push_back(all_objects[i][j]);
+        }
     }
 }
 
@@ -172,6 +190,8 @@ void GameManager::BuildGameObjects() {
 }
 
 void GameManager::BuildHealthObjects() {
+    std::vector<GameObject*> objects_list;
+
     for (int i = 0; i < 3; i++) {
         // Init meshes
         temp_object1 = Model::Create("health", health_model->GetMesh(), health_model->material);
@@ -188,11 +208,15 @@ void GameManager::BuildHealthObjects() {
         temp_object2->isHidden = true;
 
         // Adding to Stage objects list;
-        all_objects.push_back(objects_builder.BuildGameObject(temp_object2));
+        objects_list.push_back(objects_builder.BuildGameObject(temp_object2));
     }
+
+    all_objects.push_back(objects_list);
 }
 
 void GameManager::BuildScoreObjects() {
+    std::vector<GameObject*> objects_list;
+
     for (int i = 0; i < 3; i++) {
         // Init meshes
         temp_object1 = Model::Create("score", score_model->GetMesh(), score_model->material);
@@ -209,11 +233,15 @@ void GameManager::BuildScoreObjects() {
         temp_object2->isHidden = true;
 
         // Adding to Stage objects list
-        all_objects.push_back(objects_builder.BuildGameObject(temp_object2));
+        objects_list.push_back(objects_builder.BuildGameObject(temp_object2));
     }
+
+    all_objects.push_back(objects_list);
 }
 
 void GameManager::BuildGoldObjects() {
+    std::vector<GameObject*> objects_list;
+
     for (int i = 0; i < 3; i++) {
         // Init meshes
         temp_object1 = Model::Create("gold", gold_model->GetMesh(), gold_model->material);
@@ -230,11 +258,15 @@ void GameManager::BuildGoldObjects() {
         temp_object2->isHidden = true;
 
         // Adding to Stage objects list
-        all_objects.push_back(objects_builder.BuildGameObject(temp_object2));
+        objects_list.push_back(objects_builder.BuildGameObject(temp_object2));
     }
+
+    all_objects.push_back(objects_list);
 }
 
 void GameManager::BuildBonusObjects() {
+    std::vector<GameObject*> objects_list;
+
     for (int i = 0; i < 3; i++) {
         // Init meshes
         temp_object1 = Model::Create("bonus", bonus_model->GetMesh(), bonus_model->material);
@@ -251,11 +283,15 @@ void GameManager::BuildBonusObjects() {
         temp_object2->isHidden = true;
 
         // Adding to Stage objects list
-        all_objects.push_back(objects_builder.BuildGameObject(temp_object2));
+        objects_list.push_back(objects_builder.BuildGameObject(temp_object2));
     }
+
+    all_objects.push_back(objects_list);
 }
 
 void GameManager::BuildObstacleObjects() {
+    std::vector<GameObject*> objects_list;
+
     for (int i = 0; i < 3; i++) {
         // Init meshes
         temp_object1 = Model::Create("obstacle", obstacle_model->GetMesh(), obstacle_model->material);
@@ -272,8 +308,10 @@ void GameManager::BuildObstacleObjects() {
         temp_object2->isHidden = true;
 
         // Adding to Stage objects list
-        all_objects.push_back(objects_builder.BuildGameObject(temp_object2));
+        objects_list.push_back(objects_builder.BuildGameObject(temp_object2));
     }
+
+    all_objects.push_back(objects_list);
 }
 
 void GameManager::BuildExit() {
@@ -299,7 +337,7 @@ void GameManager::BuildExit() {
 Eigen::Vector3f GameManager::GenerateRandomPosition() {
     std::random_device random_device;
     std::mt19937 generator(random_device());
-    std::uniform_real_distribution<float> distribution(-50, 50);
+    std::uniform_real_distribution<float> distribution(-stage_size + 10, stage_size - 10);
 
     return Eigen::Vector3f(distribution(generator), distribution(generator), distribution(generator));
 }
