@@ -220,8 +220,8 @@ void BasicScene::KeyCallback(Viewport* viewport, int x, int y, int key, int scan
                 break;
             case GLFW_KEY_UP:
                 if (GetAnimate()) {
-                    if (game_manager->stats.current_movement_speed < game_manager->stats.max_movement_speed) {
-                        game_manager->stats.current_movement_speed += 1;
+                    if (game_manager->stats->current_movement_speed < game_manager->stats->max_movement_speed) {
+                        game_manager->stats->current_movement_speed += 1;
                     }
                     else {
                         cout << "Max movement speed already reached" << endl;
@@ -230,8 +230,8 @@ void BasicScene::KeyCallback(Viewport* viewport, int x, int y, int key, int scan
                 break;
             case GLFW_KEY_DOWN:
                 if (GetAnimate()) {
-                    if (game_manager->stats.current_movement_speed > game_manager->stats.min_movement_speed) {
-                        game_manager->stats.current_movement_speed -= 1;
+                    if (game_manager->stats->current_movement_speed > game_manager->stats->min_movement_speed) {
+                        game_manager->stats->current_movement_speed -= 1;
                     }
                     else {
                         cout << "Min movement speed already reached" << endl;
@@ -274,31 +274,31 @@ void BasicScene::KeyCallback(Viewport* viewport, int x, int y, int key, int scan
                 break;
             case GLFW_KEY_EQUAL:
                 if (debug_parameter == 1) {
-                    game_manager->stats.current_health += 10;
-                    game_manager->stats.total_health_points_healed += 10;
+                    game_manager->stats->current_health += 10;
+                    game_manager->stats->total_health_points_healed += 10;
                 }
                 if (debug_parameter == 2) {
-                    game_manager->stats.current_score += 10;
-                    game_manager->stats.total_score_points_earned += 10;
+                    game_manager->stats->current_score += 10;
+                    game_manager->stats->total_score_points_earned += 10;
                 }
                 if (debug_parameter == 3) {
-                    game_manager->stats.gold += 10;
-                    game_manager->stats.total_gold_earned += 10;
+                    game_manager->stats->gold += 10;
+                    game_manager->stats->total_gold_earned += 10;
                 }
                 cout << "+ Debug" << endl;
                 break;
             case GLFW_KEY_MINUS:
                 if (debug_parameter == 1) {
-                    game_manager->stats.current_health -= 10;
-                    game_manager->stats.total_health_points_lost += 10;
+                    game_manager->stats->current_health -= 10;
+                    game_manager->stats->total_health_points_lost += 10;
                 }
                 if (debug_parameter == 2) {
-                    game_manager->stats.current_score -= 10;
+                    game_manager->stats->current_score -= 10;
                     // No event
                 }
                 if (debug_parameter == 3) {
-                    game_manager->stats.gold -= 10;
-                    game_manager->stats.total_gold_spent += 10;
+                    game_manager->stats->gold -= 10;
+                    game_manager->stats->total_gold_spent += 10;
                 }
                 cout << "- Debug" << endl;
                 break;
@@ -390,9 +390,9 @@ void BasicScene::MenuManager() {
 }
 
 void BasicScene::LoginMenuHandler() {
-    if (game_manager->sound_manager.playing_index != LoginMenu) {
-        game_manager->sound_manager.MusicHandler("opening_theme.mp3");
-        game_manager->sound_manager.playing_index = LoginMenu;
+    if (game_manager->sound_manager->playing_index != LoginMenu) {
+        game_manager->sound_manager->MusicHandler("opening_theme.mp3");
+        game_manager->sound_manager->playing_index = LoginMenu;
     }
 
     // Set sizes
@@ -460,7 +460,7 @@ void BasicScene::LoginMenuHandler() {
         ImGui::SetCursorPosX(text_position2);
         if (ImGui::Button("Start New Game", buttons_size1)) {
             display_new_game = true;
-            game_manager->stats.NewGame(name);
+            game_manager->stats->NewGame(name);
             game_manager->leaderboard.ResetLeaderboard();
             menu_index = MainMenu;
         }
@@ -470,7 +470,7 @@ void BasicScene::LoginMenuHandler() {
 
     ImGui::SetCursorPosX(text_position2);
     if (display_new_game) {
-        if (!game_manager->stats.save_data_available) {
+        if (!game_manager->stats->save_data_available) {
             ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled));
 
             if (ImGui::Button("Continue Game", buttons_size1)) {
@@ -503,9 +503,9 @@ void BasicScene::LoginMenuHandler() {
 }
 
 void BasicScene::MainMenuHandler() {
-    if (game_manager->sound_manager.playing_index != MainMenu) {
-        game_manager->sound_manager.MusicHandler("main_menu.mp3");
-        game_manager->sound_manager.playing_index = MainMenu;
+    if (game_manager->sound_manager->playing_index != MainMenu) {
+        game_manager->sound_manager->MusicHandler("main_menu.mp3");
+        game_manager->sound_manager->playing_index = MainMenu;
     }
 
     // Set sizes
@@ -542,14 +542,14 @@ void BasicScene::MainMenuHandler() {
     Spacing(5);
 
     // Handel User name
-    gui_text = "Welcome back, " + game_manager->stats.user_name;
+    gui_text = "Welcome back, " + game_manager->stats->user_name;
     ImGui::SetCursorPosX(text_position2);
     ImGui::Text(gui_text.c_str());
 
     Spacing(5);
 
     // Handle Gold
-    gui_text = "Gold: " + std::to_string(game_manager->stats.gold);
+    gui_text = "Gold: " + std::to_string(game_manager->stats->gold);
     ImGui::SetCursorPosX(text_position2);
     ImGui::TextColored(ImVec4(1.0, 1.0, 0.0, 1.0), gui_text.c_str());
 
@@ -593,7 +593,7 @@ void BasicScene::MainMenuHandler() {
 
     ImGui::SetCursorPosX(text_position2);
     if (ImGui::Button("Logout", buttons_size1)) {
-        game_manager->stats.InitStats();
+        game_manager->stats->InitStats();
         game_manager->leaderboard.InitLeaderboard();
         menu_index = LoginMenu;
     }
@@ -602,9 +602,9 @@ void BasicScene::MainMenuHandler() {
 }
 
 void BasicScene::StageSelectionMenuHandler() {
-    if (game_manager->sound_manager.playing_index != MainMenu) {
-        game_manager->sound_manager.MusicHandler("main_menu.mp3");
-        game_manager->sound_manager.playing_index = MainMenu;
+    if (game_manager->sound_manager->playing_index != MainMenu) {
+        game_manager->sound_manager->MusicHandler("main_menu.mp3");
+        game_manager->sound_manager->playing_index = MainMenu;
     }
 
     // Set sizes
@@ -641,7 +641,7 @@ void BasicScene::StageSelectionMenuHandler() {
 
     // Handle Gold
     ImGui::SetCursorPosX(text_position1);
-    gui_text = "Gold: " + std::to_string(game_manager->stats.gold);
+    gui_text = "Gold: " + std::to_string(game_manager->stats->gold);
     ImGui::TextColored(ImVec4(1.0, 1.0, 0.0, 1.0), gui_text.c_str());
 
     Spacing(5);
@@ -659,7 +659,7 @@ void BasicScene::StageSelectionMenuHandler() {
 
         if (ImGui::Button(gui_text.c_str(), buttons_size1)) {
             cout << gui_text.c_str() << endl;
-            game_manager->sound_manager.stage_index = i;
+            game_manager->sound_manager->stage_index = i;
             game_manager->LoadStage(i);
             menu_index = StageMenu;
         }
@@ -675,9 +675,9 @@ void BasicScene::StageSelectionMenuHandler() {
 }
 
 void BasicScene::ShopMenuHandler() {
-    if (game_manager->sound_manager.playing_index != ShopMenu) {
-        game_manager->sound_manager.MusicHandler("shop.mp3");
-        game_manager->sound_manager.playing_index = ShopMenu;
+    if (game_manager->sound_manager->playing_index != ShopMenu) {
+        game_manager->sound_manager->MusicHandler("shop.mp3");
+        game_manager->sound_manager->playing_index = ShopMenu;
     }
 
     // Set sizes
@@ -716,14 +716,14 @@ void BasicScene::ShopMenuHandler() {
 
     // Handle Gold
     ImGui::SetCursorPosX(text_position2);
-    int gold = game_manager->stats.gold;
+    int gold = game_manager->stats->gold;
     gui_text = "Gold: " + std::to_string(gold);
     ImGui::TextColored(ImVec4(1.0, 1.0, 0.0, 1.0), gui_text.c_str());
 
     Spacing(5);
 
     ImGui::SetCursorPosX(text_position3);
-    int max_health = game_manager->stats.max_health;
+    int max_health = game_manager->stats->max_health;
     gui_text = "Increase Max Health (Current: " + to_string(max_health) + ")";
     ImGui::Text(gui_text.c_str());
 
@@ -732,9 +732,9 @@ void BasicScene::ShopMenuHandler() {
     gui_text = to_string(item1_cost) + " Gold###1";
     if (ImGui::Button(gui_text.c_str(), buttons_size2)) {
         if (gold >= item1_cost) {
-            game_manager->stats.max_health += 10;
-            game_manager->stats.gold -= item1_cost;
-            game_manager->stats.total_gold_spent += item1_cost;
+            game_manager->stats->max_health += 10;
+            game_manager->stats->gold -= item1_cost;
+            game_manager->stats->total_gold_spent += item1_cost;
             cout << "Increase Max Health" << endl;
             ShopMenu_InvalidGold1 = false;
         }
@@ -754,7 +754,7 @@ void BasicScene::ShopMenuHandler() {
     Spacing(5);
 
     ImGui::SetCursorPosX(text_position3);
-    int score_multiplier = game_manager->stats.score_multiplier;
+    int score_multiplier = game_manager->stats->score_multiplier;
     gui_text = "X" + to_string(score_multiplier + 1) + " Score (Current: X" + to_string(score_multiplier) + ")";
     ImGui::Text(gui_text.c_str());
 
@@ -763,9 +763,9 @@ void BasicScene::ShopMenuHandler() {
     gui_text = to_string(item2_cost) + " Gold###2";
     if (ImGui::Button(gui_text.c_str(), buttons_size2)) {
         if (gold >= item2_cost) {
-            game_manager->stats.score_multiplier++;
-            game_manager->stats.gold -= item2_cost;
-            game_manager->stats.total_gold_spent += item2_cost;
+            game_manager->stats->score_multiplier++;
+            game_manager->stats->gold -= item2_cost;
+            game_manager->stats->total_gold_spent += item2_cost;
             cout << "Increase X2 Score" << endl;
             ShopMenu_InvalidGold2 = false;
         }
@@ -785,7 +785,7 @@ void BasicScene::ShopMenuHandler() {
     Spacing(5);
 
     ImGui::SetCursorPosX(text_position3);
-    int gold_multiplier = game_manager->stats.gold_multiplier;
+    int gold_multiplier = game_manager->stats->gold_multiplier;
     gui_text = "X" + to_string(gold_multiplier + 1) + " Gold (Current: X" + to_string(gold_multiplier) + ")";
     ImGui::Text(gui_text.c_str());
 
@@ -794,9 +794,9 @@ void BasicScene::ShopMenuHandler() {
     gui_text = to_string(item3_cost) + " Gold###3";
     if (ImGui::Button(gui_text.c_str(), buttons_size2)) {
         if (gold >= item3_cost) {
-            game_manager->stats.gold_multiplier++;
-            game_manager->stats.gold -= item3_cost;
-            game_manager->stats.total_gold_spent += item3_cost;
+            game_manager->stats->gold_multiplier++;
+            game_manager->stats->gold -= item3_cost;
+            game_manager->stats->total_gold_spent += item3_cost;
             cout << "Increase X2 Gold" << endl;
             ShopMenu_InvalidGold3 = false;
         }
@@ -816,7 +816,7 @@ void BasicScene::ShopMenuHandler() {
     Spacing(5);
 
     ImGui::SetCursorPosX(text_position3);
-    int bonuses_duration = game_manager->stats.bonuses_duration;
+    int bonuses_duration = game_manager->stats->bonuses_duration;
     gui_text = "Increase Bonuses Duration (Current: " + to_string(bonuses_duration) + " sec)";
     ImGui::Text(gui_text.c_str());
 
@@ -825,9 +825,9 @@ void BasicScene::ShopMenuHandler() {
     gui_text = to_string(item4_cost) + " Gold###4";
     if (ImGui::Button(gui_text.c_str(), buttons_size2)) {
         if (gold >= item4_cost) {
-            game_manager->stats.bonuses_duration++;
-            game_manager->stats.gold -= item4_cost;
-            game_manager->stats.total_gold_spent += item4_cost;
+            game_manager->stats->bonuses_duration++;
+            game_manager->stats->gold -= item4_cost;
+            game_manager->stats->total_gold_spent += item4_cost;
             cout << "Increase Bonuses Duration" << endl;
             ShopMenu_InvalidGold4 = false;
         }
@@ -847,7 +847,7 @@ void BasicScene::ShopMenuHandler() {
     Spacing(5);
 
     ImGui::SetCursorPosX(text_position3);
-    int max_movement_speed = game_manager->stats.max_movement_speed;
+    int max_movement_speed = game_manager->stats->max_movement_speed;
     gui_text = "Increase Max Speed (Current: " + to_string(max_movement_speed) + ")";
     ImGui::Text(gui_text.c_str());
 
@@ -856,9 +856,9 @@ void BasicScene::ShopMenuHandler() {
     gui_text = to_string(item5_cost) + " Gold###5";
     if (ImGui::Button(gui_text.c_str(), buttons_size2)) {
         if (gold >= item5_cost) {
-            game_manager->stats.max_movement_speed++;
-            game_manager->stats.gold -= item5_cost;
-            game_manager->stats.total_gold_spent += item5_cost;
+            game_manager->stats->max_movement_speed++;
+            game_manager->stats->gold -= item5_cost;
+            game_manager->stats->total_gold_spent += item5_cost;
             cout << "Increase Max Speed" << endl;
             ShopMenu_InvalidGold5 = false;
         }
@@ -892,9 +892,9 @@ void BasicScene::ShopMenuHandler() {
 }
 
 void BasicScene::StatsMenuHandler() {
-    if (game_manager->sound_manager.playing_index != StatsMenu) {
-        game_manager->sound_manager.MusicHandler("stats.mp3");
-        game_manager->sound_manager.playing_index = StatsMenu;
+    if (game_manager->sound_manager->playing_index != StatsMenu) {
+        game_manager->sound_manager->MusicHandler("stats.mp3");
+        game_manager->sound_manager->playing_index = StatsMenu;
     }
 
     // Set sizes
@@ -935,23 +935,23 @@ void BasicScene::StatsMenuHandler() {
     ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "Snake Stats");
 
     ImGui::SetCursorPosX(text_position3);
-    gui_text = "Max Health: " + std::to_string(game_manager->stats.max_health);
+    gui_text = "Max Health: " + std::to_string(game_manager->stats->max_health);
     ImGui::Text(gui_text.c_str());
 
     ImGui::SetCursorPosX(text_position3);
-    gui_text = "Score Multiplier: X" + std::to_string(game_manager->stats.score_multiplier);
+    gui_text = "Score Multiplier: X" + std::to_string(game_manager->stats->score_multiplier);
     ImGui::Text(gui_text.c_str());
 
     ImGui::SetCursorPosX(text_position3);
-    gui_text = "Gold Multiplier: X" + std::to_string(game_manager->stats.gold_multiplier);
+    gui_text = "Gold Multiplier: X" + std::to_string(game_manager->stats->gold_multiplier);
     ImGui::Text(gui_text.c_str());
 
     ImGui::SetCursorPosX(text_position3);
-    gui_text = "Bonuses Duration: " + std::to_string(game_manager->stats.bonuses_duration) + " sec";
+    gui_text = "Bonuses Duration: " + std::to_string(game_manager->stats->bonuses_duration) + " sec";
     ImGui::Text(gui_text.c_str());
 
     ImGui::SetCursorPosX(text_position3);
-    gui_text = "Max Movement Speed: " + std::to_string(game_manager->stats.max_movement_speed);
+    gui_text = "Max Movement Speed: " + std::to_string(game_manager->stats->max_movement_speed);
     ImGui::Text(gui_text.c_str());
 
     Spacing(5);
@@ -960,31 +960,31 @@ void BasicScene::StatsMenuHandler() {
     ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "Statistics");
 
     ImGui::SetCursorPosX(text_position3);
-    gui_text = "Total Health Points Healed: " + std::to_string(game_manager->stats.total_health_points_healed);
+    gui_text = "Total Health Points Healed: " + std::to_string(game_manager->stats->total_health_points_healed);
     ImGui::Text(gui_text.c_str());
 
     ImGui::SetCursorPosX(text_position3);
-    gui_text = "Total Health Points Lost: " + std::to_string(game_manager->stats.total_health_points_lost);
+    gui_text = "Total Health Points Lost: " + std::to_string(game_manager->stats->total_health_points_lost);
     ImGui::Text(gui_text.c_str());
 
     ImGui::SetCursorPosX(text_position3);
-    gui_text = "Total Score Points Earned: " + std::to_string(game_manager->stats.total_score_points_earned);
+    gui_text = "Total Score Points Earned: " + std::to_string(game_manager->stats->total_score_points_earned);
     ImGui::Text(gui_text.c_str());
 
     ImGui::SetCursorPosX(text_position3);
-    gui_text = "Total Gold Earned: " + std::to_string(game_manager->stats.total_gold_earned);
+    gui_text = "Total Gold Earned: " + std::to_string(game_manager->stats->total_gold_earned);
     ImGui::Text(gui_text.c_str());
 
     ImGui::SetCursorPosX(text_position3);
-    gui_text = "Total Gold Spent: " + std::to_string(game_manager->stats.total_gold_spent);
+    gui_text = "Total Gold Spent: " + std::to_string(game_manager->stats->total_gold_spent);
     ImGui::Text(gui_text.c_str());
 
     ImGui::SetCursorPosX(text_position3);
-    gui_text = "Total Bonuses Collected: " + std::to_string(game_manager->stats.total_bonuses_collected);
+    gui_text = "Total Bonuses Collected: " + std::to_string(game_manager->stats->total_bonuses_collected);
     ImGui::Text(gui_text.c_str());
 
     ImGui::SetCursorPosX(text_position3);
-    gui_text = "Total Deaths: " + std::to_string(game_manager->stats.total_deaths);
+    gui_text = "Total Deaths: " + std::to_string(game_manager->stats->total_deaths);
     ImGui::Text(gui_text.c_str());
 
     Spacing(10);
@@ -998,9 +998,9 @@ void BasicScene::StatsMenuHandler() {
 }
 
 void BasicScene::HallOfFameMenuHandler() {
-    if (game_manager->sound_manager.playing_index != HallOfFameMenu) {
-        game_manager->sound_manager.MusicHandler("hall_of_fame.mp3");
-        game_manager->sound_manager.playing_index = HallOfFameMenu;
+    if (game_manager->sound_manager->playing_index != HallOfFameMenu) {
+        game_manager->sound_manager->MusicHandler("hall_of_fame.mp3");
+        game_manager->sound_manager->playing_index = HallOfFameMenu;
     }
 
     // Set sizes
@@ -1071,9 +1071,9 @@ void BasicScene::HallOfFameMenuHandler() {
 }
 
 void BasicScene::CreditsMenuHandler() {
-    if (game_manager->sound_manager.playing_index != CreditsMenu) {
-        game_manager->sound_manager.MusicHandler("credits.mp3");
-        game_manager->sound_manager.playing_index = CreditsMenu;
+    if (game_manager->sound_manager->playing_index != CreditsMenu) {
+        game_manager->sound_manager->MusicHandler("credits.mp3");
+        game_manager->sound_manager->playing_index = CreditsMenu;
     }
 
     // Set sizes
@@ -1125,7 +1125,7 @@ void BasicScene::CreditsMenuHandler() {
 
     ImGui::SetCursorPosX(text_position3);
     if (payed_credits) {
-        gui_text = "Honorable Contributor: " + game_manager->stats.user_name;
+        gui_text = "Honorable Contributor: " + game_manager->stats->user_name;
         ImGui::Text(gui_text.c_str());
     }
     else {
@@ -1146,10 +1146,10 @@ void BasicScene::CreditsMenuHandler() {
 
 void BasicScene::StageMenuHandler() {
     string stage_music;
-    if (game_manager->sound_manager.playing_index != -game_manager->sound_manager.stage_index) {
-        stage_music = "stage" + std::to_string(game_manager->sound_manager.stage_index) + ".mp3";
-        game_manager->sound_manager.MusicHandler(stage_music);
-        game_manager->sound_manager.playing_index = -game_manager->sound_manager.stage_index;
+    if (game_manager->sound_manager->playing_index != -game_manager->sound_manager->stage_index) {
+        stage_music = "stage" + std::to_string(game_manager->sound_manager->stage_index) + ".mp3";
+        game_manager->sound_manager->MusicHandler(stage_music);
+        game_manager->sound_manager->playing_index = -game_manager->sound_manager->stage_index;
     }
 
     // Set sizes
@@ -1186,25 +1186,25 @@ void BasicScene::StageMenuHandler() {
     Spacing(1);
 
     // Handle Stage
-    gui_text = "Stage: " + std::to_string(game_manager->selected_stage);
+    gui_text = "Stage: " + std::to_string(game_manager->stats->selected_stage);
     ImGui::TextColored(ImVec4(0.0, 0.0, 1.0, 1.0), gui_text.c_str());
 
     ImGui::SameLine(width * 0.15);
 
     // Handle Health
-    gui_text = "Health: " + std::to_string(game_manager->stats.current_health);
+    gui_text = "Health: " + std::to_string(game_manager->stats->current_health);
     ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), gui_text.c_str());
 
     ImGui::SameLine(width * 0.3);
 
     // Handle Score
-    gui_text = "Score: " + std::to_string(game_manager->stats.current_score);
+    gui_text = "Score: " + std::to_string(game_manager->stats->current_score);
     ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), gui_text.c_str());
 
     ImGui::SameLine(width * 0.45);
 
     // Handle Gold
-    gui_text = "Gold: " + std::to_string(game_manager->stats.gold);
+    gui_text = "Gold: " + std::to_string(game_manager->stats->gold);
     ImGui::TextColored(ImVec4(1.0, 1.0, 0.0, 1.0), gui_text.c_str());
     
     ImGui::SameLine(width * 0.6);
@@ -1258,9 +1258,9 @@ void BasicScene::StageMenuHandler() {
     }
 
 
-    if (game_manager->stats.current_health == 0) {
+    if (game_manager->stats->current_health == 0) {
         SetAnimate(false);
-        game_manager->sound_manager.SoundHandler("game_over.mp3");
+        game_manager->sound_manager->SoundHandler("game_over.mp3");
         menu_index = StageFailedMenu;
     }
 
@@ -1269,7 +1269,7 @@ void BasicScene::StageMenuHandler() {
 
 void BasicScene::StageCompletedMenuHandler() {
     // Menu with no sound
-    game_manager->sound_manager.StopMusic();
+    game_manager->sound_manager->StopMusic();
 
     // Set sizes
     ImVec2 window_position1, window_size1, buttons_size1;
@@ -1308,7 +1308,7 @@ void BasicScene::StageCompletedMenuHandler() {
 
     // Handle Stage
     ImGui::SetCursorPosX(text_position2);
-    int current_stage = game_manager->selected_stage;
+    int current_stage = game_manager->stats->selected_stage;
     gui_text = "Stage: " + std::to_string(current_stage);
     ImGui::TextColored(ImVec4(0.0, 0.0, 1.0, 1.0), gui_text.c_str());
 
@@ -1316,14 +1316,14 @@ void BasicScene::StageCompletedMenuHandler() {
 
     // Handle Score
     ImGui::SetCursorPosX(text_position2);
-    gui_text = "Score: " + std::to_string(game_manager->stats.current_score);
+    gui_text = "Score: " + std::to_string(game_manager->stats->current_score);
     ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), gui_text.c_str());
 
     Spacing(1);
 
     // Handle Gold
     ImGui::SetCursorPosX(text_position2);
-    gui_text = "Gold: " + std::to_string(game_manager->stats.gold);
+    gui_text = "Gold: " + std::to_string(game_manager->stats->gold);
     ImGui::TextColored(ImVec4(1.0, 1.0, 0.0, 1.0), gui_text.c_str());
 
     Spacing(5);
@@ -1338,7 +1338,7 @@ void BasicScene::StageCompletedMenuHandler() {
     else {
         if (ImGui::Button("Continue", buttons_size1)) {
             current_stage++;
-            game_manager->sound_manager.stage_index = current_stage;
+            game_manager->sound_manager->stage_index = current_stage;
             game_manager->LoadStage(current_stage);
             menu_index = StageMenu;
         }
@@ -1365,7 +1365,7 @@ void BasicScene::StageCompletedMenuHandler() {
 
 void BasicScene::StageFailedMenuHandler() {
     // Menu with no sound
-    game_manager->sound_manager.StopMusic();
+    game_manager->sound_manager->StopMusic();
 
     // Set sizes
     ImVec2 window_position1, window_size1, buttons_size1;
@@ -1404,21 +1404,21 @@ void BasicScene::StageFailedMenuHandler() {
 
     // Handle Stage
     ImGui::SetCursorPosX(text_position2);
-    gui_text = "Stage: " + std::to_string(game_manager->selected_stage);
+    gui_text = "Stage: " + std::to_string(game_manager->stats->selected_stage);
     ImGui::TextColored(ImVec4(0.0, 0.0, 1.0, 1.0), gui_text.c_str());
 
     Spacing(1);
 
     // Handle Score
     ImGui::SetCursorPosX(text_position2);
-    gui_text = "Score: " + std::to_string(game_manager->stats.current_score);
+    gui_text = "Score: " + std::to_string(game_manager->stats->current_score);
     ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), gui_text.c_str());
 
     Spacing(1);
 
     // Handle Gold
     ImGui::SetCursorPosX(text_position2);
-    gui_text = "Gold: " + std::to_string(game_manager->stats.gold);
+    gui_text = "Gold: " + std::to_string(game_manager->stats->gold);
     ImGui::TextColored(ImVec4(1.0, 1.0, 0.0, 1.0), gui_text.c_str());
 
     Spacing(5);
@@ -1449,9 +1449,9 @@ void BasicScene::StageFailedMenuHandler() {
 }
 
 void BasicScene::NewHighScoreMenuHandler() {
-    if (game_manager->sound_manager.playing_index != HallOfFameMenu) {
-        game_manager->sound_manager.MusicHandler("hall_of_fame.mp3");
-        game_manager->sound_manager.playing_index = CreditsMenu;
+    if (game_manager->sound_manager->playing_index != HallOfFameMenu) {
+        game_manager->sound_manager->MusicHandler("hall_of_fame.mp3");
+        game_manager->sound_manager->playing_index = CreditsMenu;
     }
 
     // Set sizes
@@ -1474,7 +1474,7 @@ void BasicScene::NewHighScoreMenuHandler() {
         font_scale1 = text_position1 = 1;
     }
 
-    int position = game_manager->leaderboard.CalculateLeaderboardPosition(game_manager->stats.current_score);
+    int position = game_manager->leaderboard.CalculateLeaderboardPosition(game_manager->stats->current_score);
     // No new high score found
     if (position == -1) {
         menu_index = next_menu_index;
@@ -1543,7 +1543,7 @@ void BasicScene::NewHighScoreMenuHandler() {
     ImGui::InputTextMultiline("", name, IM_ARRAYSIZE(name), ImVec2((width / 15), (height / 16)));
 
     ImGui::SameLine();
-    gui_text = "-Score: " + to_string(game_manager->stats.current_score);
+    gui_text = "-Score: " + to_string(game_manager->stats->current_score);
     ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), gui_text.c_str());
 
     Spacing(5);
@@ -1552,7 +1552,7 @@ void BasicScene::NewHighScoreMenuHandler() {
     if (ImGui::Button("Apply", buttons_size1)) {
         if (string(name).length() == 3) {
             NewHighScoreMenu_InvalidParameter = false;
-            game_manager->leaderboard.AddScoreToLeaderboard(position, name, game_manager->stats.current_score);
+            game_manager->leaderboard.AddScoreToLeaderboard(position, name, game_manager->stats->current_score);
             menu_index = next_menu_index;
         }
         else {
@@ -1596,6 +1596,51 @@ bool BasicScene::ProgramHandler(const Program& program) {
     if (program.name == "snake body program") {
         program.SetUniform4f("lightColor", 0.5f, 0.25f, 0.0f, 0.5f);
         program.SetUniform4f("Kai", 0.5f, 0.25f, 0.0f, 1.0f);
+        program.SetUniform4f("Kdi", 0.5f, 0.5f, 0.5f, 1.0f);
+        program.SetUniform1f("specular_exponent", 5.0f);
+        program.SetUniform4f("light_position", 0.0, 15.0f, 0.0, 1.0f);
+
+        default_behavior = false;
+    }
+    if (program.name == "health") {
+        program.SetUniform4f("lightColor", 0.7f, 0.7f, 0.7f, 0.5f);
+        program.SetUniform4f("Kai", 1.0f, 0.0f, 0.0f, 1.0f);
+        program.SetUniform4f("Kdi", 0.5f, 0.5f, 0.5f, 1.0f);
+        program.SetUniform1f("specular_exponent", 5.0f);
+        program.SetUniform4f("light_position", 0.0, 15.0f, 0.0, 1.0f);
+
+        default_behavior = false;
+    }
+    if (program.name == "score") {
+        program.SetUniform4f("lightColor", 0.7f, 0.7f, 0.7f, 0.5f);
+        program.SetUniform4f("Kai", 1.0f, 0.0f, 0.0f, 1.0f);
+        program.SetUniform4f("Kdi", 0.5f, 0.5f, 0.5f, 1.0f);
+        program.SetUniform1f("specular_exponent", 5.0f);
+        program.SetUniform4f("light_position", 0.0, 15.0f, 0.0, 1.0f);
+
+        default_behavior = false;
+    }
+    if (program.name == "gold") {
+        program.SetUniform4f("lightColor", 0.7f, 0.7f, 0.7f, 0.5f);
+        program.SetUniform4f("Kai", 1.0f, 1.0f, 0.0f, 1.0f);
+        program.SetUniform4f("Kdi", 0.5f, 0.5f, 0.5f, 1.0f);
+        program.SetUniform1f("specular_exponent", 5.0f);
+        program.SetUniform4f("light_position", 0.0, 15.0f, 0.0, 1.0f);
+
+        default_behavior = false;
+    }
+    if (program.name == "bonus") {
+        program.SetUniform4f("lightColor", 0.7f, 0.7f, 0.7f, 0.5f);
+        program.SetUniform4f("Kai", 0.0f, 0.0f, 1.0f, 1.0f);
+        program.SetUniform4f("Kdi", 0.5f, 0.5f, 0.5f, 1.0f);
+        program.SetUniform1f("specular_exponent", 5.0f);
+        program.SetUniform4f("light_position", 0.0, 15.0f, 0.0, 1.0f);
+
+        default_behavior = false;
+    }
+    if (program.name == "obstacle") {
+        program.SetUniform4f("lightColor", 0.7f, 0.7f, 0.7f, 0.5f);
+        program.SetUniform4f("Kai", 1.0f, 0.0f, 1.0f, 1.0f);
         program.SetUniform4f("Kdi", 0.5f, 0.5f, 0.5f, 1.0f);
         program.SetUniform1f("specular_exponent", 5.0f);
         program.SetUniform4f("light_position", 0.0, 15.0f, 0.0, 1.0f);

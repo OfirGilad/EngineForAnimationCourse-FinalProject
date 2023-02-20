@@ -48,7 +48,8 @@ public:
 
 
     // Stage stats
-    int current_health = 0;
+    int selected_stage = 0;
+    int current_health = 100;
     int current_score = 0;
     int min_movement_speed = 1; // Always
     int current_movement_speed = 1;

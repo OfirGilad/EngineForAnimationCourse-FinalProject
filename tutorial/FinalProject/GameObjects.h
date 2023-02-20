@@ -8,17 +8,23 @@
 #endif //ENGINEFORANIMATIONCOURSE_FINALPROJECT_GAMEOBJECTS_H
 
 #include <string>
-#include "BasicScene.h"
+#include "Scene.h"
+#include "SoundManager.h"
+#include "Stats.h"
 
+using namespace cg3d;
 
 class GameObject
 {
 public:
-    virtual void InitObject(GameManager* game_manager);
+    virtual void InitObject(Stats* stats, SoundManager* sound_manager, std::shared_ptr<Model> model);
     virtual void CollisionWithObject() = 0;
+    virtual void MoveObject() {};
     virtual ~GameObject() {}
 
-    GameManager* game_manager;
+    Stats* stats;
+    SoundManager* sound_manager;
+    std::shared_ptr<Model> model;
     int stage_number;
 };
 
@@ -68,14 +74,13 @@ private:
 };
 
 
-class ObjectHandler
+class ObjectsBuilder
 {
 public:
-    ObjectHandler() {};
-    void InitObjectHandler(string object_name, GameManager* game_manager);
-    void HandleCollision();
+    ObjectsBuilder() {};
+    void InitObjectsBuilder(Stats* stats, SoundManager* sound_manager);
+    GameObject* BuildGameObject(std::shared_ptr<Model> model);
 
-    string object_name;
-    GameManager* game_manager;
-    GameObject* game_object;
+    Stats* stats;
+    SoundManager* sound_manager;
 };

@@ -8,42 +8,47 @@
 // ObjectHandler //
 ///////////////////
 
-void ObjectHandler::InitObjectHandler(string object_name, GameManager* game_manager) {
-    this->object_name = object_name;
-    this->game_manager = game_manager;
-
-    if (this->object_name == "HealthObject") {
-        this->game_object = new HealthObject();
-        this->game_object->InitObject(this->game_manager);
-    }
-    if (this->object_name == "ScoreObject") {
-        this->game_object = new ScoreObject();
-        this->game_object->InitObject(this->game_manager);
-    }
-    if (this->object_name == "GoldObject") {
-        this->game_object = new GoldObject();
-        this->game_object->InitObject(this->game_manager);
-    }
-    if (this->object_name == "BonusObject") {
-        this->game_object = new BonusObject();
-        this->game_object->InitObject(this->game_manager);
-    }
-    if (this->object_name == "ObstacleObject") {
-        this->game_object = new ObstacleObject();
-        this->game_object->InitObject(this->game_manager);
-    }
+void ObjectsBuilder::InitObjectsBuilder(Stats* stats, SoundManager* sound_manager) {
+    this->stats = stats;
+    this->sound_manager = sound_manager;
 }
 
-void ObjectHandler::HandleCollision() {
-    this->game_object->CollisionWithObject();
+GameObject* ObjectsBuilder::BuildGameObject(std::shared_ptr<Model> model) {
+    string model_name = model->name;
+    GameObject* game_object;
+
+    if (model_name == "HealthObject") {
+        game_object = new HealthObject();
+        game_object->InitObject(this->stats, this->sound_manager, model);
+    }
+    if (model_name == "ScoreObject") {
+        game_object = new ScoreObject();
+        game_object->InitObject(this->stats, this->sound_manager, model);
+    }
+    if (model_name == "GoldObject") {
+        game_object = new GoldObject();
+        game_object->InitObject(this->stats, this->sound_manager, model);
+    }
+    if (model_name == "BonusObject") {
+        game_object = new BonusObject();
+        game_object->InitObject(this->stats, this->sound_manager, model);
+    }
+    if (model_name == "ObstacleObject") {
+        game_object = new ObstacleObject();
+        game_object->InitObject(this->stats, this->sound_manager, model);
+    }
+
+    return game_object;
 }
 
 ////////////////
 // GameObject //
 ////////////////
 
-void GameObject::InitObject(GameManager* game_manager) {
-    this->game_manager = game_manager;
+void GameObject::InitObject(Stats* stats, SoundManager* sound_manager, std::shared_ptr<Model> model) {
+    this->stats = stats;
+    this->model = model;
+    this->sound_manager = sound_manager;
 }
 
 //////////////////
@@ -52,9 +57,9 @@ void GameObject::InitObject(GameManager* game_manager) {
 
 void HealthObject::CollisionWithObject() {
     // Get required parameters
-    stage_number = game_manager->selected_stage;
-    current_health = game_manager->stats.current_health;
-    max_health = game_manager->stats.max_health;
+    stage_number = stats->selected_stage;
+    current_health = stats->current_health;
+    max_health = stats->max_health;
 
     // Handle event
     health_value = stage_number * 10;
@@ -64,11 +69,11 @@ void HealthObject::CollisionWithObject() {
     current_health += health_value;
 
     // Update stats
-    game_manager->stats.current_health = current_health;
-    game_manager->stats.total_health_points_healed += health_value;
+    stats->current_health = current_health;
+    stats->total_health_points_healed += health_value;
 
     // Handle sound
-    game_manager->sound_manager.SoundHandler("health_object.mp3");
+    sound_manager->SoundHandler("health_object.mp3");
     cout << "HealthObject" << endl;
 }
 
@@ -78,20 +83,20 @@ void HealthObject::CollisionWithObject() {
 
 void ScoreObject::CollisionWithObject() {
     // Get required parameters
-    stage_number = game_manager->selected_stage;
-    current_score = game_manager->stats.current_score;
-    score_multiplier = game_manager->stats.score_multiplier;
+    stage_number = stats->selected_stage;
+    current_score = stats->current_score;
+    score_multiplier = stats->score_multiplier;
 
     // Handle event
     score_value = 10 * stage_number * score_multiplier;
     current_score = current_score + score_value;
 
     // Update stats
-    game_manager->stats.current_score = current_score;
-    game_manager->stats.total_score_points_earned += score_value;
+    stats->current_score = current_score;
+    stats->total_score_points_earned += score_value;
 
     // Handle sound
-    game_manager->sound_manager.SoundHandler("score_object.mp3");
+    sound_manager->SoundHandler("score_object.mp3");
     cout << "ScoreObject" << endl;
 }
 
@@ -101,20 +106,20 @@ void ScoreObject::CollisionWithObject() {
 
 void GoldObject::CollisionWithObject() {
     // Get required parameters
-    stage_number = game_manager->selected_stage;
-    gold = game_manager->stats.gold;
-    gold_multiplier = game_manager->stats.gold_multiplier;
+    stage_number = stats->selected_stage;
+    gold = stats->gold;
+    gold_multiplier = stats->gold_multiplier;
 
     // Handle event
     gold_value = 10 * stage_number * gold_multiplier;
     gold = gold + gold_value;
 
     // Update stats
-    game_manager->stats.gold = gold;
-    game_manager->stats.total_gold_earned += gold_value;
+    stats->gold = gold;
+    stats->total_gold_earned += gold_value;
 
     // Handle sound
-    game_manager->sound_manager.SoundHandler("gold_object.mp3");
+    sound_manager->SoundHandler("gold_object.mp3");
     cout << "GoldObject" << endl;
 }
 
@@ -124,16 +129,16 @@ void GoldObject::CollisionWithObject() {
 
 void BonusObject::CollisionWithObject() {
     // Get required parameters
-    stage_number = game_manager->selected_stage;
-    bonus_duration = game_manager->stats.bonuses_duration;
+    stage_number = stats->selected_stage;
+    bonus_duration = stats->bonuses_duration;
 
     // Handle event
 
     // Update stats
-    game_manager->stats.total_bonuses_collected += 1;
+    stats->total_bonuses_collected += 1;
 
     // Handle sound
-    game_manager->sound_manager.SoundHandler("bonus_object.mp3");
+    sound_manager->SoundHandler("bonus_object.mp3");
     cout << "BonusObject" << endl;
 }
 
@@ -143,8 +148,8 @@ void BonusObject::CollisionWithObject() {
 
 void ObstacleObject::CollisionWithObject() {
     // Get required parameters
-    stage_number = game_manager->selected_stage;
-    current_health = game_manager->stats.current_health;
+    stage_number = stats->selected_stage;
+    current_health = stats->current_health;
 
     // Handle event
     damage_value = 10 * stage_number;
@@ -154,10 +159,10 @@ void ObstacleObject::CollisionWithObject() {
     current_health -= damage_value;
 
     // Update stats
-    game_manager->stats.current_health = current_health;
-    game_manager->stats.total_health_points_lost += damage_value;
+    stats->current_health = current_health;
+    stats->total_health_points_lost += damage_value;
 
     // Handle sound
-    game_manager->sound_manager.SoundHandler("obstacle_object.mp3");
+    sound_manager->SoundHandler("obstacle_object.mp3");
     cout << "ObstacleObject" << endl;
 }

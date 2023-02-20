@@ -13,12 +13,12 @@
 #include "Scene.h"
 #include "ObjLoader.h"
 #include "IglMeshLoader.h"
+#include <random>
 
 
 #include "Snake.h"
-#include "SoundManager.h"
-#include "Stats.h"
 #include "Leaderboard.h"
+#include "GameObjects.h" // Includes: Stats and SoundManager 
 
 
 using namespace std;
@@ -45,10 +45,8 @@ public:
     std::vector<std::shared_ptr<cg3d::Model>> bonus_objects;
     std::vector<std::shared_ptr<cg3d::Model>> obstacle_objects;
 
-
-    std::vector<std::shared_ptr<cg3d::Model>> stage_objects;
+    std::vector<GameObject*> stage_objects;
     int number_of_objects = 0;
-    int selected_stage = 0;
 
 
     // CollisionDetectionVisitor Params
@@ -59,13 +57,16 @@ public:
     int number_of_bones = 16;
 
     // Sound Manager
-    SoundManager sound_manager;
+    SoundManager* sound_manager;
 
     // Stats
-    Stats stats;
+    Stats* stats;
 
     // Leaderboard
     Leaderboard leaderboard;
+
+    // Objects Builder
+    ObjectsBuilder objects_builder;
 
 private:
     // Collision boxes for CollisionDetectionVisitor
@@ -84,4 +85,6 @@ private:
     void BuildGoldObjects();
     void BuildBonusObjects();
     void BuildObstacleObjects();
+
+    Eigen::Vector3f GenerateRandomPosition();
 };

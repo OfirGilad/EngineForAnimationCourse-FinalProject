@@ -12,7 +12,6 @@
 #include <vector>
 #include "../tutorial/FinalProject/BasicScene.h"
 #include "../tutorial/FinalProject/GameLogics.h"
-#include "../tutorial/FinalProject/GameObjects.h"
 
 #include <AABB.h>
 #include "igl/read_triangle_mesh.cpp"
@@ -34,7 +33,6 @@ namespace cg3d
 
         GameManager* game_manager;
         GameLogics collision_logic;
-        ObjectHandler object_handler;
 
         Eigen::Vector3f backgound_cube_space = Eigen::Vector3f(60, 60, 60);
     };

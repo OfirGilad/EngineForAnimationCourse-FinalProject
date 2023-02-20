@@ -17,21 +17,25 @@ void GameManager::InitGameManager(std::shared_ptr<Movable> _root, std::vector<st
     snake.InitSnake(number_of_bones);
 
     // Init Sound Manager
-    sound_manager = SoundManager();
+    sound_manager = new SoundManager();
 
     // Init Stats
-    stats = Stats();
-    stats.InitStats();
+    stats = new Stats();
+    stats->InitStats();
 
     // Init Leaderboard
     leaderboard = Leaderboard();
     leaderboard.InitLeaderboard();
+
+    // Init ObjectsBuilder
+    objects_builder = ObjectsBuilder();
+    objects_builder.InitObjectsBuilder(stats, sound_manager);
 }
 
 void GameManager::LoadStage(int stage_number)
 {
     // Set Select Stage
-    selected_stage = stage_number;
+    stats->selected_stage = stage_number;
 
     InitBackground();
     InitAxis();
@@ -96,18 +100,22 @@ void GameManager::InitAxis() {
 
 void GameManager::InitStageParameters(bool new_stage) {
     if (new_stage) {
-        stats.current_health = stats.max_health;
-        //stats.current_health = 20;
-        stats.current_score = 0;
+        stats->current_health = stats->max_health;
+        //stats->current_health = 20;
+        stats->current_score = 0;
     }
 }
 
 void GameManager::InitCustomObject() {
-    auto program = std::make_shared<Program>("shaders/basicShader");
+    auto program1 = std::make_shared<Program>("shaders/phongShader");
+    auto program2 = std::make_shared<Program>("shaders/phongShader");
+    auto program3 = std::make_shared<Program>("shaders/phongShader");
+    auto program4 = std::make_shared<Program>("shaders/phongShader");
+    auto program5 = std::make_shared<Program>("shaders/phongShader");
 
     // health
-    auto material1 = std::make_shared<Material>("material", program);
-    material1->AddTexture(0, "../tutorial/objects/health.png", 2);
+    auto material1 = std::make_shared<Material>("material", program1);
+    material1->program->name = "health";
     health_model = ObjLoader::ModelFromObj("health", "../tutorial/objects/health.obj", material1);
 
     health_model->Scale(0.3, Movable::Axis::XYZ);
@@ -115,32 +123,40 @@ void GameManager::InitCustomObject() {
     health_model->Translate(-1.5, Movable::Axis::Z);
 
     // Score
-    auto material2 = std::make_shared<Material>("material", program);
-    material2->AddTexture(0, "../tutorial/objects/score.jpg", 2);
+    auto material2 = std::make_shared<Material>("material", program2);
+    material2->program->name = "score";
     score_model = ObjLoader::ModelFromObj("score", "data/circle.obj", material2);
 
+    score_model->Scale(2, Movable::Axis::XYZ);
+
     // Gold
-    auto material3 = std::make_shared<Material>("material", program);
-    material3->AddTexture(0, "../tutorial/objects/gold.jpg", 2);
+    auto material3 = std::make_shared<Material>("material", program3);
+    material3->program->name = "gold";
     gold_model = ObjLoader::ModelFromObj("gold", "data/circle.obj", material3);
 
+    gold_model->Scale(2, Movable::Axis::XYZ);
+
     // Bonus
-    auto material4 = std::make_shared<Material>("material", program);
-    material4->AddTexture(0, "../tutorial/objects/bonus.jpg", 2);
+    auto material4 = std::make_shared<Material>("material", program4);
+    material4->program->name = "bonus";
     bonus_model = ObjLoader::ModelFromObj("bonus", "data/circle.obj", material4);
 
+    bonus_model->Scale(2, Movable::Axis::XYZ);
+
     // Obstacle
-    auto material5 = std::make_shared<Material>("material", program);
-    material5->AddTexture(0, "../tutorial/objects/obstacle.jpg", 2);
+    auto material5 = std::make_shared<Material>("material", program5);
+    material5->program->name = "obstacle";
     obstacle_model = ObjLoader::ModelFromObj("obstacle", "data/circle.obj", material5);
+
+    obstacle_model->Scale(6, Movable::Axis::XYZ);
 }
 
 void GameManager::BuildGameObjects() {
     BuildHealthObjects();
-    //BuildScoreObjects();
-    //BuildGoldObjects();
-    //BuildBonusObjects();
-    //BuildObstacleObjects();
+    BuildScoreObjects();
+    BuildGoldObjects();
+    BuildBonusObjects();
+    BuildObstacleObjects();
 }
 
 void GameManager::BuildHealthObjects() {
@@ -153,14 +169,14 @@ void GameManager::BuildHealthObjects() {
 
         // Setting Positions
         temp_object2->AddChild(temp_object1);
-        temp_object2->Translate(-10 * (i + 1), Movable::Axis::Z); // Need to generate randomly
+        temp_object2->Translate(GenerateRandomPosition()); // Need to generate randomly
         
         // Fix Scaling
         temp_object2->Scale(Eigen::Vector3f(3.4, 3.4, 3.4));
         temp_object2->isHidden = true;
-        
-        // Adding to Stage objects list
-        stage_objects.push_back(temp_object2);
+
+        // Adding to Stage objects list;
+        stage_objects.push_back(objects_builder.BuildGameObject(temp_object2));
         number_of_objects++;
     }
 }
@@ -175,14 +191,14 @@ void GameManager::BuildScoreObjects() {
 
         // Setting Positions
         temp_object2->AddChild(temp_object1);
-        temp_object2->Translate(-10 * (i + 1), Movable::Axis::Z); // Need to generate randomly
+        temp_object2->Translate(GenerateRandomPosition()); // Need to generate randomly
 
         // Fix Scaling
-        //temp_object2->Scale(Eigen::Vector3f(3.4, 3.4, 3.4));
+        temp_object2->Scale(Eigen::Vector3f(3.4, 3.4, 3.4));
         temp_object2->isHidden = true;
 
         // Adding to Stage objects list
-        stage_objects.push_back(temp_object2);
+        stage_objects.push_back(objects_builder.BuildGameObject(temp_object2));
         number_of_objects++;
     }
 }
@@ -197,14 +213,14 @@ void GameManager::BuildGoldObjects() {
 
         // Setting Positions
         temp_object2->AddChild(temp_object1);
-        temp_object2->Translate(-10 * (i + 1), Movable::Axis::Z); // Need to generate randomly
+        temp_object2->Translate(GenerateRandomPosition()); // Need to generate randomly
 
         // Fix Scaling
-        //temp_object2->Scale(Eigen::Vector3f(3.4, 3.4, 3.4));
+        temp_object2->Scale(Eigen::Vector3f(3.4, 3.4, 3.4));
         temp_object2->isHidden = true;
 
         // Adding to Stage objects list
-        stage_objects.push_back(temp_object2);
+        stage_objects.push_back(objects_builder.BuildGameObject(temp_object2));
         number_of_objects++;
     }
 }
@@ -219,14 +235,14 @@ void GameManager::BuildBonusObjects() {
 
         // Setting Positions
         temp_object2->AddChild(temp_object1);
-        temp_object2->Translate(-10 * (i + 1), Movable::Axis::Z); // Need to generate randomly
+        temp_object2->Translate(GenerateRandomPosition()); // Need to generate randomly
 
         // Fix Scaling
-        //temp_object2->Scale(Eigen::Vector3f(3.4, 3.4, 3.4));
+        temp_object2->Scale(Eigen::Vector3f(3.4, 3.4, 3.4));
         temp_object2->isHidden = true;
 
         // Adding to Stage objects list
-        stage_objects.push_back(temp_object2);
+        stage_objects.push_back(objects_builder.BuildGameObject(temp_object2));
         number_of_objects++;
     }
 }
@@ -241,14 +257,25 @@ void GameManager::BuildObstacleObjects() {
 
         // Setting Positions
         temp_object2->AddChild(temp_object1);
-        temp_object2->Translate(-10 * (i + 1), Movable::Axis::Z); // Need to generate randomly
+        temp_object2->Translate(GenerateRandomPosition()); // Need to generate randomly
 
         // Fix Scaling
-        //temp_object2->Scale(Eigen::Vector3f(3.4, 3.4, 3.4));
+        temp_object2->Scale(Eigen::Vector3f(6, 6, 6));
         temp_object2->isHidden = true;
 
+
+
         // Adding to Stage objects list
-        stage_objects.push_back(temp_object2);
+        stage_objects.push_back(objects_builder.BuildGameObject(temp_object2));
         number_of_objects++;
     }
+}
+
+
+Eigen::Vector3f GameManager::GenerateRandomPosition() {
+    std::random_device random_device;
+    std::mt19937 generator(random_device());
+    std::uniform_real_distribution<float> distribution(-50, 50);
+
+    return Eigen::Vector3f(distribution(generator), distribution(generator), distribution(generator));
 }

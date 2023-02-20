@@ -12,7 +12,6 @@ namespace cg3d
     void CollisionDetectionVisitor::Run(cg3d::Scene* _scene, cg3d::Camera* camera)
     {
         collision_logic = GameLogics();
-        object_handler = ObjectHandler();
         Visitor::Run(_scene, camera);
     }
 
@@ -25,23 +24,23 @@ namespace cg3d
 
             if (CheckSelfCollision()) {
                 _scene->SetAnimate(false);
-                game_manager->sound_manager.StopMusic();
-                game_manager->sound_manager.SoundHandler("obstacle_object.mp3");
-                game_manager->stats.current_health = 0;
+                game_manager->sound_manager->StopMusic();
+                game_manager->sound_manager->SoundHandler("obstacle_object.mp3");
+                game_manager->stats->current_health = 0;
                 cout << "Self Collision" << endl;
             }
 
             if (CheckBackgoroundCollision()) {
                 _scene->SetAnimate(false);
-                game_manager->sound_manager.StopMusic();
-                game_manager->sound_manager.SoundHandler("obstacle_object.mp3");
-                game_manager->stats.current_health = 0;
+                game_manager->sound_manager->StopMusic();
+                game_manager->sound_manager->SoundHandler("obstacle_object.mp3");
+                game_manager->stats->current_health = 0;
                 cout << "Backgound Collision" << endl;
             }
 
             if (game_manager->number_of_objects != 0) {
                 for (int i = 0; i < game_manager->number_of_objects; i++) {
-                    std::shared_ptr<cg3d::Model> current_game_object = game_manager->stage_objects[i];
+                    std::shared_ptr<cg3d::Model> current_game_object = game_manager->stage_objects[i]->model;
 
                     collision_logic.InitCollisionDetection(snake_head, current_game_object, game_manager->cube1, game_manager->cube2);
                     bool collision_check = collision_logic.CollisionCheck(snake_head->GetAABBTree(), current_game_object->GetAABBTree(), 0);
@@ -52,8 +51,8 @@ namespace cg3d
                         current_game_object->RemoveChild(game_manager->cube2);
 
                         // Handle Object Event
-                        object_handler.InitObjectHandler(current_game_object->name, game_manager);
-                        object_handler.HandleCollision();
+                        //object_handler.InitObjectHandler(current_game_object->name, game_manager);
+                        game_manager->stage_objects[i]->CollisionWithObject();
                         game_manager->root->RemoveChild(current_game_object);
                         game_manager->stage_objects.erase(game_manager->stage_objects.begin() + i);
                         game_manager->number_of_objects--;
