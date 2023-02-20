@@ -29,7 +29,6 @@ public:
 
 private:
     // Make sure to set the correct python version
-    string python_exe = "python3.8.exe"; //Desktop
-    //string python_exe = "python3.10.exe"; //Laptop
+    string python_version = "python3.10";
     bool playing = false;
 };

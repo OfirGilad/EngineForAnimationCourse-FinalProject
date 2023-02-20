@@ -11,7 +11,7 @@ SoundManager::SoundManager() {
 void SoundManager::MusicHandler(string music_file) {
     // Calling a script to play the music
     const auto& PlayMusic = [&](std::string music_file) {
-        std::string command = "python ../tutorial/scripts/play_music.py \"" + music_file + "\"";
+        std::string command = python_version + " ../tutorial/scripts/play_music.py \"" + music_file + "\"";
         system(command.c_str());
     };
 
@@ -19,7 +19,7 @@ void SoundManager::MusicHandler(string music_file) {
         if (playing) {
             // Kill The Previous Music Player
             playing = false;
-            std::string kill_command = "taskkill /f /im " + python_exe;
+            std::string kill_command = "taskkill /f /im " + python_version + ".exe";
             system(kill_command.c_str());
 
             // Play New Music
@@ -39,7 +39,7 @@ void SoundManager::MusicHandler(string music_file) {
 void SoundManager::SoundHandler(string sound_file) {
     // Calling a script to play the music
     const auto& PlaySound = [&](std::string sound_file) {
-        std::string command = "python ../tutorial/scripts/play_sound.py \"" + sound_file + "\"";
+        std::string command = python_version + " ../tutorial/scripts/play_sound.py \"" + sound_file + "\"";
         system(command.c_str());
     };
     if (player_enabled) {
@@ -54,7 +54,7 @@ void SoundManager::StopMusic() {
 
         // Kill The Previous Music Player
         playing = false;
-        std::string kill_command = "taskkill /f /im " + python_exe;
+        std::string kill_command = "taskkill /f /im " + python_version + ".exe";
         system(kill_command.c_str());
     }
 }

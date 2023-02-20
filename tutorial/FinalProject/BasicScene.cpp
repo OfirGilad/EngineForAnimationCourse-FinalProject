@@ -89,10 +89,10 @@ void BasicScene::MouseCallback(Viewport* viewport, int x, int y, int button, int
     // Handle ImGui Menu
     if (ImGui::GetIO().WantCaptureMouse) return;
 
-    // Handle coming back 
-    //if (menu_index != StageMenu) {
-    //    return;
-    //}
+    // Handle coming back (In Progress)
+    if (menu_index != StageMenu && menu_index != StageCompletedMenu && menu_index != StageFailedMenu && menu_index != NewHighScoreMenu) {
+        return;
+    }
     //else if ((x < window_size1.x) && (y < window_size1.y)) {
     //    return;
     //}

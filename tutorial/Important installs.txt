@@ -1,5 +1,5 @@
 Required Programs:
-Install Python3.8
+Install Python3.10
 Install VLC
 
 Required Python Libraries:
