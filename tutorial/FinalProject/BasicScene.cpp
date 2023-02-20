@@ -1235,7 +1235,7 @@ void BasicScene::StageFailedMenuHandler() {
     bool* pOpen = nullptr;
     string gui_text;
 
-    ImVec2 window_pos_x = ImVec2(float(width - 0.25 * width) / 2.f, float(height - 0.4 * height) / 2.f);
+    ImVec2 window_pos_x = ImVec2(0.75 * float(width) / 2.f, 0.6 * float(height) / 2.f);
     ImVec2 window_size_x = ImVec2((float(width)) * 0.22, (float(height)) * 0.42);
 
     float position_x1 = float(width) * 0.06f;
@@ -1317,7 +1317,7 @@ void BasicScene::NewHighScoreMenuHandler() {
     bool* pOpen = nullptr;
     string gui_text;
 
-    ImVec2 window_pos_x = ImVec2(float(width - 0.4 * width) / 2.f, float(height - 0.5 * height) / 2.f);
+    ImVec2 window_pos_x = ImVec2(0.6 * float(width) / 2.f, 0.5f * float(height) / 2.f);
     ImVec2 window_size_xx = ImVec2((float(width)) * 0.4, (float(height)) * 0.5);
 
     float position_x1xx = float(width) * 0.025f;
