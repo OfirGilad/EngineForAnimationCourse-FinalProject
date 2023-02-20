@@ -25,11 +25,11 @@ public:
     // Global Indexed
     int playing_index = -1;
     int stage_index = 0;
-    bool player_enabled = false;
+    bool player_enabled = true;
 
 private:
     // Make sure to set the correct python version
-    //string python_exe = "python3.8.exe"; //Desktop
-    string python_exe = "python3.10.exe"; //Laptop
+    string python_exe = "python3.8.exe"; //Desktop
+    //string python_exe = "python3.10.exe"; //Laptop
     bool playing = false;
 };

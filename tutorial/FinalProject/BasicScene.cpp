@@ -351,7 +351,6 @@ void BasicScene::MenuManager() {
     width = viewport->width;
     height = viewport->height;
 
-
     switch (menu_index)
     {
         case LoginMenu:
@@ -416,7 +415,6 @@ void BasicScene::LoginMenuHandler() {
         window_size1 = buttons_size1 = input_text_size1 = ImVec2(1, 1);
         font_scale1 = text_position1 = text_position2 = 1;
     }
-
 
     int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
     bool* pOpen = nullptr;
@@ -1273,9 +1271,17 @@ void BasicScene::StageMenuHandler() {
 
 
     if (game_manager->stats->current_health == 0) {
+        game_manager->sound_manager->StopMusic();
         SetAnimate(false);
         game_manager->sound_manager->SoundHandler("game_over.mp3");
         menu_index = StageFailedMenu;
+    }
+
+    if (game_manager->stats->stage_completed) {
+        game_manager->sound_manager->StopMusic();
+        SetAnimate(false);
+        game_manager->sound_manager->SoundHandler("stage_complete.mp3");
+        menu_index = StageCompletedMenu;
     }
 
     ImGui::End();
@@ -1305,6 +1311,8 @@ void BasicScene::StageCompletedMenuHandler() {
         window_position1 = window_size1, buttons_size1 = ImVec2(1, 1);
         font_scale1 = text_position1 = text_position2 = 1;
     }
+
+    game_manager->stats->stage_completed = false;
 
     int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
     bool* pOpen = nullptr;
@@ -1504,7 +1512,6 @@ void BasicScene::NewHighScoreMenuHandler() {
     ImGui::SetWindowSize(window_size1, ImGuiCond_Always);
     ImGui::SetWindowFontScale(font_scale1);
 
-
     ImGui::SetCursorPosX(text_position1);
     ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "N");
     ImGui::SameLine();
@@ -1658,6 +1665,15 @@ bool BasicScene::ProgramHandler(const Program& program) {
         program.SetUniform4f("Kdi", 0.5f, 0.5f, 0.5f, 1.0f);
         program.SetUniform1f("specular_exponent", 5.0f);
         program.SetUniform4f("light_position", 0.0, 15.0f, 0.0, 1.0f);
+
+        default_behavior = false;
+    }
+    if (program.name == "exit") {
+        program.SetUniform4f("lightColor", 0.7f, 0.7f, 0.7f, 0.5f);
+        program.SetUniform4f("Kai", 0.0f, 0.0f, 0.0f, 1.0f);
+        program.SetUniform4f("Kdi", 0.5f, 0.5f, 0.5f, 1.0f);
+        program.SetUniform1f("specular_exponent", 5.0f);
+        program.SetUniform4f("light_position", 0.0, -15.0f, 0.0, 1.0f);
 
         default_behavior = false;
     }

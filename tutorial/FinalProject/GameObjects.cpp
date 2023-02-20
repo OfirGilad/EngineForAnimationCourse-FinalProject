@@ -37,6 +37,10 @@ GameObject* ObjectsBuilder::BuildGameObject(std::shared_ptr<Model> model) {
         game_object = new ObstacleObject();
         game_object->InitObject(this->stats, this->sound_manager, model);
     }
+    if (model_name == "ExitObject") {
+        game_object = new ExitObject();
+        game_object->InitObject(this->stats, this->sound_manager, model);
+    }
 
     return game_object;
 }
@@ -165,4 +169,20 @@ void ObstacleObject::CollisionWithObject() {
     // Handle sound
     sound_manager->SoundHandler("obstacle_object.mp3");
     cout << "ObstacleObject" << endl;
+}
+
+////////////////
+// ExitObject //
+////////////////
+
+void ExitObject::CollisionWithObject() {
+    // Get required parameters
+
+    // Handle event
+    stats->stage_completed = true;
+
+    // Update stats
+
+    // Handle sound
+    cout << "ExitObject" << endl;
 }

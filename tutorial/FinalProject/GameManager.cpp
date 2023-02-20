@@ -120,7 +120,6 @@ void GameManager::InitCustomObjects() {
     health_model = ObjLoader::ModelFromObj("health", "../tutorial/objects/health.obj", material1);
 
     health_model->Scale(0.3f, Movable::Axis::XYZ);
-    health_model->Translate(6.f, Movable::Axis::Y);
     health_model->Translate(-1.5f, Movable::Axis::Z);
 
     // Score
@@ -129,7 +128,7 @@ void GameManager::InitCustomObjects() {
     material2->program->name = "score";
     score_model = ObjLoader::ModelFromObj("score", "data/circle.obj", material2);
 
-    score_model->Scale(2, Movable::Axis::XYZ);
+    score_model->Scale(2.f, Movable::Axis::XYZ);
 
     // Gold
     auto program3 = std::make_shared<Program>("shaders/phongShader");
@@ -153,13 +152,15 @@ void GameManager::InitCustomObjects() {
     material5->program->name = "obstacle";
     obstacle_model = ObjLoader::ModelFromObj("obstacle", "data/circle.obj", material5);
 
-    obstacle_model->Scale(6, Movable::Axis::XYZ);
+    obstacle_model->Scale(6.f, Movable::Axis::XYZ);
 
     // Exit
     auto program6 = std::make_shared<Program>("shaders/phongShader");
     auto material6 = std::make_shared<Material>("material", program6);
     material6->program->name = "exit";
     exit_model = ObjLoader::ModelFromObj("obstacle", "../tutorial/objects/exit.obj", material6);
+
+    exit_model->Scale(0.15f, Movable::Axis::XYZ);
 }
 
 void GameManager::BuildGameObjects() {
@@ -280,15 +281,19 @@ void GameManager::BuildExit() {
     temp_object1 = Model::Create("exit", exit_model->GetMesh(), exit_model->material);
     temp_object1->SetTransform(exit_model->GetTransform());
     exit = Model::Create("ExitObject", Mesh::Cube(), exit_model->material);
-    root->AddChild(exit);
+    //root->AddChild(exit);
 
     // Setting Positions
     exit->AddChild(temp_object1);
+    exit->Translate(0, Movable::Axis::XYZ);
     //temp_object2->Translate(GenerateRandomPosition()); // Need to generate randomly
+    exit->Translate(-60, Movable::Axis::Z);
 
     // Fix Scaling
-    //exit->Scale(Eigen::Vector3f(6, 6, 6));
+    exit->Scale(Eigen::Vector3f(3.f, 3.f, 1.f));
     exit->isHidden = true;
+
+    //alive_objects.push_back(objects_builder.BuildGameObject(exit));
 }
 
 Eigen::Vector3f GameManager::GenerateRandomPosition() {

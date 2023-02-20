@@ -79,6 +79,12 @@ private:
     int damage_value, current_health;
 };
 
+class ExitObject : public GameObject
+{
+public:
+    void CollisionWithObject() override;
+};
+
 
 class ObjectsBuilder
 {

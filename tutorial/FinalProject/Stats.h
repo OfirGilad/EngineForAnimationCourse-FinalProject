@@ -48,6 +48,7 @@ public:
 
 
     // Stage stats
+    bool stage_completed = false;
     int selected_stage = 0;
     int current_health = 100;
     int current_score = 0;
