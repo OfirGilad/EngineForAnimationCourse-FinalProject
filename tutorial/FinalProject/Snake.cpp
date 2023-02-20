@@ -21,26 +21,33 @@ void Snake::InitSnake(int num_of_bones)
     last_index = number_of_bones - 1;
     snake_length = bone_size * number_of_bones;
 
-    // Creating textures
-    auto program = std::make_shared<Program>("shaders/basicShader");
-    auto snake_material = std::make_shared<Material>("snake_material", program);
-    snake_material->AddTexture(0, "textures/snake.jpg", 2);
+
+    // Snake Texture Material
+    //auto program = std::make_shared<Program>("shaders/basicShader");
+    //auto snake_material = std::make_shared<Material>("snake_material", program);
+    //snake_material->AddTexture(0, "textures/snake.jpg", 2);
+
+
+    // Snake Color Material
+    auto snake_program = std::make_shared<Program>("shaders/phongShader");
+    auto snake_head_material = std::make_shared<Material>("snake_material", snake_program);
+    snake_head_material->program->name = "snake head program";
+
 
     // Creating first bone mesh
     float scaleFactor = 1;
     int i = 0;
-    snake_bones.push_back(ObjLoader::ModelFromObj("bone " + to_string(i), "data/zcylinder.obj", snake_material));
+    //snake_bones.push_back(ObjLoader::ModelFromObj("bone " + to_string(i), "data/zcylinder.obj", snake_material));
+    snake_bones.push_back(ObjLoader::ModelFromObj("bone " + to_string(i), "data/zcylinder.obj", snake_head_material));
     snake_bones[i]->Scale(scaleFactor, Scene::Axis::X);
-    snake_bones[i]->SetCenter(Eigen::Vector3f(0, 0, -(bone_size / 2) *scaleFactor));
+    snake_bones[i]->SetCenter(Eigen::Vector3f(0, 0, -(bone_size / 2) * scaleFactor));
     snake_bones[i]->showWireframe = false;
     root->AddChild(snake_bones[i]);
     snake_bones[i]->isHidden = true;
     i++;
 
+
     // Creating the custom snake head mesh
-    auto snake_program = std::make_shared<Program>("shaders/phongShader");
-    auto snake_head_material = std::make_shared<Material>("snake_material", snake_program);
-    snake_head_material->program->name = "snake head program";
     snake_head = ObjLoader::ModelFromObj("snake head", "../tutorial/objects/snake_head.obj", snake_head_material);
     snake_bones[first_index]->AddChild(snake_head);
     snake_head->Scale(0.09);
@@ -48,10 +55,12 @@ void Snake::InitSnake(int num_of_bones)
     snake_head->Translate(0.0, Movable::Axis::Z);
     snake_head->isHidden = true;
 
+
     // Creating the other bone meshes
     while(i < number_of_bones)
     {
-        snake_bones.push_back(ObjLoader::ModelFromObj("bone " + to_string(i), "data/zcylinder.obj", snake_material));
+        //snake_bones.push_back(ObjLoader::ModelFromObj("bone " + to_string(i), "data/zcylinder.obj", snake_material));
+        snake_bones.push_back(ObjLoader::ModelFromObj("bone " + to_string(i), "data/zcylinder.obj", snake_head_material));
         snake_bones[i]->Scale(scaleFactor, Scene::Axis::X);
         snake_bones[i]->Translate(bone_size * scaleFactor, Scene::Axis::Z);
         snake_bones[i]->SetCenter(Eigen::Vector3f(0, 0, -(bone_size / 2) * scaleFactor));
@@ -61,6 +70,7 @@ void Snake::InitSnake(int num_of_bones)
         i++;
     }
     snake_bones[first_index]->Translate({ 0,0,(bone_size / 2) * scaleFactor });
+
 
     // Updating camera views and init skinning
     UpdateCameraView();
