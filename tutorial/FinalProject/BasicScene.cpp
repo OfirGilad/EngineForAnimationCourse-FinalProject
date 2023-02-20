@@ -90,12 +90,12 @@ void BasicScene::MouseCallback(Viewport* viewport, int x, int y, int button, int
     if (ImGui::GetIO().WantCaptureMouse) return;
 
     // Handle coming back 
-    if (menu_index != StageMenu) {
-        return;
-    }
-    else if ((x < window_size1.x) && (y < window_size1.y)) {
-        return;
-    }
+    //if (menu_index != StageMenu) {
+    //    return;
+    //}
+    //else if ((x < window_size1.x) && (y < window_size1.y)) {
+    //    return;
+    //}
 
     // note: there's a (small) chance the button state here precedes the mouse press/release event
 
@@ -350,19 +350,6 @@ void BasicScene::SwitchView(bool next)
 void BasicScene::MenuManager() {
     width = viewport->width;
     height = viewport->height;
-    if (width != 0 && height != 0) {
-        buttons_size1 = ImVec2(width / 4, height / 8);
-        buttons_size2 = ImVec2(width / 4, height / 14);
-
-        window_size1 = ImVec2((float(width)) * 0.22 , (float(height)) * 0.3);
-
-        font_scale1 = (2.f * width) / 800.f;
-        font_scale2 = (1.f * width) / 800.f;
-        text_position1 = width * 0.4f;
-        text_position2 = width * 0.35f;
-        text_position3 = width * 0.3f;
-        text_position4 = width * 0.15f;
-    }
 
     switch (menu_index)
     {
@@ -407,6 +394,24 @@ void BasicScene::LoginMenuHandler() {
         game_manager->sound_manager.MusicHandler("opening_theme.mp3");
         game_manager->sound_manager.playing_index = LoginMenu;
     }
+
+    // Set sizes
+    ImVec2 buttons_size1;
+    float font_scale1, text_position1, text_position2;
+
+    if (width != 0 && height != 0) {
+        buttons_size1 = ImVec2(width / 4, height / 8);
+
+        font_scale1 = (2.f * width) / 800.f;
+
+        text_position1 = width * 0.4f;
+        text_position2 = width * 0.35f;
+    }
+    else {
+        buttons_size1 = ImVec2(1, 1);
+        font_scale1 = text_position1 = text_position2 = 1;
+    }
+
 
     int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
     bool* pOpen = nullptr;
@@ -502,6 +507,24 @@ void BasicScene::MainMenuHandler() {
         game_manager->sound_manager.playing_index = MainMenu;
     }
 
+    // Set sizes
+    ImVec2 buttons_size1, buttons_size2;
+    float font_scale1, text_position1, text_position2;
+
+    if (width != 0 && height != 0) {
+        buttons_size1 = ImVec2(width / 4, height / 8);
+        buttons_size2 = ImVec2(width / 4, height / 14);
+
+        font_scale1 = (2.f * width) / 800.f;
+
+        text_position1 = width * 0.4f;
+        text_position2 = width * 0.35f;
+    }
+    else {
+        buttons_size1 = buttons_size2 = ImVec2(1, 1);
+        font_scale1 = text_position1 = text_position2 = 1;
+    }
+
     int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
     bool* pOpen = nullptr;
     string gui_text;
@@ -583,6 +606,23 @@ void BasicScene::StageSelectionMenuHandler() {
         game_manager->sound_manager.playing_index = MainMenu;
     }
 
+    // Set sizes
+    ImVec2 buttons_size1;
+    float font_scale1, font_scale2, text_position1, text_position2;
+
+    if (width != 0 && height != 0) {
+        buttons_size1 = ImVec2(width / 4, height / 8);
+
+        font_scale1 = (2.f * width) / 800.f;
+
+        text_position1 = width * 0.35f;
+        text_position2 = width * 0.3f;
+    }
+    else {
+        buttons_size1 = ImVec2(1, 1);
+        font_scale1 = font_scale2 = text_position1 = text_position2 = 1;
+    }
+
     int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
     bool* pOpen = nullptr;
     string gui_text;
@@ -593,27 +633,27 @@ void BasicScene::StageSelectionMenuHandler() {
     //ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
     ImGui::SetWindowFontScale(font_scale1);
 
-    ImGui::SetCursorPosX(text_position3);
+    ImGui::SetCursorPosX(text_position2);
     ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Stage Selection Menu");
 
     Spacing(5);
 
     // Handle Gold
-    ImGui::SetCursorPosX(text_position2);
+    ImGui::SetCursorPosX(text_position1);
     gui_text = "Gold: " + std::to_string(game_manager->stats.gold);
     ImGui::TextColored(ImVec4(1.0, 1.0, 0.0, 1.0), gui_text.c_str());
 
     Spacing(5);
 
     // Handle Stages
-    ImGui::SetCursorPosX(text_position2);
+    ImGui::SetCursorPosX(text_position1);
     ImGui::Text("Select Stage: ");
 
     // Stages buttons
     for (int i = 1; i <= 3; i++) {
         Spacing(5);
 
-        ImGui::SetCursorPosX(text_position2);
+        ImGui::SetCursorPosX(text_position1);
         gui_text = "Stage " + std::to_string(i);
 
         if (ImGui::Button(gui_text.c_str(), buttons_size1)) {
@@ -626,7 +666,7 @@ void BasicScene::StageSelectionMenuHandler() {
 
     Spacing(10);
 
-    ImGui::SetCursorPosX(text_position2);
+    ImGui::SetCursorPosX(text_position1);
     if (ImGui::Button("Back", buttons_size1)) {
         menu_index = MainMenu;
     }
@@ -637,6 +677,25 @@ void BasicScene::ShopMenuHandler() {
     if (game_manager->sound_manager.playing_index != ShopMenu) {
         game_manager->sound_manager.MusicHandler("shop.mp3");
         game_manager->sound_manager.playing_index = ShopMenu;
+    }
+
+    // Set sizes
+    ImVec2 buttons_size1, buttons_size2;
+    float font_scale1, text_position1, text_position2, text_position3;
+
+    if (width != 0 && height != 0) {
+        buttons_size1 = ImVec2(width / 4, height / 8);
+        buttons_size2 = ImVec2(width / 4, height / 14);
+
+        font_scale1 = (2.f * width) / 800.f;
+
+        text_position1 = width * 0.4f;
+        text_position2 = width * 0.35f;
+        text_position3 = width * 0.15f;
+    }
+    else {
+        buttons_size1 = buttons_size2 = ImVec2(1, 1);
+        font_scale1 = text_position1 = text_position2 = text_position3 = 1;
     }
 
     int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
@@ -663,7 +722,7 @@ void BasicScene::ShopMenuHandler() {
 
     Spacing(5);
 
-    ImGui::SetCursorPosX(text_position4);
+    ImGui::SetCursorPosX(text_position3);
     int max_health = game_manager->stats.max_health;
     gui_text = "Increase Max Health (Current: " + to_string(max_health) + ")";
     ImGui::Text(gui_text.c_str());
@@ -688,13 +747,13 @@ void BasicScene::ShopMenuHandler() {
         }
     }
     if (ShopMenu_InvalidGold1) {
-        ImGui::SetCursorPosX(text_position4);
+        ImGui::SetCursorPosX(text_position3);
         ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "You don't have enoguh gold!");
     }
 
     Spacing(5);
 
-    ImGui::SetCursorPosX(text_position4);
+    ImGui::SetCursorPosX(text_position3);
     int score_multiplier = game_manager->stats.score_multiplier;
     gui_text = "X" + to_string(score_multiplier + 1) + " Score (Current: X" + to_string(score_multiplier) + ")";
     ImGui::Text(gui_text.c_str());
@@ -719,13 +778,13 @@ void BasicScene::ShopMenuHandler() {
         }
     }
     if (ShopMenu_InvalidGold2) {
-        ImGui::SetCursorPosX(text_position4);
+        ImGui::SetCursorPosX(text_position3);
         ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "You don't have enoguh gold!");
     }
 
     Spacing(5);
 
-    ImGui::SetCursorPosX(text_position4);
+    ImGui::SetCursorPosX(text_position3);
     int gold_multiplier = game_manager->stats.gold_multiplier;
     gui_text = "X" + to_string(gold_multiplier + 1) + " Gold (Current: X" + to_string(gold_multiplier) + ")";
     ImGui::Text(gui_text.c_str());
@@ -750,13 +809,13 @@ void BasicScene::ShopMenuHandler() {
         }
     }
     if (ShopMenu_InvalidGold3) {
-        ImGui::SetCursorPosX(text_position4);
+        ImGui::SetCursorPosX(text_position3);
         ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "You don't have enoguh gold!");
     }
 
     Spacing(5);
 
-    ImGui::SetCursorPosX(text_position4);
+    ImGui::SetCursorPosX(text_position3);
     int bonuses_duration = game_manager->stats.bonuses_duration;
     gui_text = "Increase Bonuses Duration (Current: " + to_string(bonuses_duration) + " sec)";
     ImGui::Text(gui_text.c_str());
@@ -781,13 +840,13 @@ void BasicScene::ShopMenuHandler() {
         }
     }
     if (ShopMenu_InvalidGold4) {
-        ImGui::SetCursorPosX(text_position4);
+        ImGui::SetCursorPosX(text_position3);
         ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "You don't have enoguh gold!");
     }
 
     Spacing(5);
 
-    ImGui::SetCursorPosX(text_position4);
+    ImGui::SetCursorPosX(text_position3);
     int max_movement_speed = game_manager->stats.max_movement_speed;
     gui_text = "Increase Max Speed (Current: " + to_string(max_movement_speed) + ")";
     ImGui::Text(gui_text.c_str());
@@ -812,7 +871,7 @@ void BasicScene::ShopMenuHandler() {
         }
     }
     if (ShopMenu_InvalidGold5) {
-        ImGui::SetCursorPosX(text_position4);
+        ImGui::SetCursorPosX(text_position3);
         ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "You don't have enoguh gold!");
     }
 
@@ -836,6 +895,26 @@ void BasicScene::StatsMenuHandler() {
     if (game_manager->sound_manager.playing_index != StatsMenu) {
         game_manager->sound_manager.MusicHandler("stats.mp3");
         game_manager->sound_manager.playing_index = StatsMenu;
+    }
+
+    // Set sizes
+    ImVec2 buttons_size1, buttons_size2;
+    float font_scale1, text_position1, text_position2, text_position3;
+
+    if (width != 0 && height != 0) {
+        buttons_size1 = ImVec2(width / 4, height / 8);
+        buttons_size2 = ImVec2(width / 4, height / 14);
+
+        font_scale1 = (2.f * width) / 800.f;
+
+        text_position1 = width * 0.4f;
+        text_position2 = width * 0.35f;
+        text_position3 = width * 0.3f;
+
+    }
+    else {
+        buttons_size1 = buttons_size2 = ImVec2(1, 1);
+        font_scale1 = text_position1 = text_position2 = text_position3 = 1;
     }
 
     int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
@@ -925,6 +1004,24 @@ void BasicScene::HallOfFameMenuHandler() {
         game_manager->sound_manager.playing_index = HallOfFameMenu;
     }
 
+    // Set sizes
+    ImVec2 buttons_size1;
+    float font_scale1, text_position1, text_position2;
+
+    if (width != 0 && height != 0) {
+        buttons_size1 = ImVec2(width / 4, height / 8);
+
+        font_scale1 = (2.f * width) / 800.f;
+
+        text_position1 = width * 0.35f;
+        text_position2 = width * 0.3f;
+
+    }
+    else {
+        buttons_size1 = ImVec2(1, 1);
+        font_scale1 = text_position1 = text_position2 = 1;
+    }
+
     int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
     bool* pOpen = nullptr;
     string gui_text;
@@ -935,18 +1032,18 @@ void BasicScene::HallOfFameMenuHandler() {
     ImGui::SetWindowSize(ImVec2(width, height), ImGuiCond_Always);
     ImGui::SetWindowFontScale(font_scale1);
 
-    ImGui::SetCursorPosX(text_position2);
+    ImGui::SetCursorPosX(text_position1);
     ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Hall of Fame");
 
     Spacing(5);
 
     for (int i = 0; i < 10; i++) {
-        ImGui::SetCursorPosX(text_position3);
+        ImGui::SetCursorPosX(text_position2);
         string space = "  ";
         if (i == 9) {
             space = " ";
         }
-        gui_text = to_string(i + 1) + "." + space +            // Place
+        gui_text = to_string(i + 1) + "." + space +                          // Place
             game_manager->leaderboard.leaderboard_list[i].first + " - " +    // Name
             to_string(game_manager->leaderboard.leaderboard_list[i].second); // Score
 
@@ -967,7 +1064,7 @@ void BasicScene::HallOfFameMenuHandler() {
 
     Spacing(10);
 
-    ImGui::SetCursorPosX(text_position2);
+    ImGui::SetCursorPosX(text_position1);
     if (ImGui::Button("Back", buttons_size1)) {
         menu_index = MainMenu;
     }
@@ -979,6 +1076,24 @@ void BasicScene::CreditsMenuHandler() {
     if (game_manager->sound_manager.playing_index != CreditsMenu) {
         game_manager->sound_manager.MusicHandler("credits.mp3");
         game_manager->sound_manager.playing_index = CreditsMenu;
+    }
+
+    // Set sizes
+    ImVec2 buttons_size1;
+    float font_scale1, text_position1, text_position2, text_position3;
+
+    if (width != 0 && height != 0) {
+        buttons_size1 = ImVec2(width / 4, height / 8);
+
+        font_scale1 = (2.f * width) / 800.f;
+
+        text_position1 = width * 0.4f;
+        text_position2 = width * 0.35f;
+        text_position3 = width * 0.3f;
+    }
+    else {
+        buttons_size1 = ImVec2(1, 1);
+        font_scale1 = text_position1 = text_position2 = text_position3 = 1;
     }
 
     int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
@@ -1040,16 +1155,36 @@ void BasicScene::StageMenuHandler() {
         game_manager->sound_manager.playing_index = -game_manager->sound_manager.stage_index;
     }
 
+    // Set sizes
+    ImVec2 window_size1, buttons_size1;
+    float font_scale1, font_scale2, text_position1;
+
+    if (width != 0 && height != 0) {
+        window_size1 = ImVec2(width, height * 0.12);
+        buttons_size1 = ImVec2(width / 4, height / 7);
+
+        font_scale1 = (2.f * width) / 800.f;
+        font_scale2 = (1.f * width) / 800.f;
+
+        text_position1 = width * 0.45f;
+    }
+    else {
+        buttons_size1 = ImVec2(1, 1);
+        font_scale1 = font_scale2 = text_position1 = 1;
+    }
+
     int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
     bool* pOpen = nullptr;
     string gui_text;
 
     ImGui::Begin("Menu", pOpen, flags);
     ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
+    //ImGui::SetWindowSize(window_size1, ImGuiCond_Always);
     ImGui::SetWindowSize(window_size1, ImGuiCond_Always);
     //ImGui::SetWindowFontScale(font_scale1);
     ImGui::SetWindowFontScale(font_scale2);
 
+    ImGui::SetCursorPosX(text_position1);
     ImGui::TextColored(ImVec4(1.0, 0.5, 1.0, 1.0), "Stage Menu");
 
     Spacing(1);
@@ -1058,25 +1193,25 @@ void BasicScene::StageMenuHandler() {
     gui_text = "Stage: " + std::to_string(game_manager->selected_stage);
     ImGui::TextColored(ImVec4(0.0, 0.0, 1.0, 1.0), gui_text.c_str());
 
-    Spacing(1);
+    ImGui::SameLine(width * 0.15);
 
     // Handle Health
     gui_text = "Health: " + std::to_string(game_manager->stats.current_health);
     ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), gui_text.c_str());
 
-    Spacing(1);
+    ImGui::SameLine(width * 0.3);
 
     // Handle Score
     gui_text = "Score: " + std::to_string(game_manager->stats.current_score);
     ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), gui_text.c_str());
 
-    Spacing(1);
+    ImGui::SameLine(width * 0.45);
 
     // Handle Gold
     gui_text = "Gold: " + std::to_string(game_manager->stats.gold);
     ImGui::TextColored(ImVec4(1.0, 1.0, 0.0, 1.0), gui_text.c_str());
     
-    Spacing(1);
+    ImGui::SameLine(width * 0.6);
 
     // Handle View
     ImGui::Text("Camera List: ");
@@ -1094,8 +1229,7 @@ void BasicScene::StageMenuHandler() {
         }
     }
 
-    Spacing(1);
-
+    /*
     if (!display_keys) {
         if (ImGui::Button("Show Keys")) {
             display_keys = true;
@@ -1118,17 +1252,11 @@ void BasicScene::StageMenuHandler() {
         ImGui::Text("RIGHT - Rotate snake right");
         ImGui::Text("ESC - Exit game");
     }
+    */
 
-    Spacing(1);
+    ImGui::SameLine(width * 0.85);
 
-    if (ImGui::Button("Pause")) {
-        animate = false;
-        cout << "Pause Game" << endl;
-    }
-
-    Spacing(2);
-
-    if (ImGui::Button("Back To Main Menu")) {
+    if (ImGui::Button("Exit Stage")) {
         game_manager->UnloadStage();
         menu_index = MainMenu;
     }
@@ -1147,31 +1275,44 @@ void BasicScene::StageCompletedMenuHandler() {
     // Menu with no sound
     game_manager->sound_manager.StopMusic();
 
+    // Set sizes
+    ImVec2 window_position1, window_size1, buttons_size1;
+    float font_scale1, text_position1, text_position2;
+
+    if (width != 0 && height != 0) {
+        window_position1 = ImVec2(float(width - 0.25 * width) / 2.f, float(height - 0.4 * height) / 2.f);
+
+        window_size1 = ImVec2((float(width)) * 0.22, (float(height)) * 0.42);
+
+        buttons_size1 = ImVec2(width / 6, height / 16);
+
+        font_scale1 = (1.f * width) / 800.f;
+
+        text_position1 = float(width) * 0.045f;
+        text_position2 = float(width) * 0.03f;
+    }
+    else {
+        window_position1 = window_size1, buttons_size1 = ImVec2(1, 1);
+        font_scale1 = text_position1 = text_position2 = 1;
+    }
+
     int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
     bool* pOpen = nullptr;
     string gui_text;
 
-    ImVec2 window_pos_x = ImVec2(float(width - 0.25 * width) / 2.f, float(height - 0.4 * height) / 2.f);
-    ImVec2 window_size_x = ImVec2((float(width)) * 0.22, (float(height)) * 0.42);
-
-    float position_x1x = float(width) * 0.045f;
-    float position_x2 = float(width) * 0.03f;
-
-    ImVec2 buttons_size_x = ImVec2(width / 6, height / 16);
-
     ImGui::Begin("Menu", pOpen, flags);
-    ImGui::SetWindowPos(window_pos_x, ImGuiCond_Always);
-    ImGui::SetWindowSize(window_size_x, ImGuiCond_Always);
+    ImGui::SetWindowPos(window_position1, ImGuiCond_Always);
+    ImGui::SetWindowSize(window_size1, ImGuiCond_Always);
     //ImGui::SetWindowFontScale(font_scale1);
-    ImGui::SetWindowFontScale(font_scale2);
+    ImGui::SetWindowFontScale(font_scale1);
 
-    ImGui::SetCursorPosX(position_x1x);
+    ImGui::SetCursorPosX(text_position1);
     ImGui::TextColored(ImVec4(0.0, 1.0, 0.5, 1.0), "Stage Completed");
 
     Spacing(5);
 
     // Handle Stage
-    ImGui::SetCursorPosX(position_x2);
+    ImGui::SetCursorPosX(text_position2);
     int current_stage = game_manager->selected_stage;
     gui_text = "Stage: " + std::to_string(current_stage);
     ImGui::TextColored(ImVec4(0.0, 0.0, 1.0, 1.0), gui_text.c_str());
@@ -1179,28 +1320,28 @@ void BasicScene::StageCompletedMenuHandler() {
     Spacing(1);
 
     // Handle Score
-    ImGui::SetCursorPosX(position_x2);
+    ImGui::SetCursorPosX(text_position2);
     gui_text = "Score: " + std::to_string(game_manager->stats.current_score);
     ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), gui_text.c_str());
 
     Spacing(1);
 
     // Handle Gold
-    ImGui::SetCursorPosX(position_x2);
+    ImGui::SetCursorPosX(text_position2);
     gui_text = "Gold: " + std::to_string(game_manager->stats.gold);
     ImGui::TextColored(ImVec4(1.0, 1.0, 0.0, 1.0), gui_text.c_str());
 
     Spacing(5);
 
-    ImGui::SetCursorPosX(position_x2);
+    ImGui::SetCursorPosX(text_position2);
     if (current_stage == 3) {
-        if (ImGui::Button("End Game", buttons_size_x)) {
+        if (ImGui::Button("End Game", buttons_size1)) {
             next_menu_index = CreditsMenu;
             menu_index = NewHighScoreMenu;
         }
     }
     else {
-        if (ImGui::Button("Continue", buttons_size_x)) {
+        if (ImGui::Button("Continue", buttons_size1)) {
             current_stage++;
             game_manager->sound_manager.stage_index = current_stage;
             game_manager->LoadStage(current_stage);
@@ -1210,16 +1351,16 @@ void BasicScene::StageCompletedMenuHandler() {
 
     Spacing(5);
 
-    ImGui::SetCursorPosX(position_x2);
-    if (ImGui::Button("Shop", buttons_size_x)) {
+    ImGui::SetCursorPosX(text_position2);
+    if (ImGui::Button("Shop", buttons_size1)) {
         last_menu_index = StageCompletedMenu;
         menu_index = ShopMenu;
     }
 
     Spacing(5);
 
-    ImGui::SetCursorPosX(position_x2);
-    if (ImGui::Button("Back To Main Menu", buttons_size_x)) {
+    ImGui::SetCursorPosX(text_position2);
+    if (ImGui::Button("Back To Main Menu", buttons_size1)) {
         next_menu_index = MainMenu;
         menu_index = NewHighScoreMenu;
     }
@@ -1231,68 +1372,81 @@ void BasicScene::StageFailedMenuHandler() {
     // Menu with no sound
     game_manager->sound_manager.StopMusic();
 
+    // Set sizes
+    ImVec2 window_position1, window_size1, buttons_size1;
+    float font_scale1, text_position1, text_position2;
+
+    if (width != 0 && height != 0) {
+        window_position1 = ImVec2(0.75 * float(width) / 2.f, 0.6 * float(height) / 2.f);
+
+        window_size1 = ImVec2((float(width)) * 0.22, (float(height)) * 0.42);
+
+        buttons_size1 = ImVec2(width / 6, height / 16);
+
+        font_scale1 = (1.f * width) / 800.f;
+
+        text_position1 = float(width) * 0.06f;
+        text_position2 = float(width) * 0.03f;
+    }
+    else {
+        window_position1 = window_size1, buttons_size1 = ImVec2(1, 1);
+        font_scale1 = text_position1 = text_position2 = 1;
+    }
+
     int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
     bool* pOpen = nullptr;
     string gui_text;
 
-    ImVec2 window_pos_x = ImVec2(0.75 * float(width) / 2.f, 0.6 * float(height) / 2.f);
-    ImVec2 window_size_x = ImVec2((float(width)) * 0.22, (float(height)) * 0.42);
-
-    float position_x1 = float(width) * 0.06f;
-    float position_x2 = float(width) * 0.03f;
-
-    ImVec2 buttons_size_x = ImVec2(width / 6, height / 16);
-
     ImGui::Begin("Menu", pOpen, flags);
-    ImGui::SetWindowPos(window_pos_x, ImGuiCond_Always);
-    ImGui::SetWindowSize(window_size_x, ImGuiCond_Always);
+    ImGui::SetWindowPos(window_position1, ImGuiCond_Always);
+    ImGui::SetWindowSize(window_size1, ImGuiCond_Always);
     //ImGui::SetWindowFontScale(font_scale1);
-    ImGui::SetWindowFontScale(font_scale2);
+    ImGui::SetWindowFontScale(font_scale1);
 
-    ImGui::SetCursorPosX(position_x1);
+    ImGui::SetCursorPosX(text_position1);
     ImGui::TextColored(ImVec4(1.0, 0.5, 0.0, 1.0), "Stage Failed");
 
     Spacing(5);
 
     // Handle Stage
-    ImGui::SetCursorPosX(position_x2);
+    ImGui::SetCursorPosX(text_position2);
     gui_text = "Stage: " + std::to_string(game_manager->selected_stage);
     ImGui::TextColored(ImVec4(0.0, 0.0, 1.0, 1.0), gui_text.c_str());
 
     Spacing(1);
 
     // Handle Score
-    ImGui::SetCursorPosX(position_x2);
+    ImGui::SetCursorPosX(text_position2);
     gui_text = "Score: " + std::to_string(game_manager->stats.current_score);
     ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), gui_text.c_str());
 
     Spacing(1);
 
     // Handle Gold
-    ImGui::SetCursorPosX(position_x2);
+    ImGui::SetCursorPosX(text_position2);
     gui_text = "Gold: " + std::to_string(game_manager->stats.gold);
     ImGui::TextColored(ImVec4(1.0, 1.0, 0.0, 1.0), gui_text.c_str());
 
     Spacing(5);
 
-    ImGui::SetCursorPosX(position_x2);
-    if (ImGui::Button("Retry", buttons_size_x)) {
+    ImGui::SetCursorPosX(text_position2);
+    if (ImGui::Button("Retry", buttons_size1)) {
         next_menu_index = StageSelectionMenu;
         menu_index = NewHighScoreMenu;
     }
 
     Spacing(5);
 
-    ImGui::SetCursorPosX(position_x2);
-    if (ImGui::Button("Shop", buttons_size_x)) {
+    ImGui::SetCursorPosX(text_position2);
+    if (ImGui::Button("Shop", buttons_size1)) {
         last_menu_index = StageFailedMenu;
         menu_index = ShopMenu;
     }
 
     Spacing(5);
 
-    ImGui::SetCursorPosX(position_x2);
-    if (ImGui::Button("Back To Main Menu", buttons_size_x)) {
+    ImGui::SetCursorPosX(text_position2);
+    if (ImGui::Button("Back To Main Menu", buttons_size1)) {
         next_menu_index = MainMenu;
         menu_index = NewHighScoreMenu;
     }
@@ -1306,6 +1460,26 @@ void BasicScene::NewHighScoreMenuHandler() {
         game_manager->sound_manager.playing_index = CreditsMenu;
     }
 
+    // Set sizes
+    ImVec2 window_position1, window_size1, buttons_size1;
+    float font_scale1, text_position1;
+
+    if (width != 0 && height != 0) {
+        ImVec2 window_position1 = ImVec2(0.6 * float(width) / 2.f, 0.5f * float(height) / 2.f);
+
+        ImVec2 window_size1 = ImVec2((float(width)) * 0.4, (float(height)) * 0.5);
+
+        ImVec2 buttons_size1 = ImVec2(width / 3, height / 13);
+
+        font_scale1 = (2.f * width) / 800.f;
+
+        text_position1 = float(width) * 0.025f;
+    }
+    else {
+        window_position1 = window_size1, buttons_size1 = ImVec2(1, 1);
+        font_scale1 = text_position1 = 1;
+    }
+
     int position = game_manager->leaderboard.CalculateLeaderboardPosition(game_manager->stats.current_score);
     // No new high score found
     if (position == -1) {
@@ -1317,22 +1491,14 @@ void BasicScene::NewHighScoreMenuHandler() {
     bool* pOpen = nullptr;
     string gui_text;
 
-    ImVec2 window_pos_x = ImVec2(0.6 * float(width) / 2.f, 0.5f * float(height) / 2.f);
-    ImVec2 window_size_xx = ImVec2((float(width)) * 0.4, (float(height)) * 0.5);
-
-    float position_x1xx = float(width) * 0.025f;
-    float position_x2 = float(width) * 0.03f;
-
-    ImVec2 buttons_size_xx = ImVec2(width / 3, height / 13);
-
     ImGui::Begin("Menu", pOpen, flags);
-    ImGui::SetWindowPos(window_pos_x, ImGuiCond_Always);
-    ImGui::SetWindowSize(window_size_xx, ImGuiCond_Always);
+    ImGui::SetWindowPos(window_position1, ImGuiCond_Always);
+    ImGui::SetWindowSize(window_size1, ImGuiCond_Always);
     //ImGui::SetWindowFontScale(font_scale1);
     ImGui::SetWindowFontScale(font_scale1);
 
 
-    ImGui::SetCursorPosX(position_x1xx);
+    ImGui::SetCursorPosX(text_position1);
     ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "N");
     ImGui::SameLine();
     ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), "e");
@@ -1359,12 +1525,12 @@ void BasicScene::NewHighScoreMenuHandler() {
 
     Spacing(5);
 
-    ImGui::SetCursorPosX(position_x1xx);
+    ImGui::SetCursorPosX(text_position1);
     ImGui::Text("Code Name: ");
 
     Spacing(5);
 
-    ImGui::SetCursorPosX(position_x1xx);
+    ImGui::SetCursorPosX(text_position1);
     gui_text = to_string(position + 1) + ".";
     if (position == 0) {
         ImGui::TextColored(ImVec4(201.f / 176.f, 149.f / 255.f, 55.f / 255.f, 1.0), gui_text.c_str());
@@ -1389,8 +1555,8 @@ void BasicScene::NewHighScoreMenuHandler() {
 
     Spacing(5);
 
-    ImGui::SetCursorPosX(position_x1xx);
-    if (ImGui::Button("Apply", buttons_size_xx)) {
+    ImGui::SetCursorPosX(text_position1);
+    if (ImGui::Button("Apply", buttons_size1)) {
         if (string(name).length() == 3) {
             NewHighScoreMenu_InvalidParameter = false;
             game_manager->leaderboard.AddScoreToLeaderboard(position, name, game_manager->stats.current_score);
@@ -1402,14 +1568,14 @@ void BasicScene::NewHighScoreMenuHandler() {
     }
 
     if (NewHighScoreMenu_InvalidParameter) {
-        ImGui::SetCursorPosX(position_x1xx);
+        ImGui::SetCursorPosX(text_position1);
         ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "Invalid Code Name!");
     }
 
     Spacing(5);
 
-    ImGui::SetCursorPosX(position_x1xx);
-    if (ImGui::Button("Back To Main Menu", buttons_size_xx)) {
+    ImGui::SetCursorPosX(text_position1);
+    if (ImGui::Button("Back To Main Menu", buttons_size1)) {
         menu_index = MainMenu;
     }
 
