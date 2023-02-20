@@ -37,7 +37,7 @@ public:
     void CollisionWithObject() override;
 
 private:
-    int score_value, current_score;
+    int score_value, current_score, score_multiplier;
 };
 
 class GoldObject : public GameObject

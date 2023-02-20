@@ -80,9 +80,10 @@ void ScoreObject::CollisionWithObject() {
     // Get required parameters
     stage_number = game_manager->selected_stage;
     current_score = game_manager->stats.current_score;
+    score_multiplier = game_manager->stats.score_multiplier;
 
     // Handle event
-    score_value = 10 * stage_number;
+    score_value = 10 * stage_number * score_multiplier;
     current_score = current_score + score_value;
 
     // Update stats
