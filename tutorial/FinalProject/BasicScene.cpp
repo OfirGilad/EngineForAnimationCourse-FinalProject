@@ -352,7 +352,7 @@ void BasicScene::MenuManager() {
     height = viewport->height;
     if (width != 0 && height != 0) {
         buttons_size1 = ImVec2(width / 4, height / 8);
-        buttons_size2 = ImVec2(width / 4, height / 16);
+        buttons_size2 = ImVec2(width / 4, height / 14);
 
         window_size1 = ImVec2((float(width)) * 0.22 , (float(height)) * 0.3);
 
@@ -361,6 +361,7 @@ void BasicScene::MenuManager() {
         text_position1 = width * 0.4f;
         text_position2 = width * 0.35f;
         text_position3 = width * 0.3f;
+        text_position4 = width * 0.15f;
     }
 
     switch (menu_index)
@@ -662,7 +663,7 @@ void BasicScene::ShopMenuHandler() {
 
     Spacing(5);
 
-    ImGui::SetCursorPosX(text_position2);
+    ImGui::SetCursorPosX(text_position4);
     int max_health = game_manager->stats.max_health;
     gui_text = "Increase Max Health (Current: " + to_string(max_health) + ")";
     ImGui::Text(gui_text.c_str());
@@ -676,6 +677,7 @@ void BasicScene::ShopMenuHandler() {
             game_manager->stats.gold -= item1_cost;
             game_manager->stats.total_gold_spent += item1_cost;
             cout << "Increase Max Health" << endl;
+            ShopMenu_InvalidGold1 = false;
         }
         else {
             ShopMenu_InvalidGold1 = true;
@@ -686,50 +688,144 @@ void BasicScene::ShopMenuHandler() {
         }
     }
     if (ShopMenu_InvalidGold1) {
-        ImGui::SetCursorPosX(text_position2);
+        ImGui::SetCursorPosX(text_position4);
         ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "You don't have enoguh gold!");
     }
 
     Spacing(5);
 
+    ImGui::SetCursorPosX(text_position4);
+    int score_multiplier = game_manager->stats.score_multiplier;
+    gui_text = "X" + to_string(score_multiplier + 1) + " Score (Current: X" + to_string(score_multiplier) + ")";
+    ImGui::Text(gui_text.c_str());
+
     ImGui::SetCursorPosX(text_position2);
-    ImGui::Text("X2 Score");
-    ImGui::SetCursorPosX(text_position2);
-    if (ImGui::Button("100 Gold###2", buttons_size2)) {
-        cout << "Increase X2 Score" << endl;
+    item2_cost = score_multiplier * 10;
+    gui_text = to_string(item2_cost) + " Gold###2";
+    if (ImGui::Button(gui_text.c_str(), buttons_size2)) {
+        if (gold >= item2_cost) {
+            game_manager->stats.score_multiplier++;
+            game_manager->stats.gold -= item2_cost;
+            game_manager->stats.total_gold_spent += item2_cost;
+            cout << "Increase X2 Score" << endl;
+            ShopMenu_InvalidGold2 = false;
+        }
+        else {
+            ShopMenu_InvalidGold1 = false;
+            ShopMenu_InvalidGold2 = true;
+            ShopMenu_InvalidGold3 = false;
+            ShopMenu_InvalidGold4 = false;
+            ShopMenu_InvalidGold5 = false;
+        }
+    }
+    if (ShopMenu_InvalidGold2) {
+        ImGui::SetCursorPosX(text_position4);
+        ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "You don't have enoguh gold!");
     }
 
     Spacing(5);
 
+    ImGui::SetCursorPosX(text_position4);
+    int gold_multiplier = game_manager->stats.gold_multiplier;
+    gui_text = "X" + to_string(gold_multiplier + 1) + " Gold (Current: X" + to_string(gold_multiplier) + ")";
+    ImGui::Text(gui_text.c_str());
+
     ImGui::SetCursorPosX(text_position2);
-    ImGui::Text("X2 Gold");
-    ImGui::SetCursorPosX(text_position2);
-    if (ImGui::Button("70 Gold###3", buttons_size2)) {
-        cout << "Increase X2 Gold" << endl;
+    item3_cost = gold_multiplier * 10;
+    gui_text = to_string(item3_cost) + " Gold###3";
+    if (ImGui::Button(gui_text.c_str(), buttons_size2)) {
+        if (gold >= item3_cost) {
+            game_manager->stats.gold_multiplier++;
+            game_manager->stats.gold -= item3_cost;
+            game_manager->stats.total_gold_spent += item3_cost;
+            cout << "Increase X2 Gold" << endl;
+            ShopMenu_InvalidGold3 = false;
+        }
+        else {
+            ShopMenu_InvalidGold1 = false;
+            ShopMenu_InvalidGold2 = false;
+            ShopMenu_InvalidGold3 = true;
+            ShopMenu_InvalidGold4 = false;
+            ShopMenu_InvalidGold5 = false;
+        }
+    }
+    if (ShopMenu_InvalidGold3) {
+        ImGui::SetCursorPosX(text_position4);
+        ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "You don't have enoguh gold!");
     }
 
     Spacing(5);
 
+    ImGui::SetCursorPosX(text_position4);
+    int bonuses_duration = game_manager->stats.bonuses_duration;
+    gui_text = "Increase Bonuses Duration (Current: " + to_string(bonuses_duration) + " sec)";
+    ImGui::Text(gui_text.c_str());
+
     ImGui::SetCursorPosX(text_position2);
-    ImGui::Text("Increase Bonuses Duration");
-    ImGui::SetCursorPosX(text_position2);
-    if (ImGui::Button("50 Gold###4", buttons_size2)) {
-        cout << "Increase Bonuses Duration" << endl;
+    item4_cost = bonuses_duration * 100;
+    gui_text = to_string(item4_cost) + " Gold###4";
+    if (ImGui::Button(gui_text.c_str(), buttons_size2)) {
+        if (gold >= item4_cost) {
+            game_manager->stats.bonuses_duration++;
+            game_manager->stats.gold -= item4_cost;
+            game_manager->stats.total_gold_spent += item4_cost;
+            cout << "Increase Bonuses Duration" << endl;
+            ShopMenu_InvalidGold4 = false;
+        }
+        else {
+            ShopMenu_InvalidGold1 = false;
+            ShopMenu_InvalidGold2 = false;
+            ShopMenu_InvalidGold3 = false;
+            ShopMenu_InvalidGold4 = true;
+            ShopMenu_InvalidGold5 = false;
+        }
+    }
+    if (ShopMenu_InvalidGold4) {
+        ImGui::SetCursorPosX(text_position4);
+        ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "You don't have enoguh gold!");
     }
 
     Spacing(5);
 
+    ImGui::SetCursorPosX(text_position4);
+    int max_movement_speed = game_manager->stats.max_movement_speed;
+    gui_text = "Increase Max Speed (Current: " + to_string(max_movement_speed) + ")";
+    ImGui::Text(gui_text.c_str());
+
     ImGui::SetCursorPosX(text_position2);
-    ImGui::Text("Increase Max Speed");
-    ImGui::SetCursorPosX(text_position2);
-    if (ImGui::Button("25 Gold###5", buttons_size2)) {
-        cout << "Increase Max Speed" << endl;
+    item5_cost = max_movement_speed * 100;
+    gui_text = to_string(item5_cost) + " Gold###5";
+    if (ImGui::Button(gui_text.c_str(), buttons_size2)) {
+        if (gold >= item5_cost) {
+            game_manager->stats.max_movement_speed++;
+            game_manager->stats.gold -= item5_cost;
+            game_manager->stats.total_gold_spent += item5_cost;
+            cout << "Increase Max Speed" << endl;
+            ShopMenu_InvalidGold5 = false;
+        }
+        else {
+            ShopMenu_InvalidGold1 = false;
+            ShopMenu_InvalidGold2 = false;
+            ShopMenu_InvalidGold3 = false;
+            ShopMenu_InvalidGold4 = false;
+            ShopMenu_InvalidGold5 = true;
+        }
+    }
+    if (ShopMenu_InvalidGold5) {
+        ImGui::SetCursorPosX(text_position4);
+        ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "You don't have enoguh gold!");
     }
 
     Spacing(10);
 
     ImGui::SetCursorPosX(text_position2);
     if (ImGui::Button("Back", buttons_size1)) {
+        ShopMenu_InvalidGold1 = false;
+        ShopMenu_InvalidGold2 = false;
+        ShopMenu_InvalidGold3 = false;
+        ShopMenu_InvalidGold4 = false;
+        ShopMenu_InvalidGold5 = false;
+
         menu_index = last_menu_index;
     }
 

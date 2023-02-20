@@ -91,7 +91,7 @@ private:
     // Menu parameters
     int width, height;
     ImVec2 buttons_size1, buttons_size2, window_size1;
-    float font_scale1, font_scale2, text_position1, text_position2, text_position3;
+    float font_scale1, font_scale2, text_position1, text_position2, text_position3, text_position4;
 
     int menu_index = MainMenu;
     int last_menu_index = MainMenu; // For ShopMenu
@@ -111,5 +111,5 @@ private:
 
 
     // Debug mode
-    int debug_parameter = 1;
+    int debug_parameter = 0;
 };
