@@ -114,6 +114,7 @@ void GameManager::InitStageParameters(bool new_stage) {
         //stats->current_health = 20;
         stats->current_score = 0;
     }
+    stats->objective_score = stats->current_score + 100 * stats->selected_stage;
 }
 
 void GameManager::LoadGameObjects() {
@@ -128,6 +129,8 @@ void GameManager::LoadGameObjects() {
             alive_objects.push_back(all_objects[i][j]);
         }
     }
+
+    dead_objects.push_back(exit_object);
 }
 
 void GameManager::InitCustomObjects() {
@@ -331,7 +334,7 @@ void GameManager::BuildExit() {
     exit->Scale(Eigen::Vector3f(3.f, 3.f, 1.f));
     exit->isHidden = true;
 
-    //alive_objects.push_back(objects_builder.BuildGameObject(exit));
+    exit_object = objects_builder.BuildGameObject(exit);
 }
 
 Eigen::Vector3f GameManager::GenerateRandomPosition() {

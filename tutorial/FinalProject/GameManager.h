@@ -42,6 +42,7 @@ public:
     std::vector<std::vector<GameObject*>> all_objects;
     std::vector<GameObject*> alive_objects;
     std::vector<GameObject*> dead_objects;
+    GameObject* exit_object;
 
     float base_length = 60.f;
     float stage_size = 0.f;

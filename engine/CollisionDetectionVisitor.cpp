@@ -59,8 +59,16 @@ namespace cg3d
                     // Handle Object Event
                     current_game_object->CollisionWithObject();
                     game_manager->root->RemoveChild(current_game_object->model);
+
+                    // Move to Dead Objects
                     game_manager->alive_objects.erase(game_manager->alive_objects.begin() + i);
                     game_manager->dead_objects.push_back(current_game_object);
+
+                    // Handle Timers
+                    current_game_object->alive_timer.StopTimer();
+
+                    current_game_object->dead_timer.ResetTimer();
+                    current_game_object->dead_timer.StartTimer();
 
                     return;
                 }

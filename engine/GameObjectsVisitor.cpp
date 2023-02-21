@@ -36,16 +36,46 @@ void GameObjectsVisitor::Visit(Scene* _scene) {
             GameObject* current_game_object = game_manager->dead_objects[i];
             float object_time = current_game_object->dead_timer.GetElapsedTime();
 
-            if (object_time > 5.f) {
-                current_game_object->dead_timer.StopTimer();
+            // Handle Exit Object
+            if (current_game_object->model->name == "ExitObject") {
+                if (game_manager->stats->current_score >= game_manager->stats->objective_score) {
+                    cout << "HEY" << endl;
 
+                    Eigen::Vector3f original_translation = current_game_object->model->GetTranslation();
+                    current_game_object->model->Translate(-original_translation);
+                    game_manager->root->AddChild(current_game_object->model);
+                    Eigen::Vector3f new_translation = Eigen::Vector3f(0.f, 0.f, -game_manager->stage_size);
+                    current_game_object->model->Translate(new_translation);
+
+                    // Move to Alive Objects
+                    game_manager->dead_objects.erase(game_manager->dead_objects.begin() + i);
+                    game_manager->alive_objects.push_back(current_game_object);
+
+                    // Handle Timers
+                    current_game_object->dead_timer.StopTimer();
+
+                    current_game_object->alive_timer.ResetTimer();
+                    current_game_object->alive_timer.StartTimer();
+
+                    return;
+                }
+            }
+            else if (object_time > 5.f) {
+                // Handle Object Event
                 Eigen::Vector3f original_translation = current_game_object->model->GetTranslation();
                 current_game_object->model->Translate(-original_translation);
                 game_manager->root->AddChild(current_game_object->model);
                 current_game_object->model->Translate(game_manager->GenerateRandomPosition());
 
+                // Move to Alive Objects
                 game_manager->dead_objects.erase(game_manager->dead_objects.begin() + i);
                 game_manager->alive_objects.push_back(current_game_object);
+
+                // Handle Timers
+                current_game_object->dead_timer.StopTimer();
+
+                current_game_object->alive_timer.ResetTimer();
+                current_game_object->alive_timer.StartTimer();
 
                 return;
             }

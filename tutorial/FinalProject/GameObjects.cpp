@@ -78,9 +78,6 @@ void HealthObject::CollisionWithObject() {
     stats->current_health = current_health;
     stats->total_health_points_healed += health_value;
 
-    // Start Dead Timer
-    dead_timer.StartTimer();
-
     // Handle sound
     sound_manager->HandleSound("health_object.mp3");
     cout << "HealthObject" << endl;
@@ -107,9 +104,6 @@ void ScoreObject::CollisionWithObject() {
     // Update stats
     stats->current_score = current_score;
     stats->total_score_points_earned += score_value;
-
-    // Start Dead Timer
-    dead_timer.StartTimer();
 
     // Handle sound
     sound_manager->HandleSound("score_object.mp3");
@@ -138,9 +132,6 @@ void GoldObject::CollisionWithObject() {
     stats->gold = gold;
     stats->total_gold_earned += gold_value;
 
-    // Start Dead Timer
-    dead_timer.StartTimer();
-
     // Handle sound
     sound_manager->HandleSound("gold_object.mp3");
     cout << "GoldObject" << endl;
@@ -163,9 +154,6 @@ void BonusObject::CollisionWithObject() {
 
     // Update stats
     stats->total_bonuses_collected += 1;
-
-    // Start Dead Timer
-    dead_timer.StartTimer();
 
     // Handle sound
     sound_manager->HandleSound("bonus_object.mp3");
@@ -195,9 +183,6 @@ void ObstacleObject::CollisionWithObject() {
     // Update stats
     stats->current_health = current_health;
     stats->total_health_points_lost += damage_value;
-
-    // Start Dead Timer
-    dead_timer.StartTimer();
 
     // Handle sound
     sound_manager->HandleSound("obstacle_object.mp3");
