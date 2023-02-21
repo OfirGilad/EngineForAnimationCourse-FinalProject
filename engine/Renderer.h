@@ -7,6 +7,7 @@
 
 #include "AnimationVisitor.h"
 #include "CollisionDetectionVisitor.h"
+#include "GameObjectsVisitor.h"
 
 
 namespace cg3d
@@ -48,6 +49,7 @@ private:
     // New Code
     AnimationVisitor animationVisitor;
     CollisionDetectionVisitor collisionDetectionVisitor;
+    GameObjectsVisitor gameObjectsVisitor;
 };
 
 } // namespace cg3d

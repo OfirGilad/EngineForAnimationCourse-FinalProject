@@ -21,8 +21,7 @@ namespace cg3d
         float stage_size = game_manager->stage_size;
         backgound_cube_space = Eigen::Vector3f(stage_size, stage_size, stage_size);
 
-        if (_scene->GetAnimate())
-        {
+        if (_scene->GetAnimate()) {
             std::shared_ptr<cg3d::Model> snake_head = game_manager->snake.GetBones()[0];
 
             if (CheckSelfCollision()) {
@@ -45,26 +44,25 @@ namespace cg3d
                 return;
             }
 
-            if (game_manager->alive_objects.size() != 0) {
-                for (int i = 0; i < game_manager->alive_objects.size(); i++) {
-                    GameObject* current_game_object = game_manager->alive_objects[i];
 
-                    collision_logic.InitCollisionDetection(snake_head, current_game_object->model, game_manager->cube1, game_manager->cube2);
-                    bool collision_check = collision_logic.CollisionCheck(snake_head->GetAABBTree(), current_game_object->model->GetAABBTree(), 0);
+            for (int i = 0; i < int(game_manager->alive_objects.size()); i++) {
+                GameObject* current_game_object = game_manager->alive_objects[i];
 
-                    if (collision_check) {
-                        // Remove Collision Boxes
-                        snake_head->RemoveChild(game_manager->cube1);
-                        current_game_object->model->RemoveChild(game_manager->cube2);
+                collision_logic.InitCollisionDetection(snake_head, current_game_object->model, game_manager->cube1, game_manager->cube2);
+                bool collision_check = collision_logic.CollisionCheck(snake_head->GetAABBTree(), current_game_object->model->GetAABBTree(), 0);
 
-                        // Handle Object Event
-                        current_game_object->CollisionWithObject();
-                        game_manager->root->RemoveChild(current_game_object->model);
-                        game_manager->alive_objects.erase(game_manager->alive_objects.begin() + i);
-                        game_manager->dead_objects.push_back(current_game_object);
+                if (collision_check) {
+                    // Remove Collision Boxes
+                    snake_head->RemoveChild(game_manager->cube1);
+                    current_game_object->model->RemoveChild(game_manager->cube2);
 
-                        return;
-                    }
+                    // Handle Object Event
+                    current_game_object->CollisionWithObject();
+                    game_manager->root->RemoveChild(current_game_object->model);
+                    game_manager->alive_objects.erase(game_manager->alive_objects.begin() + i);
+                    game_manager->dead_objects.push_back(current_game_object);
+
+                    return;
                 }
             }
         }

@@ -20,7 +20,7 @@ class GameObject
 public:
     virtual void InitObject(Stats* stats, SoundManager* sound_manager, std::shared_ptr<Model> model);
     virtual void CollisionWithObject() = 0;
-    //virtual void MoveObject();
+    virtual void MoveObject() = 0;
 
     //virtual void SetAlive();
     //virtual void SetDead();
@@ -31,13 +31,14 @@ public:
     SoundManager* sound_manager;
     std::shared_ptr<Model> model;
     int stage_number;
-    GameTimer game_timer;
+    GameTimer alive_timer, dead_timer;
 };
 
 class HealthObject : public GameObject
 {
 public:
     void CollisionWithObject() override;
+    void MoveObject() override;
 
 private:
     int health_value, current_health, max_health;
@@ -47,6 +48,7 @@ class ScoreObject : public GameObject
 {
 public:
     void CollisionWithObject() override;
+    void MoveObject() override;
 
 private:
     int score_value, current_score, score_multiplier;
@@ -56,6 +58,7 @@ class GoldObject : public GameObject
 {
 public:
     void CollisionWithObject() override;
+    void MoveObject() override;
 
 private:
     int gold_value, gold, gold_multiplier;
@@ -65,6 +68,7 @@ class BonusObject : public GameObject
 {
 public:
     void CollisionWithObject() override;
+    void MoveObject() override;
 
 private:
     int bonus_duration;
@@ -74,6 +78,7 @@ class ObstacleObject : public GameObject
 {
 public:
     void CollisionWithObject() override;
+    void MoveObject() override;
 
 private:
     int damage_value, current_health;
@@ -83,6 +88,7 @@ class ExitObject : public GameObject
 {
 public:
     void CollisionWithObject() override;
+    void MoveObject() override;
 };
 
 

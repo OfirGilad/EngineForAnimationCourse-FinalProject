@@ -36,6 +36,7 @@ void Renderer::RenderViewport(Viewport* viewport, Visitor* visitor)
     // New Code
     animationVisitor.Run(viewport->scene.get(), viewport->camera.get());
     collisionDetectionVisitor.Run(viewport->scene.get(), viewport->camera.get());
+    gameObjectsVisitor.Run(viewport->scene.get(), viewport->camera.get());
 }
 
 void Renderer::RenderViewportAtPos(int x, int y, Visitor* visitor)
@@ -53,6 +54,7 @@ void Renderer::RenderAllViewports()
     // New Code
     animationVisitor.Init();
     collisionDetectionVisitor.Init();
+    gameObjectsVisitor.Init();
 
     for (auto& viewport: viewports)
         RenderViewport(viewport.get());

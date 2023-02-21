@@ -65,6 +65,8 @@ public:
     // Objects Builder
     ObjectsBuilder objects_builder;
 
+    Eigen::Vector3f GenerateRandomPosition();
+
 private:
     // Collision boxes for CollisionDetectionVisitor
     void InitCollisionBoxes();
@@ -84,6 +86,4 @@ private:
     void BuildBonusObjects();
     void BuildObstacleObjects();
     void BuildExit();
-
-    Eigen::Vector3f GenerateRandomPosition();
 };
