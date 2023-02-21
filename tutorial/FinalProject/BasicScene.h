@@ -109,6 +109,9 @@ private:
     bool NewHighScoreMenu_InvalidParameter = false;
 
 
+    // Snake Color
+    Eigen::Vector3f snake_color = Eigen::Vector3f(0.5f, 0.25f, 0.0f);
+
     // Debug mode
     int debug_parameter = 0;
 };

@@ -1268,7 +1268,11 @@ void BasicScene::StageMenuHandler() {
         game_manager->UnloadStage();
         menu_index = MainMenu;
     }
-
+    
+    static float rgb[3] = { snake_color.x(), snake_color.y(), snake_color.z() };
+    ImGui::ColorEdit3("Snake Color", rgb);
+    snake_color = Eigen::Vector3f(rgb[0], rgb[1], rgb[2]);
+    
 
     if (game_manager->stats->current_health == 0) {
         game_manager->sound_manager->StopMusic();
@@ -1474,7 +1478,7 @@ void BasicScene::StageFailedMenuHandler() {
 void BasicScene::NewHighScoreMenuHandler() {
     if (game_manager->sound_manager->playing_index != HallOfFameMenu) {
         game_manager->sound_manager->HandleMusic("hall_of_fame.mp3");
-        game_manager->sound_manager->playing_index = CreditsMenu;
+        game_manager->sound_manager->playing_index = HallOfFameMenu;
     }
 
     // Set sizes
@@ -1482,11 +1486,11 @@ void BasicScene::NewHighScoreMenuHandler() {
     float font_scale1, text_position1;
 
     if (width != 0 && height != 0) {
-        ImVec2 window_position1 = ImVec2(float(width) * 0.3f, float(height) * 0.25f);
+        window_position1 = ImVec2(float(width) * 0.3f, float(height) * 0.25f);
 
-        ImVec2 window_size1 = ImVec2(float(width) * 0.4f, float(height) * 0.5f);
+        window_size1 = ImVec2(float(width) * 0.4f, float(height) * 0.5f);
 
-        ImVec2 buttons_size1 = ImVec2(float(width) / 3.f, float(height) / 13.f);
+        buttons_size1 = ImVec2(float(width) / 3.f, float(height) / 13.f);
 
         font_scale1 = float(width) / 400.f;
 
@@ -1607,8 +1611,8 @@ bool BasicScene::ProgramHandler(const Program& program) {
     bool default_behavior = true;
 
     if (program.name == "snake head program") {
-        program.SetUniform4f("lightColor", 0.5f, 0.25f, 0.0f, 0.5f);
-        program.SetUniform4f("Kai", 0.5f, 0.25f, 0.0f, 1.0f);
+        program.SetUniform4f("lightColor", 0.7f, 0.7f, 0.7f, 0.5f);
+        program.SetUniform4f("Kai", snake_color.x(), snake_color.y(), snake_color.z(), 1.0f);
         program.SetUniform4f("Kdi", 0.5f, 0.5f, 0.5f, 1.0f);
         program.SetUniform1f("specular_exponent", 5.0f);
         program.SetUniform4f("light_position", 0.0, -15.0f, 0.0, 1.0f);
@@ -1616,8 +1620,8 @@ bool BasicScene::ProgramHandler(const Program& program) {
         default_behavior = false;
     }
     if (program.name == "snake body program") {
-        program.SetUniform4f("lightColor", 0.5f, 0.25f, 0.0f, 0.5f);
-        program.SetUniform4f("Kai", 0.5f, 0.25f, 0.0f, 1.0f);
+        program.SetUniform4f("lightColor", 0.7f, 0.7f, 0.7f, 0.5f);
+        program.SetUniform4f("Kai", snake_color.x(), snake_color.y(), snake_color.z(), 1.0f);
         program.SetUniform4f("Kdi", 0.5f, 0.5f, 0.5f, 1.0f);
         program.SetUniform1f("specular_exponent", 5.0f);
         program.SetUniform4f("light_position", 0.0, 15.0f, 0.0, 1.0f);
