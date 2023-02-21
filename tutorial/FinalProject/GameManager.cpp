@@ -37,27 +37,35 @@ void GameManager::InitGameManager(std::shared_ptr<Movable> _root, std::vector<st
     BuildExit();
 }
 
-void GameManager::LoadStage(int stage_number)
+void GameManager::LoadStage(int stage_number, bool new_stage)
 {
     // Set Select Stage
     stats->selected_stage = stage_number;
+    InitStageParameters(new_stage);
 
+    if (!new_stage) {
+        UnloadStage();
+    }
     InitBackground();
     InitAxis();
-    InitStageParameters(true);
     LoadGameObjects();
-
     snake.ShowSnake();
 }
 
 void GameManager::UnloadStage() {
     root->RemoveChild(background);
     root->RemoveChild(axis);
-
     snake.HideSnake();
     snake.ResetSnakePosition();
 
-    // And unload all other objects
+    for (int i = 0; i < alive_objects.size(); i++) {
+        root->RemoveChild(alive_objects[i]->model);
+        alive_objects.erase(alive_objects.begin());
+    }
+
+    for (int i = 0; i < dead_objects.size(); i++) {
+        dead_objects.erase(dead_objects.begin());
+    }
 }
 
 
@@ -110,10 +118,11 @@ void GameManager::InitAxis() {
 
 void GameManager::InitStageParameters(bool new_stage) {
     if (new_stage) {
-        stats->current_health = stats->max_health;
-        //stats->current_health = 20;
         stats->current_score = 0;
     }
+
+    stats->current_movement_speed = stats->min_movement_speed;
+    stats->current_health = stats->max_health;
     stats->objective_score = stats->current_score + 100 * stats->selected_stage;
 }
 

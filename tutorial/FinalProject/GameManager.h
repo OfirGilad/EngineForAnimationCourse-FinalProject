@@ -30,7 +30,7 @@ public:
     GameManager() {};
     void InitGameManager(std::shared_ptr<Movable> _root, std::vector<std::shared_ptr<Camera>> _camera_list);
 
-    void LoadStage(int stage_number);
+    void LoadStage(int stage_number, bool new_stage);
     void UnloadStage();
 
     // Stage Builder

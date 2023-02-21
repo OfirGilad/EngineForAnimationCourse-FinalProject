@@ -536,7 +536,6 @@ void BasicScene::MainMenuHandler() {
     ImGui::Begin("Menu", pOpen, flags);
     ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
     ImGui::SetWindowSize(window_size1, ImGuiCond_Always);
-    //ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
     ImGui::SetWindowFontScale(font_scale1);
 
     ImGui::SetCursorPosX(text_position1);
@@ -636,7 +635,6 @@ void BasicScene::StageSelectionMenuHandler() {
     ImGui::Begin("Menu", pOpen, flags);
     ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
     ImGui::SetWindowSize(ImVec2(width, height), ImGuiCond_Always);
-    //ImGui::SetWindowSize(ImVec2(0, 0), ImGuiCond_Always);
     ImGui::SetWindowFontScale(font_scale1);
 
     ImGui::SetCursorPosX(text_position2);
@@ -665,7 +663,7 @@ void BasicScene::StageSelectionMenuHandler() {
         if (ImGui::Button(gui_text.c_str(), buttons_size1)) {
             cout << gui_text.c_str() << endl;
             game_manager->sound_manager->stage_index = i;
-            game_manager->LoadStage(i);
+            game_manager->LoadStage(i, true);
             menu_index = StageMenu;
         }
     }
@@ -1359,6 +1357,7 @@ void BasicScene::StageCompletedMenuHandler() {
     if (current_stage == 3) {
         if (ImGui::Button("End Game", buttons_size1)) {
             next_menu_index = CreditsMenu;
+            game_manager->UnloadStage();
             menu_index = NewHighScoreMenu;
         }
     }
@@ -1366,7 +1365,7 @@ void BasicScene::StageCompletedMenuHandler() {
         if (ImGui::Button("Continue", buttons_size1)) {
             current_stage++;
             game_manager->sound_manager->stage_index = current_stage;
-            game_manager->LoadStage(current_stage);
+            game_manager->LoadStage(current_stage, false);
             menu_index = StageMenu;
         }
     }
@@ -1505,6 +1504,7 @@ void BasicScene::NewHighScoreMenuHandler() {
     // No new high score found
     if (position == -1) {
         menu_index = next_menu_index;
+        game_manager->UnloadStage();
         return;
     }
 
@@ -1580,6 +1580,7 @@ void BasicScene::NewHighScoreMenuHandler() {
             NewHighScoreMenu_InvalidParameter = false;
             game_manager->leaderboard.AddScoreToLeaderboard(position, name, game_manager->stats->current_score);
             menu_index = next_menu_index;
+            game_manager->UnloadStage();
         }
         else {
             NewHighScoreMenu_InvalidParameter = true;
@@ -1596,6 +1597,7 @@ void BasicScene::NewHighScoreMenuHandler() {
     ImGui::SetCursorPosX(text_position1);
     if (ImGui::Button("Back To Main Menu", buttons_size1)) {
         menu_index = MainMenu;
+        game_manager->UnloadStage();
     }
 
     ImGui::End();
