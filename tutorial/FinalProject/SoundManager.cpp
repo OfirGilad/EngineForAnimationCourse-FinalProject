@@ -4,57 +4,97 @@
 
 #include "SoundManager.h"
 
+#include "thread"
+#include <assert.h>
+#include <chrono>
+#include <future>
+#include <string>
+#include <iostream>
+#include <cstdlib>
+#include <cstdio>
+
+
 SoundManager::SoundManager() {
-	
+
 }
 
-void SoundManager::MusicHandler(string music_file) {
-    // Calling a script to play the music
-    const auto& PlayMusic = [&](std::string music_file) {
-        std::string command = python_version + " ../tutorial/scripts/play_music.py \"" + music_file + "\"";
-        system(command.c_str());
-    };
+void SoundManager::HandleMusic(string music_file) {
+    if (playing) {
+        int updated_player_index = playing_index;
+        StopMusic();
+        playing_index = updated_player_index;
+    }
 
-    if (player_enabled) {
-        if (playing) {
-            // Kill The Previous Music Player
-            playing = false;
-            std::string kill_command = "taskkill /f /im " + python_version + ".exe";
-            system(kill_command.c_str());
+    if (music_player_enabled) {
+        // Calling a script to play the music
+        std::string command = python_version + " ../tutorial/scripts/new_play_music.py \"" + music_file + "\"";
+        pipe = _popen(command.c_str(), "w");
+        if (!pipe) {
+            std::cerr << "Error: Could not open pipe to Python process." << std::endl;
+            return;
+        }
+        playing = true;
 
-            // Play New Music
-            playing = true;
-            std::thread t1(PlayMusic, music_file);
-            t1.detach();
-        }
-        else {
-            // Play Music For The First Time
-            playing = true;
-            std::thread t1(PlayMusic, music_file);
-            t1.detach();
-        }
+        // Set Volume
+        string updated_volume = to_string(music_volume);
+        std::fprintf(pipe, "%s\n", updated_volume.c_str());
+        fflush(pipe);
     }
 }
 
-void SoundManager::SoundHandler(string sound_file) {
-    // Calling a script to play the music
+void SoundManager::HandleSound(string sound_file) {
+    // Calling a script to play the sound
     const auto& PlaySound = [&](std::string sound_file) {
-        std::string command = python_version + " ../tutorial/scripts/play_sound.py \"" + sound_file + "\"";
+        string updated_volume = to_string(sound_volume * 100);
+        std::string command = python_version + " ../tutorial/scripts/new_play_sound.py " + sound_file + " " + updated_volume + "";
         system(command.c_str());
     };
-    if (player_enabled) {
+
+    if (sound_player_enabled) {
         std::thread t2(PlaySound, sound_file);
         t2.detach();
     }
+}
+
+void SoundManager::SetMusicVolume(double volume) {
+    music_volume = volume;
+
+    if (playing) {
+        string updated_volume = to_string(music_volume);
+        std::fprintf(pipe, "%s\n", updated_volume.c_str());
+        fflush(pipe);
+    }
+}
+
+void SoundManager::SetSoundVolume(double volume) {
+    sound_volume = volume;
+}
+
+void SoundManager::SetMusicPlayerStatus(bool enabled) {
+    music_player_enabled = enabled;
+
+    if (!music_player_enabled) {
+        int updated_player_index = playing_index;
+        StopMusic();
+        playing_index = updated_player_index;
+    }
+}
+
+void SoundManager::SetSoundPlayerStatus(bool enabled) {
+    sound_player_enabled = enabled;
 }
 
 void SoundManager::StopMusic() {
     if (playing) {
         playing_index = -1;
 
-        // Kill The Previous Music Player
+        // Kill All Media Players
         playing = false;
         std::string kill_command = "taskkill /f /im " + python_version + ".exe";
         system(kill_command.c_str());
     }
+}
+
+SoundManager::~SoundManager() {
+    StopMusic();
 }

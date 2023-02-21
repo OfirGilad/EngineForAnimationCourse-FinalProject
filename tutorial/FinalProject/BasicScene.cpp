@@ -391,7 +391,7 @@ void BasicScene::MenuManager() {
 
 void BasicScene::LoginMenuHandler() {
     if (game_manager->sound_manager->playing_index != LoginMenu) {
-        game_manager->sound_manager->MusicHandler("opening_theme.mp3");
+        game_manager->sound_manager->HandleMusic("opening_theme.mp3");
         game_manager->sound_manager->playing_index = LoginMenu;
     }
 
@@ -505,7 +505,7 @@ void BasicScene::LoginMenuHandler() {
 
 void BasicScene::MainMenuHandler() {
     if (game_manager->sound_manager->playing_index != MainMenu) {
-        game_manager->sound_manager->MusicHandler("main_menu.mp3");
+        game_manager->sound_manager->HandleMusic("main_menu.mp3");
         game_manager->sound_manager->playing_index = MainMenu;
     }
 
@@ -606,7 +606,7 @@ void BasicScene::MainMenuHandler() {
 
 void BasicScene::StageSelectionMenuHandler() {
     if (game_manager->sound_manager->playing_index != MainMenu) {
-        game_manager->sound_manager->MusicHandler("main_menu.mp3");
+        game_manager->sound_manager->HandleMusic("main_menu.mp3");
         game_manager->sound_manager->playing_index = MainMenu;
     }
 
@@ -681,7 +681,7 @@ void BasicScene::StageSelectionMenuHandler() {
 
 void BasicScene::ShopMenuHandler() {
     if (game_manager->sound_manager->playing_index != ShopMenu) {
-        game_manager->sound_manager->MusicHandler("shop.mp3");
+        game_manager->sound_manager->HandleMusic("shop.mp3");
         game_manager->sound_manager->playing_index = ShopMenu;
     }
 
@@ -900,7 +900,7 @@ void BasicScene::ShopMenuHandler() {
 
 void BasicScene::StatsMenuHandler() {
     if (game_manager->sound_manager->playing_index != StatsMenu) {
-        game_manager->sound_manager->MusicHandler("stats.mp3");
+        game_manager->sound_manager->HandleMusic("stats.mp3");
         game_manager->sound_manager->playing_index = StatsMenu;
     }
 
@@ -1008,7 +1008,7 @@ void BasicScene::StatsMenuHandler() {
 
 void BasicScene::HallOfFameMenuHandler() {
     if (game_manager->sound_manager->playing_index != HallOfFameMenu) {
-        game_manager->sound_manager->MusicHandler("hall_of_fame.mp3");
+        game_manager->sound_manager->HandleMusic("hall_of_fame.mp3");
         game_manager->sound_manager->playing_index = HallOfFameMenu;
     }
 
@@ -1082,7 +1082,7 @@ void BasicScene::HallOfFameMenuHandler() {
 
 void BasicScene::CreditsMenuHandler() {
     if (game_manager->sound_manager->playing_index != CreditsMenu) {
-        game_manager->sound_manager->MusicHandler("credits.mp3");
+        game_manager->sound_manager->HandleMusic("credits.mp3");
         game_manager->sound_manager->playing_index = CreditsMenu;
     }
 
@@ -1160,7 +1160,7 @@ void BasicScene::StageMenuHandler() {
     string stage_music;
     if (game_manager->sound_manager->playing_index != -game_manager->sound_manager->stage_index) {
         stage_music = "stage" + std::to_string(game_manager->sound_manager->stage_index) + ".mp3";
-        game_manager->sound_manager->MusicHandler(stage_music);
+        game_manager->sound_manager->HandleMusic(stage_music);
         game_manager->sound_manager->playing_index = -game_manager->sound_manager->stage_index;
     }
 
@@ -1273,15 +1273,15 @@ void BasicScene::StageMenuHandler() {
     if (game_manager->stats->current_health == 0) {
         game_manager->sound_manager->StopMusic();
         SetAnimate(false);
-        game_manager->sound_manager->SoundHandler("obstacle_object.mp3");
-        game_manager->sound_manager->SoundHandler("game_over.mp3");
+        game_manager->sound_manager->HandleSound("obstacle_object.mp3");
+        game_manager->sound_manager->HandleSound("game_over.mp3");
         menu_index = StageFailedMenu;
     }
 
     if (game_manager->stats->stage_completed) {
         game_manager->sound_manager->StopMusic();
         SetAnimate(false);
-        game_manager->sound_manager->SoundHandler("stage_complete.mp3");
+        game_manager->sound_manager->HandleSound("stage_complete.mp3");
         menu_index = StageCompletedMenu;
     }
 
@@ -1473,7 +1473,7 @@ void BasicScene::StageFailedMenuHandler() {
 
 void BasicScene::NewHighScoreMenuHandler() {
     if (game_manager->sound_manager->playing_index != HallOfFameMenu) {
-        game_manager->sound_manager->MusicHandler("hall_of_fame.mp3");
+        game_manager->sound_manager->HandleMusic("hall_of_fame.mp3");
         game_manager->sound_manager->playing_index = CreditsMenu;
     }
 

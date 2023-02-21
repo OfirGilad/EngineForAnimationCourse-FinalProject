@@ -18,17 +18,32 @@ class SoundManager
 public:
     SoundManager();
 
-    void MusicHandler(string music_file);
-    void SoundHandler(string sound_file);
-    void StopMusic();
+    void HandleMusic(string music_file);
+    void HandleSound(string sound_file);
     
+    void SetMusicVolume(double volume);
+    void SetSoundVolume(double volume);
+
+    void SetMusicPlayerStatus(bool enabled);
+    void SetSoundPlayerStatus(bool enabled);
+
+    void StopMusic();
+    ~SoundManager();
+
     // Global Indexed
     int playing_index = -1;
     int stage_index = 0;
-    bool player_enabled = true;
 
 private:
+    FILE* pipe;
+
     // Make sure to set the correct python version
     string python_version = "python3.10";
+
     bool playing = false;
+    bool music_player_enabled = true;
+    bool sound_player_enabled = true;
+
+    double music_volume = 0.5;
+    double sound_volume = 0.7;
 };
