@@ -39,8 +39,6 @@ void GameObjectsVisitor::Visit(Scene* _scene) {
             // Handle Exit Object
             if (current_game_object->model->name == "ExitObject") {
                 if (game_manager->stats->current_score >= game_manager->stats->objective_score) {
-                    cout << "HEY" << endl;
-
                     Eigen::Vector3f original_translation = current_game_object->model->GetTranslation();
                     current_game_object->model->Translate(-original_translation);
                     game_manager->root->AddChild(current_game_object->model);
@@ -56,6 +54,8 @@ void GameObjectsVisitor::Visit(Scene* _scene) {
 
                     current_game_object->alive_timer.ResetTimer();
                     current_game_object->alive_timer.StartTimer();
+
+                    cout << "Exit Appeared" << endl;
 
                     return;
                 }
