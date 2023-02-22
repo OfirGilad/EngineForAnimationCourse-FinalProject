@@ -19,15 +19,18 @@ using namespace cg3d;
 class GameObject
 {
 public:
-    virtual void InitObject(Stats* stats, SoundManager* sound_manager, std::shared_ptr<Model> model);
+    virtual void InitObject(Stats* stats, SoundManager* sound_manager, std::shared_ptr<Model> model, std::shared_ptr<Movable> root);
     virtual void CollisionWithObject() = 0;
     virtual void MoveObject() = 0;
+    virtual void SetAlive() = 0;
+    virtual void SetDead() = 0;
     virtual ~GameObject() {}
 
     Stats* stats;
     SoundManager* sound_manager;
-    std::shared_ptr<Model> model;
-    int stage_number;
+    std::shared_ptr<Movable> root;
+    std::shared_ptr<Model> model, bezier_curve;
+    int stage_number, stage_size;
     GameTimer alive_timer, dead_timer;
     GameLogics bezier_logic;
 };
@@ -37,6 +40,8 @@ class HealthObject : public GameObject
 public:
     void CollisionWithObject() override;
     void MoveObject() override;
+    void SetAlive() override;
+    void SetDead() override;
 
 private:
     int health_value, current_health, max_health;
@@ -47,6 +52,8 @@ class ScoreObject : public GameObject
 public:
     void CollisionWithObject() override;
     void MoveObject() override;
+    void SetAlive() override;
+    void SetDead() override;
 
 private:
     int score_value, current_score, score_multiplier;
@@ -57,6 +64,8 @@ class GoldObject : public GameObject
 public:
     void CollisionWithObject() override;
     void MoveObject() override;
+    void SetAlive() override;
+    void SetDead() override;
 
 private:
     int gold_value, gold, gold_multiplier;
@@ -67,6 +76,8 @@ class BonusObject : public GameObject
 public:
     void CollisionWithObject() override;
     void MoveObject() override;
+    void SetAlive() override;
+    void SetDead() override;
 
 private:
     int bonus_duration;
@@ -77,6 +88,8 @@ class ObstacleObject : public GameObject
 public:
     void CollisionWithObject() override;
     void MoveObject() override;
+    void SetAlive() override;
+    void SetDead() override;
 
 private:
     int damage_value, current_health;
@@ -87,6 +100,8 @@ class ExitObject : public GameObject
 public:
     void CollisionWithObject() override;
     void MoveObject() override;
+    void SetAlive() override;
+    void SetDead() override;
 };
 
 
@@ -95,7 +110,7 @@ class ObjectsBuilder
 public:
     ObjectsBuilder() {};
     void InitObjectsBuilder(Stats* stats, SoundManager* sound_manager);
-    GameObject* BuildGameObject(std::shared_ptr<Model> model);
+    GameObject* BuildGameObject(std::shared_ptr<Model> model, std::shared_ptr<Movable> root);
 
     Stats* stats;
     SoundManager* sound_manager;

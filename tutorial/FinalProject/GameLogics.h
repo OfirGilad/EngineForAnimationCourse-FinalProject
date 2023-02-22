@@ -13,6 +13,7 @@
 
 #include <memory>
 #include <utility>
+#include <random>
 
 using namespace cg3d;
 using namespace std;
@@ -53,6 +54,16 @@ public:
     void IKCyclicCoordinateDecentMethod();
     void IKFabrikMethod();
     void IKSolverHelper(int link_id, Eigen::Vector3f D);
+
+
+    // Bezier Curve
+    void InitBezierCurve(std::shared_ptr<cg3d::Model> model, float stage_size);
+    void GenerateBezierCurve();
+    void MoveOnCurve();
+    Eigen::Vector3f GenerateRandomPosition(int point_zone);
+
+    std::shared_ptr<Model> GetBezierCurveModel() { return bezier_curve; }
+    
 
 private:
     // Simplification
@@ -97,4 +108,15 @@ private:
     int last_link_id = 2;
     int num_of_links = 3;
     float link_length = 1.6f;
+
+
+    // Bezier Curve
+    std::shared_ptr<Model> model, bezier_curve;
+    float stage_size = 0.f;
+    float t = 0.f;
+    bool move_forward = true;
+    int total_curve_points = 20;
+    Eigen::Matrix <float, 4, 3 > MG;
+
+    float bezier_step = 0.001;
 };

@@ -50,6 +50,8 @@ public:
     // Stage stats
     bool stage_completed = false;
     int selected_stage = 0;
+    float base_length = 60.f;
+    float stage_size = 0.f;
     int current_health = 100;
     int current_score = 0;
     int objective_score = 0;

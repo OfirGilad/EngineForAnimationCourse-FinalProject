@@ -96,14 +96,14 @@ void GameManager::InitBackground() {
 
     background = Model::Create("background", Mesh::Cube(), daylight);
     root->AddChild(background);
-    background->Scale(2 * base_length * stage_number, Movable::Axis::XYZ);
+    background->Scale(2 * stats->base_length * stage_number, Movable::Axis::XYZ);
     background->SetPickable(false);
     background->SetStatic();
 }
 
 void GameManager::InitAxis() {
     int stage_number = stats->selected_stage;
-    stage_size = base_length * stage_number;
+    stats->stage_size = stats->base_length * stage_number;
 
     auto program = std::make_shared<Program>("shaders/basicShader");
     auto material{ std::make_shared<Material>("material", program) }; // empty material
@@ -117,7 +117,7 @@ void GameManager::InitAxis() {
     std::shared_ptr<Mesh> coordsys = std::make_shared<Mesh>("coordsys", vertices, faces, vertexNormals, textureCoords);
     axis = Model::Create("axis", coordsys, material);
     axis->mode = 1;
-    axis->Scale(stage_size, Movable::Axis::XYZ);
+    axis->Scale(stats->stage_size, Movable::Axis::XYZ);
     root->AddChild(axis);
     axis->Translate(Eigen::Vector3f(0, 0, 0));
 }
@@ -141,10 +141,12 @@ void GameManager::LoadGameObjects() {
             all_objects[i][j]->model->Translate(-original_translation);
             root->AddChild(all_objects[i][j]->model);
             all_objects[i][j]->model->Translate(GenerateRandomPosition());
+            all_objects[i][j]->SetAlive();
             alive_objects.push_back(all_objects[i][j]);
         }
     }
 
+    exit_object->SetDead();
     dead_objects.push_back(exit_object);
 }
 
@@ -230,7 +232,7 @@ void GameManager::BuildHealthObjects() {
         //temp_object2->showFaces = false;
 
         // Adding to Stage objects list;
-        objects_list.push_back(objects_builder.BuildGameObject(temp_object2));
+        objects_list.push_back(objects_builder.BuildGameObject(temp_object2, root));
     }
 
     all_objects.push_back(objects_list);
@@ -255,7 +257,7 @@ void GameManager::BuildScoreObjects() {
         //temp_object2->showFaces = false;
 
         // Adding to Stage objects list
-        objects_list.push_back(objects_builder.BuildGameObject(temp_object2));
+        objects_list.push_back(objects_builder.BuildGameObject(temp_object2, root));
     }
 
     all_objects.push_back(objects_list);
@@ -280,7 +282,7 @@ void GameManager::BuildGoldObjects() {
         //temp_object2->showFaces = false;
 
         // Adding to Stage objects list
-        objects_list.push_back(objects_builder.BuildGameObject(temp_object2));
+        objects_list.push_back(objects_builder.BuildGameObject(temp_object2, root));
     }
 
     all_objects.push_back(objects_list);
@@ -305,7 +307,7 @@ void GameManager::BuildBonusObjects() {
         //temp_object2->showFaces = false;
 
         // Adding to Stage objects list
-        objects_list.push_back(objects_builder.BuildGameObject(temp_object2));
+        objects_list.push_back(objects_builder.BuildGameObject(temp_object2, root));
     }
 
     all_objects.push_back(objects_list);
@@ -331,7 +333,7 @@ void GameManager::BuildObstacleObjects() {
 
 
         // Adding to Stage objects list
-        objects_list.push_back(objects_builder.BuildGameObject(temp_object2));
+        objects_list.push_back(objects_builder.BuildGameObject(temp_object2, root));
     }
 
     all_objects.push_back(objects_list);
@@ -353,13 +355,13 @@ void GameManager::BuildExit() {
     exit->isHidden = true;
     //temp_object2->showFaces = false;
 
-    exit_object = objects_builder.BuildGameObject(exit);
+    exit_object = objects_builder.BuildGameObject(exit, root);
 }
 
 Eigen::Vector3f GameManager::GenerateRandomPosition() {
     std::random_device random_device;
     std::mt19937 generator(random_device());
-    std::uniform_real_distribution<float> distribution(-stage_size + 10, stage_size - 10);
+    std::uniform_real_distribution<float> distribution(-stats->stage_size + 10, stats->stage_size - 10);
 
     return Eigen::Vector3f(distribution(generator), distribution(generator), distribution(generator));
 }

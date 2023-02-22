@@ -18,7 +18,7 @@ namespace cg3d
     void CollisionDetectionVisitor::Visit(Scene* _scene) {
         game_manager = ((BasicScene*)_scene)->game_manager;
 
-        float stage_size = game_manager->stage_size;
+        float stage_size = game_manager->stats->stage_size;
         backgound_cube_space = Eigen::Vector3f(stage_size, stage_size, stage_size);
 
         if (_scene->GetAnimate()) {
@@ -59,6 +59,8 @@ namespace cg3d
                     // Handle Object Event
                     current_game_object->CollisionWithObject();
                     game_manager->root->RemoveChild(current_game_object->model);
+
+                    current_game_object->SetDead();
 
                     // Move to Dead Objects
                     game_manager->alive_objects.erase(game_manager->alive_objects.begin() + i);

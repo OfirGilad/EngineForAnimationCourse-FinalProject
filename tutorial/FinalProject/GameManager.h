@@ -44,9 +44,6 @@ public:
     std::vector<GameObject*> dead_objects;
     GameObject* exit_object;
 
-    float base_length = 60.f;
-    float stage_size = 0.f;
-
     // CollisionDetectionVisitor Parameters
     std::shared_ptr<cg3d::Model> cube1, cube2;
 

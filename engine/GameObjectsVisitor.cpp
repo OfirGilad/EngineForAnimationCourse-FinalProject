@@ -40,11 +40,8 @@ void GameObjectsVisitor::Visit(Scene* _scene) {
             // Handle Exit Object
             if (current_game_object->model->name == "ExitObject") {
                 if (game_manager->stats->current_score >= game_manager->stats->objective_score) {
-                    Eigen::Vector3f original_translation = current_game_object->model->GetTranslation();
-                    current_game_object->model->Translate(-original_translation);
                     game_manager->root->AddChild(current_game_object->model);
-                    Eigen::Vector3f new_translation = Eigen::Vector3f(0.f, 0.f, -game_manager->stage_size);
-                    current_game_object->model->Translate(new_translation);
+                    current_game_object->MoveObject();
 
                     // Move to Alive Objects
                     game_manager->dead_objects.erase(game_manager->dead_objects.begin() + i);
@@ -67,6 +64,8 @@ void GameObjectsVisitor::Visit(Scene* _scene) {
                 current_game_object->model->Translate(-original_translation);
                 game_manager->root->AddChild(current_game_object->model);
                 current_game_object->model->Translate(game_manager->GenerateRandomPosition());
+
+                current_game_object->SetAlive();
 
                 // Move to Alive Objects
                 game_manager->dead_objects.erase(game_manager->dead_objects.begin() + i);

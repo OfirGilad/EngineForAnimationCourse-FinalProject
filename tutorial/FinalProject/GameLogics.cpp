@@ -806,3 +806,126 @@ void GameLogics::IKSolverHelper(int link_id, Eigen::Vector3f D) {
     arms[link_id]->Rotate(euler_angles[1], Scene::Axis::X);
     arms[link_id]->Rotate(euler_angles[2], Scene::Axis::Z);
 }
+
+
+void GameLogics::InitBezierCurve(std::shared_ptr<cg3d::Model> model, float stage_size) {
+    this->model = model;
+    this->stage_size = stage_size;
+    t = 0;
+}
+
+void GameLogics::GenerateBezierCurve() 
+{
+    Eigen::Vector3f p0 = GenerateRandomPosition(0);
+    Eigen::Vector3f p1 = GenerateRandomPosition(1);
+    Eigen::Vector3f p2 = GenerateRandomPosition(2);
+    Eigen::Vector3f p3 = GenerateRandomPosition(3);
+
+    Eigen::Matrix <float, 4, 3 > G;
+
+    G.row(0) = p0;
+    G.row(1) = p1;
+    G.row(2) = p2;
+    G.row(3) = p3;
+
+    Eigen::Matrix4f M;
+
+    M << -1, 3, -3, 1,
+        3, -6, 3, 0,
+        -3, 3, 0, 0,
+        1, 0, 0, 0;
+
+    MG = M * G;
+
+    Eigen::MatrixXd vertices(total_curve_points + 1, 3);
+    Eigen::MatrixXi faces(total_curve_points, 2);
+
+    for (int i = 0; i <= total_curve_points; i++) {
+        Eigen::RowVector4f Ti;
+        float t_i = float(i) / total_curve_points;
+
+        Ti[0] = powf(t_i, 3);
+        Ti[1] = powf(t_i, 2);
+        Ti[2] = t_i;
+        Ti[3] = 1;
+
+        Eigen::Vector3f TMG = Ti * MG;
+        vertices.row(i) = TMG.cast<double>();
+
+        
+        if (i != total_curve_points) {
+            faces.row(i) = Eigen::Vector2i(i, i + 1);
+        }
+    }
+
+    // Create bezier curve model
+    Eigen::MatrixXd vertexNormals = Eigen::MatrixXd::Ones(total_curve_points + 1, 3);
+    Eigen::MatrixXd textureCoords = Eigen::MatrixXd::Ones(total_curve_points + 1, 2);
+    std::shared_ptr<Mesh> coords = std::make_shared<Mesh>("Bezier Curve Mesh", vertices, faces, vertexNormals, textureCoords);
+
+    auto program = std::make_shared<Program>("shaders/phongShader");
+    auto material{ std::make_shared<Material>("material", program) };
+    material->program->name = "bezier";
+
+    bezier_curve = Model::Create("Bezier Curve", coords, material);
+    bezier_curve->mode = 1;
+
+    // Reset model position
+    Eigen::Vector3f object_translation = p0 - model->GetTranslation();
+    model->Translate(object_translation);
+}
+
+void GameLogics::MoveOnCurve() {
+    // Find next position
+    if (move_forward) {
+        if (t > 0.99f) {
+            move_forward = false;
+            t = 1.f;
+        }
+        else {
+            t += bezier_step;
+        }
+    }
+    else {
+        if (t < 0.01f) {
+            move_forward = true;
+            t = 0.f;
+        }
+        else {
+            t -= bezier_step;
+        }
+    }
+
+    // Translate to next position
+    Eigen::RowVector4f T;
+
+    T[0] = powf(t, 3);
+    T[1] = powf(t, 2);
+    T[2] = t;
+    T[3] = 1;
+
+    Eigen::Vector3f TMG = T * MG;
+    Eigen::Vector3f object_translation = TMG - model->GetTranslation();
+    model->Translate(object_translation);
+}
+
+Eigen::Vector3f GameLogics::GenerateRandomPosition(int point_zone) {
+    std::random_device random_device;
+    std::mt19937 generator(random_device());
+    std::uniform_real_distribution<float> distribution1(0, stage_size - 10);
+    std::uniform_real_distribution<float> distribution2(-stage_size + 10, 0);
+    std::uniform_real_distribution<float> distribution3(-stage_size + 10, stage_size - 10);
+
+    if (point_zone == 0) {
+        return Eigen::Vector3f(distribution1(generator), distribution1(generator), distribution3(generator));
+    }
+    if (point_zone == 1) {
+        return Eigen::Vector3f(distribution1(generator), distribution2(generator), distribution3(generator));
+    }
+    if (point_zone == 2) {
+        return Eigen::Vector3f(distribution2(generator), distribution1(generator), distribution3(generator));
+    }
+    if (point_zone == 3) {
+        return Eigen::Vector3f(distribution2(generator), distribution2(generator), distribution3(generator));
+    }
+}
