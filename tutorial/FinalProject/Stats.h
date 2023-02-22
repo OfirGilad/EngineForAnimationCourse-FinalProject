@@ -52,9 +52,11 @@ public:
     int selected_stage = 0;
     int current_health = 100;
     int current_score = 0;
-    int min_movement_speed = 1; // Always
-    int current_movement_speed = 1;
     int objective_score = 0;
+    string active_bonus = "None";
+    int current_movement_speed = 1;
+    int game_time = 0;
+    int min_movement_speed = 1; // Always
     int leaderboard_position = -1;
 
 private:

@@ -27,7 +27,7 @@ void GameManager::InitGameManager(std::shared_ptr<Movable> _root, std::vector<st
     leaderboard = Leaderboard();
     leaderboard.InitLeaderboard();
 
-    // Init ObjectsBuilder
+    // Init Objects Builder
     objects_builder = ObjectsBuilder();
     objects_builder.InitObjectsBuilder(stats, sound_manager);
 
@@ -35,6 +35,9 @@ void GameManager::InitGameManager(std::shared_ptr<Movable> _root, std::vector<st
     InitCustomObjects();
     BuildGameObjects();
     BuildExit();
+
+    // Init Game Timer
+    game_timer = GameTimer();
 }
 
 void GameManager::LoadStage(int stage_number, bool new_stage)
@@ -50,6 +53,8 @@ void GameManager::LoadStage(int stage_number, bool new_stage)
     InitAxis();
     LoadGameObjects();
     snake.ShowSnake();
+    game_timer.ResetTimer();
+    game_timer.StartTimer();
 }
 
 void GameManager::UnloadStage() {
@@ -66,6 +71,7 @@ void GameManager::UnloadStage() {
     for (int i = 0; i < dead_objects.size(); i++) {
         dead_objects.erase(dead_objects.begin());
     }
+    game_timer.StopTimer();
 }
 
 

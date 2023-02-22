@@ -26,6 +26,7 @@ void GameObjectsVisitor::Run(cg3d::Scene* _scene, cg3d::Camera* camera) {
 
 void GameObjectsVisitor::Visit(Scene* _scene) {
     game_manager = ((BasicScene*)_scene)->game_manager;
+    game_manager->stats->game_time = int(game_manager->game_timer.GetElapsedTime());
 
     if (_scene->GetAnimate()) {
         for (int i = 0; i < int(game_manager->alive_objects.size()); i++) {

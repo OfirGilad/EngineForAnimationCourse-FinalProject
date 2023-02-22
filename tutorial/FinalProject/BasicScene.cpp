@@ -1164,6 +1164,8 @@ void BasicScene::StageMenuHandler() {
         stage_music = "stage" + std::to_string(game_manager->sound_manager->stage_index) + ".mp3";
         game_manager->sound_manager->HandleMusic(stage_music);
         game_manager->sound_manager->playing_index = -game_manager->sound_manager->stage_index;
+
+        SetMenuImage("stage.jpg");
     }
 
     // Set sizes
@@ -1171,7 +1173,7 @@ void BasicScene::StageMenuHandler() {
     float font_scale1, font_scale2, text_position1;
 
     if (width != 0 && height != 0) {
-        window_size1 = ImVec2(float(width), float(height) * 0.12f);
+        window_size1 = ImVec2(float(width), float(height) * 0.13f);
 
         buttons_size1 = ImVec2(float(width) / 4.f, float(height) / 7.f);
 
@@ -1193,6 +1195,8 @@ void BasicScene::StageMenuHandler() {
     ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
     ImGui::SetWindowSize(window_size1, ImGuiCond_Always);
     ImGui::SetWindowFontScale(font_scale2);
+
+    LoadMenuImage();
 
     ImGui::SetCursorPosX(text_position1);
     ImGui::TextColored(ImVec4(1.0, 0.5, 1.0, 1.0), "Stage Menu");
@@ -1223,10 +1227,34 @@ void BasicScene::StageMenuHandler() {
     
     ImGui::SameLine(float(width) * 0.6f);
 
+    // Handle Current Movement Speed 
+    gui_text = "Movement Speed: " + std::to_string(game_manager->stats->current_movement_speed);
+    ImGui::TextColored(ImVec4(0.0, 0.0, 1.0, 1.0), gui_text.c_str());
+
+    ImGui::SameLine(float(width) * 0.8f);
+
+    // Handle Game Time 
+    gui_text = "Game Time: " + std::to_string(game_manager->stats->game_time) + " sec";
+    ImGui::TextColored(ImVec4(0.0, 0.0, 1.0, 1.0), gui_text.c_str());
+
+    Spacing(1);
+
+    // Handle Objective Score
+    gui_text = "Objective Score: " + std::to_string(game_manager->stats->objective_score);
+    ImGui::TextColored(ImVec4(0.0, 0.0, 1.0, 1.0), gui_text.c_str());
+
+    ImGui::SameLine(float(width) * 0.3f);
+
+    // Handle Active Bonus
+    gui_text = "Active Bonus: " + game_manager->stats->active_bonus;
+    ImGui::TextColored(ImVec4(0.0, 0.0, 1.0, 1.0), gui_text.c_str());
+
+    ImGui::SameLine(float(width) * 0.6f);
+
     // Handle View
     ImGui::Text("Camera List: ");
     for (int i = 0; i < camera_list.size(); i++) {
-        ImGui::SameLine(0);
+        ImGui::SameLine();
         bool selected_camera = camera_list[i] == camera;
         if (selected_camera) {
             ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetStyleColorVec4(ImGuiCol_ButtonActive));
@@ -1262,19 +1290,19 @@ void BasicScene::StageMenuHandler() {
         ImGui::Text("RIGHT - Rotate snake right");
         ImGui::Text("ESC - Exit game");
     }
-    */
+    
 
-    ImGui::SameLine(float(width) * 0.85f);
+    static float rgb[3] = { snake_color.x(), snake_color.y(), snake_color.z() };
+    ImGui::ColorEdit3("Snake Color", rgb);
+    snake_color = Eigen::Vector3f(rgb[0], rgb[1], rgb[2]);
+    
+    ImGui::SameLine(float(width) * 0.8f);
+    */
 
     if (ImGui::Button("Exit Stage")) {
         game_manager->UnloadStage();
         menu_index = MainMenu;
     }
-    
-    static float rgb[3] = { snake_color.x(), snake_color.y(), snake_color.z() };
-    ImGui::ColorEdit3("Snake Color", rgb);
-    snake_color = Eigen::Vector3f(rgb[0], rgb[1], rgb[2]);
-    
 
     if (game_manager->stats->current_health == 0) {
         game_manager->sound_manager->StopMusic();

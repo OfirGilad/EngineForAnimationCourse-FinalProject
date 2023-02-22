@@ -47,7 +47,7 @@ public:
     float base_length = 60.f;
     float stage_size = 0.f;
 
-    // CollisionDetectionVisitor Params
+    // CollisionDetectionVisitor Parameters
     std::shared_ptr<cg3d::Model> cube1, cube2;
 
     // Snake
@@ -65,8 +65,10 @@ public:
 
     // Objects Builder
     ObjectsBuilder objects_builder;
-
     Eigen::Vector3f GenerateRandomPosition();
+
+    // Game Timer
+    GameTimer game_timer;
 
 private:
     // Collision boxes for CollisionDetectionVisitor

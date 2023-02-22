@@ -33,7 +33,8 @@ namespace cg3d
             {
                 if (model->name == std::string("bone 0"))
                 {
-                    model->TranslateInSystem(system, Eigen::Vector3f(0, 0, -0.1f));
+                    float movement_speed = float(scene->game_manager->stats->current_movement_speed) * -0.1f;
+                    model->TranslateInSystem(system, Eigen::Vector3f(0, 0, movement_speed));
                     snake.Skinning();
                 }
                 else {
