@@ -79,10 +79,6 @@ private:
     std::shared_ptr<Movable> root;
 
 
-    // Camera parameters
-    
-
-
     // Camera list parameters
     std::vector<std::shared_ptr<cg3d::Camera>> camera_list{ 3 };
     int camera_index = 0;
