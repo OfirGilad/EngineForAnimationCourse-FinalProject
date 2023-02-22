@@ -157,6 +157,9 @@ void Snake::UpdateCameraView()
 {
     // Set global view
     snake_bones[first_index]->AddChild(camera_list[0]);
+    Eigen::Vector3f camera_translation0 = Eigen::Vector3f(0.f, 10.f, 50.f);
+    camera_list[0]->Translate(camera_translation0);
+    camera_list[0]->RotateByDegree(-15.f, Movable::Axis::X);
 
     // Set snake front view
     snake_bones[first_index]->AddChild(camera_list[1]);

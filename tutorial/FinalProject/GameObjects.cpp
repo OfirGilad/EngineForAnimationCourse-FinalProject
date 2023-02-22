@@ -161,7 +161,7 @@ void BonusObject::CollisionWithObject() {
 }
 
 void BonusObject::MoveObject() {
-
+    model->RotateByDegree(1.f, Eigen::Vector3f(0.f, 1.f, 0.f));
 }
 
 ////////////////////
@@ -190,7 +190,7 @@ void ObstacleObject::CollisionWithObject() {
 }
 
 void ObstacleObject::MoveObject() {
-
+    model->RotateByDegree(1.f, Eigen::Vector3f(0.f, 1.f, 0.f));
 }
 
 ////////////////

@@ -80,9 +80,7 @@ private:
 
 
     // Camera parameters
-    float distance = 50.f;
-    float degree = -15.f;
-    Eigen::Vector3f camera_translation = Eigen::Vector3f(0, 15, 50);
+    
 
 
     // Camera list parameters
