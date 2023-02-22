@@ -4,9 +4,9 @@
 
 #include <memory>
 #include <utility>
+#include <vector>
 
 #include "SceneWithImGui.h"
-#include "imgui.h"
 #include "GameManager.h"
 
 class BasicScene : public cg3d::SceneWithImGui
@@ -66,6 +66,9 @@ public:
     // Programs Handler
     bool ProgramHandler(const Program& program);
 
+    void SetMenuImage(string image_name);
+    void LoadMenuImage();
+
 private:
     // SceneWithImGui expend
     void BuildImGui() override;
@@ -111,6 +114,14 @@ private:
 
     // Snake Color
     Eigen::Vector3f snake_color = Eigen::Vector3f(0.5f, 0.25f, 0.0f);
+
+    unsigned char* background_image;
+    GLuint back_ground_image_texture;
+    int image_width;
+    int image_height;
+    int screen_width;
+    int screen_height;
+    int channels;
 
     // Debug mode
     int debug_parameter = 0;

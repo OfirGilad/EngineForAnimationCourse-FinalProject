@@ -1,37 +1,19 @@
+#include <glad\glad.h>
 #include "BasicScene.h"
-#include <Eigen/src/Core/Matrix.h>
-#include <edges.h>
-#include <memory>
-#include <per_face_normals.h>
-#include <read_triangle_mesh.h>
-#include <utility>
-#include <vector>
-#include "GLFW/glfw3.h"
-#include "Mesh.h"
+
+#include <GLFW\glfw3.h>
 #include "PickVisitor.h"
 #include "Renderer.h"
-#include "ObjLoader.h"
-#include "IglMeshLoader.h"
 
-#include "igl/per_vertex_normals.h"
-#include "igl/per_face_normals.h"
-#include "igl/unproject_onto_mesh.h"
-#include "igl/edge_flaps.h"
-#include "igl/loop.h"
-#include "igl/upsample.h"
-#include "igl/AABB.h"
-#include "igl/parallel_for.h"
-#include "igl/shortest_edge_and_midpoint.h"
-#include "igl/circulation.h"
-#include "igl/edge_midpoints.h"
-#include "igl/collapse_edge.h"
-#include "igl/edge_collapse_is_valid.h"
-#include "igl/write_triangle_mesh.h"
+#define STB_IMAGE_IMPLEMENTATION
+#define IMGUI_DEFINE_MATH_OPERATORS
+#include "stb_image.h"
+#include <imgui.h>
+#include <imgui_internal.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
+#include <imgui_impl_sdl.h>
 
-// #include "AutoMorphingModel.h"
-
-#include "file_dialog_open.h"
-#include "GLFW/glfw3.h"
 
 using namespace std;
 using namespace cg3d;
@@ -393,6 +375,8 @@ void BasicScene::LoginMenuHandler() {
     if (game_manager->sound_manager->playing_index != LoginMenu) {
         game_manager->sound_manager->HandleMusic("opening_theme.mp3");
         game_manager->sound_manager->playing_index = LoginMenu;
+
+        SetMenuImage("login.jpg");
     }
 
     // Set sizes
@@ -424,6 +408,8 @@ void BasicScene::LoginMenuHandler() {
     ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
     ImGui::SetWindowSize(window_size1, ImGuiCond_Always);
     ImGui::SetWindowFontScale(font_scale1);
+
+    LoadMenuImage();
 
     ImGui::SetCursorPosX(text_position1);
     ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "S");
@@ -507,6 +493,8 @@ void BasicScene::MainMenuHandler() {
     if (game_manager->sound_manager->playing_index != MainMenu) {
         game_manager->sound_manager->HandleMusic("main_menu.mp3");
         game_manager->sound_manager->playing_index = MainMenu;
+
+        SetMenuImage("main_menu.jpg");
     }
 
     // Set sizes
@@ -537,6 +525,8 @@ void BasicScene::MainMenuHandler() {
     ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
     ImGui::SetWindowSize(window_size1, ImGuiCond_Always);
     ImGui::SetWindowFontScale(font_scale1);
+
+    LoadMenuImage();
 
     ImGui::SetCursorPosX(text_position1);
     ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Main Menu");
@@ -607,6 +597,8 @@ void BasicScene::StageSelectionMenuHandler() {
     if (game_manager->sound_manager->playing_index != MainMenu) {
         game_manager->sound_manager->HandleMusic("main_menu.mp3");
         game_manager->sound_manager->playing_index = MainMenu;
+
+        SetMenuImage("main_menu.jpg");
     }
 
     // Set sizes
@@ -636,6 +628,8 @@ void BasicScene::StageSelectionMenuHandler() {
     ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
     ImGui::SetWindowSize(ImVec2(width, height), ImGuiCond_Always);
     ImGui::SetWindowFontScale(font_scale1);
+
+    LoadMenuImage();
 
     ImGui::SetCursorPosX(text_position2);
     ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Stage Selection Menu");
@@ -681,6 +675,8 @@ void BasicScene::ShopMenuHandler() {
     if (game_manager->sound_manager->playing_index != ShopMenu) {
         game_manager->sound_manager->HandleMusic("shop.mp3");
         game_manager->sound_manager->playing_index = ShopMenu;
+
+        SetMenuImage("shop.jpg");
     }
 
     // Set sizes
@@ -714,6 +710,8 @@ void BasicScene::ShopMenuHandler() {
     ImGui::SetWindowSize(ImVec2(width, height), ImGuiCond_Always);
     ImGui::SetWindowFontScale(font_scale1);
 
+    LoadMenuImage();
+
     ImGui::SetCursorPosX(text_position1);
     ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Shop");
 
@@ -730,7 +728,7 @@ void BasicScene::ShopMenuHandler() {
     ImGui::SetCursorPosX(text_position3);
     int max_health = game_manager->stats->max_health;
     gui_text = "Increase Max Health (Current: " + to_string(max_health) + ")";
-    ImGui::Text(gui_text.c_str());
+    ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), gui_text.c_str());
 
     ImGui::SetCursorPosX(text_position2);
     item1_cost = max_health;
@@ -761,7 +759,7 @@ void BasicScene::ShopMenuHandler() {
     ImGui::SetCursorPosX(text_position3);
     int score_multiplier = game_manager->stats->score_multiplier;
     gui_text = "X" + to_string(score_multiplier + 1) + " Score (Current: X" + to_string(score_multiplier) + ")";
-    ImGui::Text(gui_text.c_str());
+    ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), gui_text.c_str());
 
     ImGui::SetCursorPosX(text_position2);
     item2_cost = score_multiplier * 10;
@@ -792,7 +790,7 @@ void BasicScene::ShopMenuHandler() {
     ImGui::SetCursorPosX(text_position3);
     int gold_multiplier = game_manager->stats->gold_multiplier;
     gui_text = "X" + to_string(gold_multiplier + 1) + " Gold (Current: X" + to_string(gold_multiplier) + ")";
-    ImGui::Text(gui_text.c_str());
+    ImGui::TextColored(ImVec4(1.0, 1.0, 0.0, 1.0), gui_text.c_str());
 
     ImGui::SetCursorPosX(text_position2);
     item3_cost = gold_multiplier * 10;
@@ -823,7 +821,7 @@ void BasicScene::ShopMenuHandler() {
     ImGui::SetCursorPosX(text_position3);
     int bonuses_duration = game_manager->stats->bonuses_duration;
     gui_text = "Increase Bonuses Duration (Current: " + to_string(bonuses_duration) + " sec)";
-    ImGui::Text(gui_text.c_str());
+    ImGui::TextColored(ImVec4(1.0, 0.0, 1.0, 1.0), gui_text.c_str());
 
     ImGui::SetCursorPosX(text_position2);
     item4_cost = bonuses_duration * 100;
@@ -854,7 +852,7 @@ void BasicScene::ShopMenuHandler() {
     ImGui::SetCursorPosX(text_position3);
     int max_movement_speed = game_manager->stats->max_movement_speed;
     gui_text = "Increase Max Speed (Current: " + to_string(max_movement_speed) + ")";
-    ImGui::Text(gui_text.c_str());
+    ImGui::TextColored(ImVec4(0.0, 0.0, 1.0, 1.0), gui_text.c_str());
 
     ImGui::SetCursorPosX(text_position2);
     item5_cost = max_movement_speed * 100;
@@ -900,6 +898,8 @@ void BasicScene::StatsMenuHandler() {
     if (game_manager->sound_manager->playing_index != StatsMenu) {
         game_manager->sound_manager->HandleMusic("stats.mp3");
         game_manager->sound_manager->playing_index = StatsMenu;
+
+        SetMenuImage("stats.jpg");
     }
 
     // Set sizes
@@ -932,6 +932,8 @@ void BasicScene::StatsMenuHandler() {
     ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
     ImGui::SetWindowSize(ImVec2(width, height), ImGuiCond_Always);
     ImGui::SetWindowFontScale(font_scale1);
+
+    LoadMenuImage();
 
     ImGui::SetCursorPosX(text_position1);
     ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Stats");
@@ -1008,6 +1010,8 @@ void BasicScene::HallOfFameMenuHandler() {
     if (game_manager->sound_manager->playing_index != HallOfFameMenu) {
         game_manager->sound_manager->HandleMusic("hall_of_fame.mp3");
         game_manager->sound_manager->playing_index = HallOfFameMenu;
+
+        SetMenuImage("hall_of_fame.jpg");
     }
 
     // Set sizes
@@ -1037,6 +1041,8 @@ void BasicScene::HallOfFameMenuHandler() {
     ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
     ImGui::SetWindowSize(ImVec2(width, height), ImGuiCond_Always);
     ImGui::SetWindowFontScale(font_scale1);
+
+    LoadMenuImage();
 
     ImGui::SetCursorPosX(text_position1);
     ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Hall of Fame");
@@ -1082,6 +1088,8 @@ void BasicScene::CreditsMenuHandler() {
     if (game_manager->sound_manager->playing_index != CreditsMenu) {
         game_manager->sound_manager->HandleMusic("credits.mp3");
         game_manager->sound_manager->playing_index = CreditsMenu;
+
+        SetMenuImage("credits.jpg");
     }
 
     // Set sizes
@@ -1112,6 +1120,8 @@ void BasicScene::CreditsMenuHandler() {
     ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
     ImGui::SetWindowSize(ImVec2(width, height), ImGuiCond_Always);
     ImGui::SetWindowFontScale(font_scale1);
+
+    LoadMenuImage();
 
     ImGui::SetCursorPosX(text_position1);
     ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Credits");
@@ -1686,4 +1696,41 @@ bool BasicScene::ProgramHandler(const Program& program) {
     }
 
     return default_behavior;
+}
+
+void BasicScene::SetMenuImage(string image_name) {
+    string image_path = "../tutorial/images/" + image_name;
+    background_image = stbi_load(image_path.c_str(), &image_width, &image_height, &channels, STBI_rgb_alpha);
+    if (background_image == NULL) {
+        // Error handling if the image couldn't be loaded
+        std::cout << "image not loaded! " << std::endl;
+    }
+    else {
+        glGenTextures(1, &back_ground_image_texture);
+        glBindTexture(GL_TEXTURE_2D, back_ground_image_texture);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image_width, image_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, background_image);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        stbi_image_free(background_image);
+        std::cout << "image loaded successfully! " << std::endl;
+    }
+}
+
+void BasicScene::LoadMenuImage() {
+    // Set Image
+    ImVec2 window_size = ImGui::GetWindowSize();
+    ImVec2 window_position = ImGui::GetWindowPos();
+    ImVec2 image_position = window_position + ImGui::GetCursorPos();
+    ImVec2 image_size = window_size;
+
+    ImGui::GetWindowDrawList()->AddImage(
+        (void*)(intptr_t)back_ground_image_texture,
+        image_position,
+        image_position + image_size,
+        ImVec2(0, 0),
+        ImVec2(1, 1),
+        ImColor(255, 255, 255, 255)
+    );
 }
