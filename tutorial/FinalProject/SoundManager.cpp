@@ -56,9 +56,7 @@ void SoundManager::HandleSound(string sound_file) {
     }
 }
 
-void SoundManager::SetMusicVolume(double volume) {
-    music_volume = volume;
-
+void SoundManager::UpdateMusicPlayerVolume() {
     if (playing) {
         string updated_volume = to_string(music_volume);
         std::fprintf(pipe, "%s\n", updated_volume.c_str());
@@ -66,23 +64,24 @@ void SoundManager::SetMusicVolume(double volume) {
     }
 }
 
-void SoundManager::SetSoundVolume(double volume) {
-    sound_volume = volume;
-}
-
-void SoundManager::SetMusicPlayerStatus(bool enabled) {
-    music_player_enabled = enabled;
-
-    if (!music_player_enabled) {
-        int updated_player_index = playing_index;
-        StopMusic();
-        playing_index = updated_player_index;
-    }
-}
-
-void SoundManager::SetSoundPlayerStatus(bool enabled) {
-    sound_player_enabled = enabled;
-}
+//
+//void SoundManager::SetSoundVolume(double volume) {
+//    sound_volume = volume;
+//}
+//
+//void SoundManager::SetMusicPlayerStatus(bool enabled) {
+//    music_player_enabled = enabled;
+//
+//    if (!music_player_enabled) {
+//        int updated_player_index = playing_index;
+//        StopMusic();
+//        playing_index = updated_player_index;
+//    }
+//}
+//
+//void SoundManager::SetSoundPlayerStatus(bool enabled) {
+//    sound_player_enabled = enabled;
+//}
 
 void SoundManager::StopMusic() {
     if (playing) {

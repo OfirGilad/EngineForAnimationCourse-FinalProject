@@ -661,8 +661,10 @@ void BasicScene::StageSelectionMenuHandler() {
         if (ImGui::Button(gui_text.c_str(), buttons_size1)) {
             cout << gui_text.c_str() << endl;
             game_manager->sound_manager->stage_index = i;
-            game_manager->LoadStage(i, true);
             menu_index = StageMenu;
+
+            game_manager->LoadStage(i, true);
+            animate = true;
         }
     }
 
@@ -1135,7 +1137,138 @@ void BasicScene::SettingsMenuHandler() {
 
     Spacing(5);
 
+    bool* skinning_enabled = &game_manager->snake.skinning_enabled;
+    if (*skinning_enabled)
+        gui_text = "Skinning On";
+    else {
+        gui_text = "Skinning Off";
+    }
+
+    ImGui::SetCursorPosX(text_position2);
+    if (ImGui::Checkbox(gui_text.c_str(), skinning_enabled)) {
+        if (*skinning_enabled) {
+            cout << "Skinning enabled" << endl;
+        }
+        else {
+            cout << "Skinning disabled" << endl;
+        }
+    }
+
+    Spacing(5);
+
+    bool* music_player_enabled = &game_manager->sound_manager->music_player_enabled;
+    if (*music_player_enabled)
+        gui_text = "Music On";
+    else {
+        gui_text = "Music Off";
+    }
+
+    ImGui::SetCursorPosX(text_position2);
+    if (ImGui::Checkbox(gui_text.c_str(), music_player_enabled)) {
+        if (*music_player_enabled) {
+            game_manager->sound_manager->playing_index = -1;
+            cout << "Music enabled" << endl;
+        }
+        else {
+            game_manager->sound_manager->StopMusic();
+            cout << "Music disabled" << endl;
+        }
+
+    }
+
+    Spacing(5);
+
+    bool* sound_player_enabled = &game_manager->sound_manager->sound_player_enabled;
+    if (*sound_player_enabled)
+        gui_text = "Sound On";
+    else {
+        gui_text = "Sound Off";
+    }
+
+    ImGui::SetCursorPosX(text_position2);
+    if (ImGui::Checkbox(gui_text.c_str(), sound_player_enabled)) {
+        if (*sound_player_enabled) {
+            cout << "Sound enabled" << endl;
+        }
+        else {
+            cout << "Sound disabled" << endl;
+        }
+    }
+
+    Spacing(5);
     
+    if (ImGui::SliderFloat("Music Volume", &game_manager->sound_manager->music_volume, 0.0f, 1.0f)) {
+        game_manager->sound_manager->UpdateMusicPlayerVolume();
+        cout << "Music volume: " + to_string(game_manager->sound_manager->music_volume) << endl;
+    }
+
+    Spacing(5);
+
+    if (ImGui::SliderFloat("Sound Volume", &game_manager->sound_manager->sound_volume, 0.0f, 1.0f)) {
+        cout << "Sound volume: " + to_string(game_manager->sound_manager->sound_volume) << endl;
+    }
+
+    Spacing(5);
+
+    ImGui::SetCursorPosX(text_position2);
+    if (ImGui::Button("Test Sound", buttons_size1)) {
+        game_manager->sound_manager->HandleSound("obstacle_object.mp3");
+    }
+
+    // Enable Music
+    // Enable Sound
+    // Music volume
+    // Sound Volume
+    // Test Sound
+    // Enable Skinning
+    // Snake Color
+    // View keys
+
+    Spacing(5);
+
+    static float rgb[3] = { snake_color.x(), snake_color.y(), snake_color.z() };
+    ImGui::ColorEdit3("Snake Color", rgb);
+    snake_color = Eigen::Vector3f(rgb[0], rgb[1], rgb[2]);
+
+    Spacing(5);
+
+    ImGui::SetCursorPosX(text_position2);
+    if (!display_keys) {
+        if (ImGui::Button("Show Keys", buttons_size1)) {
+            display_keys = true;
+        }
+    }
+    else {
+        if (ImGui::Button("Hide Keys", buttons_size1)) {
+            display_keys = false;
+        }
+        ImGui::SetCursorPosX(text_position2);
+        ImGui::Text("Keyboard Keys: ");
+        ImGui::SetCursorPosX(text_position2);
+        ImGui::Text("W - Move snake up");
+        ImGui::SetCursorPosX(text_position2);
+        ImGui::Text("S - Move snake down");
+        ImGui::SetCursorPosX(text_position2);
+        ImGui::Text("A - Move snake left");
+        ImGui::SetCursorPosX(text_position2);
+        ImGui::Text("D - Move snake right");
+        ImGui::SetCursorPosX(text_position2);
+        ImGui::Text("V - Switch view forward");
+        ImGui::SetCursorPosX(text_position2);
+        ImGui::Text("B - Switch view backward");
+        ImGui::SetCursorPosX(text_position2);
+        ImGui::Text("UP - Increase snake speed");
+        ImGui::SetCursorPosX(text_position2);
+        ImGui::Text("DOWN - Decrease snake speed");
+        ImGui::SetCursorPosX(text_position2);
+        ImGui::Text("LEFT - Rotate snake left");
+        ImGui::SetCursorPosX(text_position2);
+        ImGui::Text("RIGHT - Rotate snake right");
+        ImGui::SetCursorPosX(text_position2);
+        ImGui::Text("SPACE - Pause stage");
+        ImGui::SetCursorPosX(text_position2);
+        ImGui::Text("ESC - Exit game");
+    }
 
     Spacing(10);
 
@@ -1336,41 +1469,14 @@ void BasicScene::StageMenuHandler() {
         }
     }
 
-    /*
-    if (!display_keys) {
-        if (ImGui::Button("Show Keys")) {
-            display_keys = true;
-        }
-    }
-    else {
-        if (ImGui::Button("Hide Keys")) {
-            display_keys = false;
-        }
-        ImGui::Text("Keyboard Keys: ");
-        ImGui::Text("W - Move snake up");
-        ImGui::Text("S - Move snake down");
-        ImGui::Text("A - Move snake left");
-        ImGui::Text("D - Move snake right");
-        ImGui::Text("V - Switch view forward");
-        ImGui::Text("B - Switch view backward");
-        ImGui::Text("UP - Increase snake speed");
-        ImGui::Text("DOWN - Decrease snake speed");
-        ImGui::Text("LEFT - Rotate snake left");
-        ImGui::Text("RIGHT - Rotate snake right");
-        ImGui::Text("ESC - Exit game");
-    }
-    
-
-    static float rgb[3] = { snake_color.x(), snake_color.y(), snake_color.z() };
-    ImGui::ColorEdit3("Snake Color", rgb);
-    snake_color = Eigen::Vector3f(rgb[0], rgb[1], rgb[2]);
-    
-    ImGui::SameLine(float(width) * 0.8f);
-    */
-
     if (ImGui::Button("Exit Stage")) {
-        game_manager->UnloadStage();
         menu_index = MainMenu;
+
+        game_manager->UnloadStage();
+        animate = false;
+
+        ImGui::End();
+        return;
     }
 
     if (game_manager->stats->current_health == 0) {
@@ -1458,16 +1564,20 @@ void BasicScene::StageCompletedMenuHandler() {
     if (current_stage == 3) {
         if (ImGui::Button("End Game", buttons_size1)) {
             next_menu_index = CreditsMenu;
-            game_manager->UnloadStage();
             menu_index = NewHighScoreMenu;
+
+            game_manager->UnloadStage();
+            animate = false;
         }
     }
     else {
         if (ImGui::Button("Continue", buttons_size1)) {
             current_stage++;
             game_manager->sound_manager->stage_index = current_stage;
-            game_manager->LoadStage(current_stage, false);
             menu_index = StageMenu;
+
+            game_manager->LoadStage(current_stage, false);
+            animate = true;
         }
     }
 
@@ -1605,7 +1715,9 @@ void BasicScene::NewHighScoreMenuHandler() {
     // No new high score found
     if (position == -1) {
         menu_index = next_menu_index;
+
         game_manager->UnloadStage();
+        animate = false;
         return;
     }
 
@@ -1681,7 +1793,9 @@ void BasicScene::NewHighScoreMenuHandler() {
             NewHighScoreMenu_InvalidParameter = false;
             game_manager->leaderboard.AddScoreToLeaderboard(position, name, game_manager->stats->current_score);
             menu_index = next_menu_index;
+
             game_manager->UnloadStage();
+            animate = false;
         }
         else {
             NewHighScoreMenu_InvalidParameter = true;
@@ -1698,7 +1812,9 @@ void BasicScene::NewHighScoreMenuHandler() {
     ImGui::SetCursorPosX(text_position1);
     if (ImGui::Button("Back To Main Menu", buttons_size1)) {
         menu_index = MainMenu;
+
         game_manager->UnloadStage();
+        animate = false;
     }
 
     ImGui::End();
@@ -1814,7 +1930,6 @@ void BasicScene::SetMenuImage(string image_name) {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         stbi_image_free(background_image);
-        std::cout << "image loaded successfully! " << std::endl;
     }
 }
 

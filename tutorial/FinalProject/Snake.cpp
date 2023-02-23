@@ -79,7 +79,7 @@ void Snake::InitSnake(int num_of_bones)
 
 
 void Snake::ShowSnake() {
-    if (enable_skinning) {
+    if (skinning_enabled) {
         snake_body->isHidden = false;
     }
     else {
@@ -91,7 +91,7 @@ void Snake::ShowSnake() {
 }
 
 void Snake::HideSnake() {
-    if (enable_skinning) {
+    if (skinning_enabled) {
         snake_body->isHidden = true;
     }
     else {
@@ -199,10 +199,6 @@ void Snake::CalculateWeight()
 
 
 void Snake::SkinningInit() {
-    if (!enable_skinning) {
-        return;
-    }
-
     // Create snake mesh
     auto program = std::make_shared<Program>("shaders/phongShader");
     auto material = std::make_shared<Material>("snake_material", program);
@@ -265,7 +261,7 @@ void Snake::SkinningInit() {
 
 void Snake::Skinning() 
 {
-    if (!enable_skinning) {
+    if (!skinning_enabled) {
         return;
     }
 

@@ -63,7 +63,7 @@ public:
     Eigen::Vector3f GetBonePosition(int bone_id, int position);
 
     // Skinning status
-    bool enable_skinning = false;
+    bool skinning_enabled = false;
 
 private:
     void UpdateCameraView();
