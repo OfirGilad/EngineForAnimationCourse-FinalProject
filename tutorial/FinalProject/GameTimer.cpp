@@ -4,10 +4,6 @@
 
 #include "GameTimer.h"
 
-GameTimer::GameTimer() {
-    running_status = false;
-    elapsed_time = 0;
-}
 
 void GameTimer::StartTimer() {
     if (!running_status) {

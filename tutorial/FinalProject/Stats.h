@@ -18,7 +18,7 @@ using namespace nlohmann;
 class Stats
 {
 public:
-    Stats();
+    Stats() {};
 
     void InitStats();
     void NewGame(string name);

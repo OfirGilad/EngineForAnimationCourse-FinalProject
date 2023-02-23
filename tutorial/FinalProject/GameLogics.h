@@ -21,7 +21,7 @@ using namespace std;
 class GameLogics
 {
 public:
-    GameLogics();
+    GameLogics() {};
 
     // Simplification
     void InitSimplification(vector<std::shared_ptr<cg3d::Model>> models);

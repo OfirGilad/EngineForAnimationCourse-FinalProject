@@ -4,9 +4,6 @@
 
 #include "Leaderboard.h"
 
-Leaderboard::Leaderboard() {
-
-}
 
 void Leaderboard::InitLeaderboard() {
     std::ifstream file("../tutorial/json/leaderboard.json");

@@ -12,10 +12,6 @@
 
 using namespace cg3d;
 
-GameLogics::GameLogics() {
-
-}
-
 
 // Simplification
 

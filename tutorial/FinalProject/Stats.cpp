@@ -5,10 +5,6 @@
 #include "Stats.h"
 
 
-Stats::Stats() {
-
-}
-
 void Stats::InitStats() {
     std::ifstream file("../tutorial/json/savedata.json");
 

@@ -16,7 +16,7 @@ using namespace std;
 class SoundManager
 {
 public:
-    SoundManager();
+    SoundManager() {};
 
     void HandleMusic(string music_file);
     void HandleSound(string sound_file);

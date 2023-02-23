@@ -14,10 +14,6 @@
 #include <cstdio>
 
 
-SoundManager::SoundManager() {
-
-}
-
 void SoundManager::HandleMusic(string music_file) {
     if (playing) {
         int updated_player_index = playing_index;

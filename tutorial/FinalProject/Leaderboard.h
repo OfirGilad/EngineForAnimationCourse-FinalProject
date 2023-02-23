@@ -18,7 +18,7 @@ using namespace nlohmann;
 class Leaderboard
 {
 public:
-    Leaderboard();
+    Leaderboard() {};
 
     void InitLeaderboard();
     void ResetLeaderboard();

@@ -18,7 +18,7 @@ using namespace std::chrono;
 class GameTimer
 {
 public:
-    GameTimer();
+    GameTimer() {};
 	
     void StartTimer();
     void StopTimer();
@@ -32,8 +32,8 @@ public:
 	
 private:
     time_point<system_clock> start_time;
-    bool running_status;
-    double elapsed_time;
+    bool running_status = false;
+    double elapsed_time = 0;
 };
 
 
