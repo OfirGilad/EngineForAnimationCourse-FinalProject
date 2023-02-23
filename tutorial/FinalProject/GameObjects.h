@@ -24,13 +24,13 @@ public:
     virtual void MoveObject() = 0;
     virtual void SetAlive() = 0;
     virtual void SetDead() = 0;
+    virtual Eigen::Vector3f GenerateRandomPosition();
     virtual ~GameObject() {}
 
     Stats* stats;
     SoundManager* sound_manager;
     std::shared_ptr<Movable> root;
     std::shared_ptr<Model> model, bezier_curve;
-    int stage_number, stage_size;
     GameTimer alive_timer, dead_timer;
     GameLogics bezier_logic;
 };

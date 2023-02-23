@@ -24,8 +24,8 @@ void GameManager::InitGameManager(std::shared_ptr<Movable> _root, std::vector<st
     stats->InitStats();
 
     // Init Leaderboard
-    leaderboard = Leaderboard();
-    leaderboard.InitLeaderboard();
+    leaderboard = new Leaderboard();
+    leaderboard->InitLeaderboard();
 
     // Init Objects Builder
     objects_builder = ObjectsBuilder();
@@ -37,7 +37,7 @@ void GameManager::InitGameManager(std::shared_ptr<Movable> _root, std::vector<st
     BuildExit();
 
     // Init Game Timer
-    InitGameTimer();
+    InitTimers();
 }
 
 void GameManager::LoadStage(int stage_number, bool new_stage)
@@ -46,34 +46,55 @@ void GameManager::LoadStage(int stage_number, bool new_stage)
     stats->selected_stage = stage_number;
     InitStageParameters(new_stage);
 
-    if (!new_stage) {
-        UnloadStage();
-    }
+    UnloadStage();
     InitBackground();
     InitAxis();
     LoadGameObjects();
     snake.ShowSnake();
-    game_timer.ResetTimer();
-    game_timer.StartTimer();
+    stage_timer.StartTimer();
 }
 
 void GameManager::UnloadStage() {
-    root->RemoveChild(background);
-    root->RemoveChild(axis);
+    if (background_loaded) {
+        root->RemoveChild(background);
+        background_loaded = false;
+    }
+    if (axis_loaded) {
+        root->RemoveChild(axis);
+        axis_loaded = false;
+    }
+
     snake.HideSnake();
     snake.ResetSnakePosition();
 
     for (int i = 0; i < alive_objects.size(); i++) {
-        root->RemoveChild(alive_objects[i]->model);
+        alive_objects[0]->SetDead();
         alive_objects.erase(alive_objects.begin());
     }
 
     for (int i = 0; i < dead_objects.size(); i++) {
         dead_objects.erase(dead_objects.begin());
     }
-    game_timer.StopTimer();
+
+    stage_timer.ResetTimer();
 }
 
+void GameManager::NewGame(string name) {
+    game_timer.ResetTimer();
+
+    stats->ResetStats(name);
+    leaderboard->ResetLeaderboard();
+
+    game_timer.StartTimer();
+}
+
+void GameManager::SaveGame() {
+    float time_played = game_timer.GetElapsedTime();
+    stats->time_played = game_timer.SecondsToGameTime(time_played);
+
+    stats->SaveStats();
+    leaderboard->SaveLeaderboard();
+}
 
 void GameManager::InitCollisionBoxes() {
     auto program = std::make_shared<Program>("shaders/basicShader");
@@ -99,6 +120,8 @@ void GameManager::InitBackground() {
     background->Scale(2 * stats->base_length * stage_number, Movable::Axis::XYZ);
     background->SetPickable(false);
     background->SetStatic();
+
+    background_loaded = true;
 }
 
 void GameManager::InitAxis() {
@@ -120,6 +143,8 @@ void GameManager::InitAxis() {
     axis->Scale(stats->stage_size, Movable::Axis::XYZ);
     root->AddChild(axis);
     axis->Translate(Eigen::Vector3f(0, 0, 0));
+
+    axis_loaded = true;
 }
 
 void GameManager::InitStageParameters(bool new_stage) {
@@ -137,10 +162,6 @@ void GameManager::LoadGameObjects() {
 
     for (int i = 0; i < int(all_objects.size()); i++) {
         for (int j = 0; j < selected_stage; j++) {
-            Eigen::Vector3f original_translation = all_objects[i][j]->model->GetTranslation();
-            all_objects[i][j]->model->Translate(-original_translation);
-            root->AddChild(all_objects[i][j]->model);
-            all_objects[i][j]->model->Translate(GenerateRandomPosition());
             all_objects[i][j]->SetAlive();
             alive_objects.push_back(all_objects[i][j]);
         }
@@ -358,18 +379,12 @@ void GameManager::BuildExit() {
     exit_object = objects_builder.BuildGameObject(exit, root);
 }
 
-Eigen::Vector3f GameManager::GenerateRandomPosition() {
-    std::random_device random_device;
-    std::mt19937 generator(random_device());
-    std::uniform_real_distribution<float> distribution(-stats->stage_size + 10, stats->stage_size - 10);
-
-    return Eigen::Vector3f(distribution(generator), distribution(generator), distribution(generator));
-}
-
-void GameManager::InitGameTimer() {
+void GameManager::InitTimers() {
     game_timer = GameTimer();
     string game_time = stats->time_played;
     float elapsed_time = float(game_timer.GameTimeToSecond(game_time));
     game_timer.SetElapsedTime(elapsed_time);
     game_timer.StartTimer();
+
+    stage_timer = GameTimer();
 }

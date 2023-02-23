@@ -45,7 +45,6 @@ namespace cg3d
                 return;
             }
 
-
             for (int i = 0; i < int(game_manager->alive_objects.size()); i++) {
                 GameObject* current_game_object = game_manager->alive_objects[i];
 
@@ -53,25 +52,21 @@ namespace cg3d
                 bool collision_check = collision_logic.CollisionCheck(snake_head->GetAABBTree(), current_game_object->model->GetAABBTree(), 0);
 
                 if (collision_check) {
+                    // Reset Timers
+                    current_game_object->alive_timer.ResetTimer();
+                    current_game_object->dead_timer.StartTimer();
+
                     // Remove Collision Boxes
                     snake_head->RemoveChild(game_manager->cube1);
                     current_game_object->model->RemoveChild(game_manager->cube2);
-
-                    // Handle Object Event
-                    current_game_object->CollisionWithObject();
-                    game_manager->root->RemoveChild(current_game_object->model);
-
-                    current_game_object->SetDead();
 
                     // Move to Dead Objects
                     game_manager->alive_objects.erase(game_manager->alive_objects.begin() + i);
                     game_manager->dead_objects.push_back(current_game_object);
 
-                    // Handle Timers
-                    current_game_object->alive_timer.StopTimer();
-
-                    current_game_object->dead_timer.ResetTimer();
-                    current_game_object->dead_timer.StartTimer();
+                    // Handle Object Event
+                    current_game_object->CollisionWithObject();
+                    current_game_object->SetDead();
 
                     return;
                 }

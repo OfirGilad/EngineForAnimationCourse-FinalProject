@@ -21,8 +21,8 @@ public:
     Stats() {};
 
     void InitStats();
-    void NewGame(string name);
-    void SaveGame();
+    void ResetStats(string name);
+    void SaveStats();
 
     bool save_data_available = false;
 
@@ -36,7 +36,7 @@ public:
     int score_multiplier = 1;
     int gold_multiplier = 1;
     int bonuses_duration = 10;
-    int max_movement_speed = 1;
+    int max_movement_speed = 2;
 
 
     // Statistics Default Values
@@ -59,7 +59,6 @@ public:
     int objective_score = 0;
     string active_bonus = "None";
     int current_movement_speed = 1;
-    int game_time = 0;
     int min_movement_speed = 1; // Always
     int leaderboard_position = -1;
 

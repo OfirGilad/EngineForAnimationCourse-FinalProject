@@ -54,9 +54,18 @@ void GameObject::InitObject(Stats* stats, SoundManager* sound_manager, std::shar
     this->model = model;
     this->root = root;
     this->sound_manager = sound_manager;
+
     alive_timer = GameTimer();
     dead_timer = GameTimer();
     bezier_logic = GameLogics();
+}
+
+Eigen::Vector3f GameObject::GenerateRandomPosition() {
+    std::random_device random_device;
+    std::mt19937 generator(random_device());
+    std::uniform_real_distribution<float> distribution(-stats->stage_size + 10, stats->stage_size - 10);
+
+    return Eigen::Vector3f(distribution(generator), distribution(generator), distribution(generator));
 }
 
 //////////////////
@@ -65,7 +74,7 @@ void GameObject::InitObject(Stats* stats, SoundManager* sound_manager, std::shar
 
 void HealthObject::CollisionWithObject() {
     // Get required parameters
-    stage_number = stats->selected_stage;
+    int stage_number = stats->selected_stage;
     current_health = stats->current_health;
     max_health = stats->max_health;
 
@@ -90,11 +99,15 @@ void HealthObject::MoveObject() {
 }
 
 void HealthObject::SetAlive() {
+    Eigen::Vector3f original_translation = model->GetTranslation();
+    model->Translate(-original_translation);
+    model->Translate(GenerateRandomPosition());
+    root->AddChild(model);
 
 }
 
 void HealthObject::SetDead() {
-
+    root->RemoveChild(model);
 }
 
 /////////////////
@@ -103,7 +116,7 @@ void HealthObject::SetDead() {
 
 void ScoreObject::CollisionWithObject() {
     // Get required parameters
-    stage_number = stats->selected_stage;
+    int stage_number = stats->selected_stage;
     current_score = stats->current_score;
     score_multiplier = stats->score_multiplier;
 
@@ -125,11 +138,14 @@ void ScoreObject::MoveObject() {
 }
 
 void ScoreObject::SetAlive() {
-
+    Eigen::Vector3f original_translation = model->GetTranslation();
+    model->Translate(-original_translation);
+    model->Translate(GenerateRandomPosition());
+    root->AddChild(model);
 }
 
 void ScoreObject::SetDead() {
-
+    root->RemoveChild(model);
 }
 
 ////////////////
@@ -138,7 +154,7 @@ void ScoreObject::SetDead() {
 
 void GoldObject::CollisionWithObject() {
     // Get required parameters
-    stage_number = stats->selected_stage;
+    int stage_number = stats->selected_stage;
     gold = stats->gold;
     gold_multiplier = stats->gold_multiplier;
 
@@ -160,11 +176,14 @@ void GoldObject::MoveObject() {
 }
 
 void GoldObject::SetAlive() {
-
+    Eigen::Vector3f original_translation = model->GetTranslation();
+    model->Translate(-original_translation);
+    model->Translate(GenerateRandomPosition());
+    root->AddChild(model);
 }
 
 void GoldObject::SetDead() {
-
+    root->RemoveChild(model);
 }
 
 /////////////////
@@ -173,7 +192,7 @@ void GoldObject::SetDead() {
 
 void BonusObject::CollisionWithObject() {
     // Get required parameters
-    stage_number = stats->selected_stage;
+    int stage_number = stats->selected_stage;
     bonus_duration = stats->bonuses_duration;
 
     // Handle event
@@ -192,12 +211,17 @@ void BonusObject::MoveObject() {
 }
 
 void BonusObject::SetAlive() {
+    Eigen::Vector3f original_translation = model->GetTranslation();
+    model->Translate(-original_translation);
+    root->AddChild(model);
+
     bezier_logic.InitBezierCurve(model, stats->stage_size);
     bezier_logic.GenerateBezierCurve();
     root->AddChild(bezier_logic.GetBezierCurveModel());
 }
 
 void BonusObject::SetDead() {
+    root->RemoveChild(model);
     root->RemoveChild(bezier_logic.GetBezierCurveModel());
 }
 
@@ -207,7 +231,7 @@ void BonusObject::SetDead() {
 
 void ObstacleObject::CollisionWithObject() {
     // Get required parameters
-    stage_number = stats->selected_stage;
+    int stage_number = stats->selected_stage;
     current_health = stats->current_health;
 
     // Handle event
@@ -232,12 +256,17 @@ void ObstacleObject::MoveObject() {
 }
 
 void ObstacleObject::SetAlive() {
+    Eigen::Vector3f original_translation = model->GetTranslation();
+    model->Translate(-original_translation);
+    root->AddChild(model);
+
     bezier_logic.InitBezierCurve(model, stats->stage_size);
     bezier_logic.GenerateBezierCurve();
     root->AddChild(bezier_logic.GetBezierCurveModel());
 }
 
 void ObstacleObject::SetDead() {
+    root->RemoveChild(model);
     root->RemoveChild(bezier_logic.GetBezierCurveModel());
 }
 
@@ -260,14 +289,15 @@ void ExitObject::CollisionWithObject() {
 void ExitObject::MoveObject() {
     Eigen::Vector3f original_translation = model->GetTranslation();
     model->Translate(-original_translation);
-    Eigen::Vector3f new_translation = Eigen::Vector3f(0.f, 0.f, -stage_size);
+
+    Eigen::Vector3f new_translation = Eigen::Vector3f(0.f, 0.f, -stats->stage_size);
     model->Translate(new_translation);
 }
 
 void ExitObject::SetAlive() {
-
+    root->AddChild(model);
 }
 
 void ExitObject::SetDead() {
-
+    root->RemoveChild(model);
 }

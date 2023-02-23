@@ -33,6 +33,9 @@ public:
     void LoadStage(int stage_number, bool new_stage);
     void UnloadStage();
 
+    void NewGame(string name);
+    void SaveGame();
+
     // Stage Builder
     std::shared_ptr<Movable> root;
     std::vector<std::shared_ptr<Camera>> camera_list;
@@ -58,14 +61,13 @@ public:
     Stats* stats = 0;
 
     // Leaderboard
-    Leaderboard leaderboard;
+    Leaderboard* leaderboard;
 
     // Objects Builder
     ObjectsBuilder objects_builder;
-    Eigen::Vector3f GenerateRandomPosition();
 
-    // Game Timer
-    GameTimer game_timer;
+    // Timers
+    GameTimer game_timer, stage_timer;
 
 private:
     // Collision boxes for CollisionDetectionVisitor
@@ -76,6 +78,9 @@ private:
     void InitAxis();
     void InitStageParameters(bool new_stage);
     void LoadGameObjects();
+
+    bool background_loaded = false;
+    bool axis_loaded = false;
 
     // Building Game Objects
     void InitCustomObjects();
@@ -88,5 +93,5 @@ private:
     void BuildExit();
 
     // Init Game Timer
-    void InitGameTimer();
+    void InitTimers();
 };

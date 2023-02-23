@@ -50,7 +50,7 @@ void BasicScene::Update(const Program& program, const Eigen::Matrix4f& proj, con
 {
     Scene::Update(program, proj, view, model);
     
-    // If ProgramHandler finds known program -> skip default setup
+    // If Program Handler finds known program -> skip default setup
     if (ProgramHandler(program)) {
         program.SetUniform4f("lightColor", 0.8f, 0.3f, 0.0f, 0.5f);
         program.SetUniform4f("Kai", 1.0f, 0.3f, 0.6f, 1.0f);
@@ -66,12 +66,14 @@ void BasicScene::MouseCallback(Viewport* viewport, int x, int y, int button, int
     if (ImGui::GetIO().WantCaptureMouse) return;
 
     // Handle coming back (In Progress)
-    if (menu_index != StageMenu && menu_index != StageCompletedMenu && menu_index != StageFailedMenu && menu_index != NewHighScoreMenu) {
-        return;
-    }
-    //else if ((x < window_size1.x) && (y < window_size1.y)) {
+    //if (menu_index != StageMenu && menu_index != StageCompletedMenu && menu_index != StageFailedMenu && menu_index != NewHighScoreMenu) {
     //    return;
     //}
+
+    // Reject all mouse callbacks
+    if (menu_index != -1) {
+        return;
+    }
 
     // note: there's a (small) chance the button state here precedes the mouse press/release event
 
@@ -131,33 +133,52 @@ void BasicScene::CursorPosCallback(Viewport* viewport, int x, int y, bool draggi
     // Handle ImGui Menu
     if (ImGui::GetIO().WantCaptureMouse) return;
 
-    if (dragging) {
+    //if (dragging) {
+    //    auto system = camera->GetRotation().transpose() * GetRotation();
+    //    auto moveCoeff = camera->CalcMoveCoeff(pickedModelDepth, viewport->width);
+    //    auto angleCoeff = camera->CalcAngleCoeff(viewport->width);
+    //    if (pickedModel) {
+    //        //pickedModel->SetTout(pickedToutAtPress);
+    //        if (buttonState[GLFW_MOUSE_BUTTON_RIGHT] != GLFW_RELEASE)
+    //            pickedModel->TranslateInSystem(system, {-float(xAtPress - x) / moveCoeff, float(yAtPress - y) / moveCoeff, 0});
+    //        if (buttonState[GLFW_MOUSE_BUTTON_MIDDLE] != GLFW_RELEASE)
+    //            pickedModel->RotateInSystem(system, float(xAtPress - x) / angleCoeff, Axis::Z);
+    //        if (buttonState[GLFW_MOUSE_BUTTON_LEFT] != GLFW_RELEASE) {
+    //            pickedModel->RotateInSystem(system, float(xAtPress - x) / angleCoeff, Axis::Y);
+    //            pickedModel->RotateInSystem(system, float(yAtPress - y) / angleCoeff, Axis::X);
+    //        }
+    //    } else {
+    //       // camera->SetTout(cameraToutAtPress);
+    //        if (buttonState[GLFW_MOUSE_BUTTON_RIGHT] != GLFW_RELEASE)
+    //            root->TranslateInSystem(system, {-float(xAtPress - x) / moveCoeff/10.0f, float( yAtPress - y) / moveCoeff/10.0f, 0});
+    //        if (buttonState[GLFW_MOUSE_BUTTON_MIDDLE] != GLFW_RELEASE)
+    //            root->RotateInSystem(system, float(x - xAtPress) / 180.0f, Axis::Z);
+    //        if (buttonState[GLFW_MOUSE_BUTTON_LEFT] != GLFW_RELEASE) {
+    //            root->RotateInSystem(system, float(x - xAtPress) / angleCoeff, Axis::Y);
+    //            root->RotateInSystem(system, float(y - yAtPress) / angleCoeff, Axis::X);
+    //        }
+    //    }
+    //    xAtPress =  x;
+    //    yAtPress =  y;
+    //}
+
+    if ((dragging) && (camera_list[0] == camera)) {
         auto system = camera->GetRotation().transpose() * GetRotation();
         auto moveCoeff = camera->CalcMoveCoeff(pickedModelDepth, viewport->width);
         auto angleCoeff = camera->CalcAngleCoeff(viewport->width);
-        if (pickedModel) {
-            //pickedModel->SetTout(pickedToutAtPress);
-            if (buttonState[GLFW_MOUSE_BUTTON_RIGHT] != GLFW_RELEASE)
-                pickedModel->TranslateInSystem(system, {-float(xAtPress - x) / moveCoeff, float(yAtPress - y) / moveCoeff, 0});
-            if (buttonState[GLFW_MOUSE_BUTTON_MIDDLE] != GLFW_RELEASE)
-                pickedModel->RotateInSystem(system, float(xAtPress - x) / angleCoeff, Axis::Z);
-            if (buttonState[GLFW_MOUSE_BUTTON_LEFT] != GLFW_RELEASE) {
-                pickedModel->RotateInSystem(system, float(xAtPress - x) / angleCoeff, Axis::Y);
-                pickedModel->RotateInSystem(system, float(yAtPress - y) / angleCoeff, Axis::X);
-            }
-        } else {
-           // camera->SetTout(cameraToutAtPress);
-            if (buttonState[GLFW_MOUSE_BUTTON_RIGHT] != GLFW_RELEASE)
-                root->TranslateInSystem(system, {-float(xAtPress - x) / moveCoeff/10.0f, float( yAtPress - y) / moveCoeff/10.0f, 0});
-            if (buttonState[GLFW_MOUSE_BUTTON_MIDDLE] != GLFW_RELEASE)
-                root->RotateInSystem(system, float(x - xAtPress) / 180.0f, Axis::Z);
-            if (buttonState[GLFW_MOUSE_BUTTON_LEFT] != GLFW_RELEASE) {
-                root->RotateInSystem(system, float(x - xAtPress) / angleCoeff, Axis::Y);
-                root->RotateInSystem(system, float(y - yAtPress) / angleCoeff, Axis::X);
-            }
+        
+        // camera->SetTout(cameraToutAtPress);
+        if (buttonState[GLFW_MOUSE_BUTTON_RIGHT] != GLFW_RELEASE)
+            camera->TranslateInSystem(system, { -float(xAtPress - x) / moveCoeff / 10.0f, float(yAtPress - y) / moveCoeff / 10.0f, 0 });
+        if (buttonState[GLFW_MOUSE_BUTTON_MIDDLE] != GLFW_RELEASE)
+            camera->RotateInSystem(system, float(x - xAtPress) / 180.0f, Axis::Z);
+        if (buttonState[GLFW_MOUSE_BUTTON_LEFT] != GLFW_RELEASE) {
+            camera->RotateInSystem(system, float(x - xAtPress) / angleCoeff, Axis::Y);
+            camera->RotateInSystem(system, float(y - yAtPress) / angleCoeff, Axis::X);
         }
-        xAtPress =  x;
-        yAtPress =  y;
+
+        xAtPress = x;
+        yAtPress = y;
     }
 }
 
@@ -233,8 +254,9 @@ void BasicScene::KeyCallback(Viewport* viewport, int x, int y, int key, int scan
 
             // Debug Mode Buttons
             case GLFW_KEY_SPACE:
-                this->animate = !this->animate;
-                cout << this->animate << endl;
+                if (menu_index == StageMenu) {
+                    this->animate = !this->animate;
+                }
                 break;
             case GLFW_KEY_1:
                 debug_parameter = 1;
@@ -444,8 +466,8 @@ void BasicScene::LoginMenuHandler() {
         ImGui::SetCursorPosX(text_position2);
         if (ImGui::Button("Start New Game", buttons_size1)) {
             display_new_game = true;
-            game_manager->stats->NewGame(name);
-            game_manager->leaderboard.ResetLeaderboard();
+            
+            game_manager->NewGame(name);
             menu_index = MainMenu;
         }
     }
@@ -552,6 +574,13 @@ void BasicScene::MainMenuHandler() {
     Spacing(5);
 
     ImGui::SetCursorPosX(text_position2);
+    if (ImGui::Button("Save Game", buttons_size2)) {
+        game_manager->SaveGame();
+    }
+
+    Spacing(5);
+
+    ImGui::SetCursorPosX(text_position2);
     if (ImGui::Button("Shop", buttons_size2)) {
         last_menu_index = MainMenu;
         menu_index = ShopMenu;
@@ -590,7 +619,7 @@ void BasicScene::MainMenuHandler() {
     ImGui::SetCursorPosX(text_position2);
     if (ImGui::Button("Logout", buttons_size1)) {
         game_manager->stats->InitStats();
-        game_manager->leaderboard.InitLeaderboard();
+        game_manager->leaderboard->InitLeaderboard();
         menu_index = LoginMenu;
     }
     
@@ -858,7 +887,7 @@ void BasicScene::ShopMenuHandler() {
     ImGui::SetCursorPosX(text_position3);
     int max_movement_speed = game_manager->stats->max_movement_speed;
     gui_text = "Increase Max Speed (Current: " + to_string(max_movement_speed) + ")";
-    ImGui::TextColored(ImVec4(0.0, 0.0, 1.0, 1.0), gui_text.c_str());
+    ImGui::TextColored(ImVec4(0.0, 1.0, 1.0, 1.0), gui_text.c_str());
 
     ImGui::SetCursorPosX(text_position2);
     item5_cost = max_movement_speed * 100;
@@ -1003,7 +1032,8 @@ void BasicScene::StatsMenuHandler() {
     ImGui::Text(gui_text.c_str());
 
     ImGui::SetCursorPosX(text_position3);
-    gui_text = "Time Played: " + game_manager->stats->time_played;
+    float time_played = game_manager->game_timer.GetElapsedTime();
+    gui_text = "Time Played: " + game_manager->game_timer.SecondsToGameTime(time_played);
     ImGui::Text(gui_text.c_str());
 
     Spacing(10);
@@ -1066,8 +1096,8 @@ void BasicScene::HallOfFameMenuHandler() {
             space = " ";
         }
         gui_text = to_string(i + 1) + "." + space +                          // Place
-            game_manager->leaderboard.leaderboard_list[i].first + " - " +    // Name
-            to_string(game_manager->leaderboard.leaderboard_list[i].second); // Score
+            game_manager->leaderboard->leaderboard_list[i].first + " - " +    // Name
+            to_string(game_manager->leaderboard->leaderboard_list[i].second); // Score
 
         
         if (i == 0) {
@@ -1103,22 +1133,24 @@ void BasicScene::SettingsMenuHandler() {
     }
 
     // Set sizes
-    ImVec2 window_size1, buttons_size1;
-    float font_scale1, text_position1, text_position2;
+    ImVec2 window_size1, buttons_size1, buttons_size2;
+    float font_scale1, text_position1, text_position2, text_position3;
 
     if (width != 0 && height != 0) {
         window_size1 = ImVec2(float(width), float(height));
 
         buttons_size1 = ImVec2(float(width) / 4.f, float(height) / 8.f);
+        buttons_size2 = ImVec2(float(width) / 4.f, float(height) / 14.f);
 
         font_scale1 = float(width) / 400.f;
 
         text_position1 = float(width) * 0.4f;
         text_position2 = float(width) * 0.35f;
+        text_position3 = float(width) * 0.3f;
     }
     else {
-        window_size1 = buttons_size1 = ImVec2(1, 1);
-        font_scale1 = text_position1 = text_position2 = 1;
+        window_size1 = buttons_size1 = buttons_size2 = ImVec2(1, 1);
+        font_scale1 = text_position1 = text_position2 = text_position3 = 1;
     }
 
     int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
@@ -1211,7 +1243,7 @@ void BasicScene::SettingsMenuHandler() {
     Spacing(5);
 
     ImGui::SetCursorPosX(text_position2);
-    if (ImGui::Button("Test Sound", buttons_size1)) {
+    if (ImGui::Button("Test Sound", buttons_size2)) {
         game_manager->sound_manager->HandleSound("obstacle_object.mp3");
     }
 
@@ -1225,39 +1257,39 @@ void BasicScene::SettingsMenuHandler() {
 
     ImGui::SetCursorPosX(text_position2);
     if (!display_keys) {
-        if (ImGui::Button("Show Keys", buttons_size1)) {
+        if (ImGui::Button("Show Keys", buttons_size2)) {
             display_keys = true;
         }
     }
     else {
-        if (ImGui::Button("Hide Keys", buttons_size1)) {
+        if (ImGui::Button("Hide Keys", buttons_size2)) {
             display_keys = false;
         }
-        ImGui::SetCursorPosX(text_position2);
+        ImGui::SetCursorPosX(text_position3);
         ImGui::Text("Keyboard Keys: ");
-        ImGui::SetCursorPosX(text_position2);
+        ImGui::SetCursorPosX(text_position3);
         ImGui::Text("W - Move snake up");
-        ImGui::SetCursorPosX(text_position2);
+        ImGui::SetCursorPosX(text_position3);
         ImGui::Text("S - Move snake down");
-        ImGui::SetCursorPosX(text_position2);
+        ImGui::SetCursorPosX(text_position3);
         ImGui::Text("A - Move snake left");
-        ImGui::SetCursorPosX(text_position2);
+        ImGui::SetCursorPosX(text_position3);
         ImGui::Text("D - Move snake right");
-        ImGui::SetCursorPosX(text_position2);
+        ImGui::SetCursorPosX(text_position3);
         ImGui::Text("V - Switch view forward");
-        ImGui::SetCursorPosX(text_position2);
+        ImGui::SetCursorPosX(text_position3);
         ImGui::Text("B - Switch view backward");
-        ImGui::SetCursorPosX(text_position2);
+        ImGui::SetCursorPosX(text_position3);
         ImGui::Text("UP - Increase snake speed");
-        ImGui::SetCursorPosX(text_position2);
+        ImGui::SetCursorPosX(text_position3);
         ImGui::Text("DOWN - Decrease snake speed");
-        ImGui::SetCursorPosX(text_position2);
+        ImGui::SetCursorPosX(text_position3);
         ImGui::Text("LEFT - Rotate snake left");
-        ImGui::SetCursorPosX(text_position2);
+        ImGui::SetCursorPosX(text_position3);
         ImGui::Text("RIGHT - Rotate snake right");
-        ImGui::SetCursorPosX(text_position2);
+        ImGui::SetCursorPosX(text_position3);
         ImGui::Text("SPACE - Pause stage");
-        ImGui::SetCursorPosX(text_position2);
+        ImGui::SetCursorPosX(text_position3);
         ImGui::Text("ESC - Exit game");
     }
 
@@ -1423,25 +1455,26 @@ void BasicScene::StageMenuHandler() {
 
     // Handle Current Movement Speed 
     gui_text = "Movement Speed: " + std::to_string(game_manager->stats->current_movement_speed);
-    ImGui::TextColored(ImVec4(0.0, 0.0, 1.0, 1.0), gui_text.c_str());
+    ImGui::TextColored(ImVec4(0.0, 1.0, 1.0, 1.0), gui_text.c_str());
 
     ImGui::SameLine(float(width) * 0.8f);
 
-    // Handle Game Time 
-    gui_text = "Game Time: " + std::to_string(game_manager->stats->game_time) + " sec";
-    ImGui::TextColored(ImVec4(0.0, 0.0, 1.0, 1.0), gui_text.c_str());
+    // Handle Game Time
+    float stage_time = game_manager->stage_timer.GetElapsedTime();
+    gui_text = "Game Time: " + game_manager->stage_timer.SecondsToGameTime(stage_time);
+    ImGui::TextColored(ImVec4(1.0, 1.0, 1.0, 1.0), gui_text.c_str());
 
     Spacing(1);
 
-    // Handle Objective Score
-    gui_text = "Objective Score: " + std::to_string(game_manager->stats->objective_score);
-    ImGui::TextColored(ImVec4(0.0, 0.0, 1.0, 1.0), gui_text.c_str());
+    // Handle Active Bonus
+    gui_text = "Active Bonus: " + game_manager->stats->active_bonus;
+    ImGui::TextColored(ImVec4(1.0, 0.0, 1.0, 1.0), gui_text.c_str());
 
     ImGui::SameLine(float(width) * 0.3f);
 
-    // Handle Active Bonus
-    gui_text = "Active Bonus: " + game_manager->stats->active_bonus;
-    ImGui::TextColored(ImVec4(0.0, 0.0, 1.0, 1.0), gui_text.c_str());
+    // Handle Objective Score
+    gui_text = "Objective Score: " + std::to_string(game_manager->stats->objective_score);
+    ImGui::TextColored(ImVec4(0.0, 0.0, 0.0, 1.0), gui_text.c_str());
 
     ImGui::SameLine(float(width) * 0.6f);
 
@@ -1500,7 +1533,7 @@ void BasicScene::StageCompletedMenuHandler() {
     if (width != 0 && height != 0) {
         window_position1 = ImVec2(float(width) * 0.375f, float(height) * 0.3f);
 
-        window_size1 = ImVec2(float(width) * 0.22f, float(height) * 0.42f);
+        window_size1 = ImVec2(float(width) * 0.22f, float(height) * 0.45f);
 
         buttons_size1 = ImVec2(float(width) / 6.f, float(height) / 16.f);
 
@@ -1603,7 +1636,7 @@ void BasicScene::StageFailedMenuHandler() {
     if (width != 0 && height != 0) {
         window_position1 = ImVec2(float(width) * 0.375f, float(height) * 0.3f);
 
-        window_size1 = ImVec2(float(width) * 0.22f, float(height) * 0.42f);
+        window_size1 = ImVec2(float(width) * 0.22f, float(height) * 0.45f);
 
         buttons_size1 = ImVec2(float(width) / 6.f, float(height) / 16.f);
 
@@ -1703,7 +1736,7 @@ void BasicScene::NewHighScoreMenuHandler() {
         font_scale1 = text_position1 = 1;
     }
 
-    int position = game_manager->leaderboard.CalculateLeaderboardPosition(game_manager->stats->current_score);
+    int position = game_manager->leaderboard->CalculateLeaderboardPosition(game_manager->stats->current_score);
     // No new high score found
     if (position == -1) {
         menu_index = next_menu_index;
@@ -1783,7 +1816,7 @@ void BasicScene::NewHighScoreMenuHandler() {
     if (ImGui::Button("Apply", buttons_size1)) {
         if (string(name).length() == 3) {
             NewHighScoreMenu_InvalidParameter = false;
-            game_manager->leaderboard.AddScoreToLeaderboard(position, name, game_manager->stats->current_score);
+            game_manager->leaderboard->AddScoreToLeaderboard(position, name, game_manager->stats->current_score);
             menu_index = next_menu_index;
 
             game_manager->UnloadStage();

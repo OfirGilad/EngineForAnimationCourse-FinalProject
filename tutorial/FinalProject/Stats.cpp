@@ -43,7 +43,7 @@ void Stats::InitStats() {
     }
 }
 
-void Stats::NewGame(string name) {
+void Stats::ResetStats(string name) {
     if (save_data_available) {
         save_data = json();
     }
@@ -79,7 +79,7 @@ void Stats::NewGame(string name) {
 }
 
 
-void Stats::SaveGame() {
+void Stats::SaveStats() {
     // User data
     save_data["user_data"]["username"] = user_name;
     save_data["user_data"]["gold"] = gold;
