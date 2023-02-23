@@ -23,12 +23,6 @@ public:
     
     void UpdateMusicPlayerVolume();
 
-    //void SetMusicVolume(double volume);
-    //void SetSoundVolume(double volume);
-
-    //void SetMusicPlayerStatus(bool enabled);
-    //void SetSoundPlayerStatus(bool enabled);
-
     void StopMusic();
     ~SoundManager();
 

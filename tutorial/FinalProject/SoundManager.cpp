@@ -64,25 +64,6 @@ void SoundManager::UpdateMusicPlayerVolume() {
     }
 }
 
-//
-//void SoundManager::SetSoundVolume(double volume) {
-//    sound_volume = volume;
-//}
-//
-//void SoundManager::SetMusicPlayerStatus(bool enabled) {
-//    music_player_enabled = enabled;
-//
-//    if (!music_player_enabled) {
-//        int updated_player_index = playing_index;
-//        StopMusic();
-//        playing_index = updated_player_index;
-//    }
-//}
-//
-//void SoundManager::SetSoundPlayerStatus(bool enabled) {
-//    sound_player_enabled = enabled;
-//}
-
 void SoundManager::StopMusic() {
     if (playing) {
         playing_index = -1;
