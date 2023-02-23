@@ -1215,15 +1215,6 @@ void BasicScene::SettingsMenuHandler() {
         game_manager->sound_manager->HandleSound("obstacle_object.mp3");
     }
 
-    // Enable Music
-    // Enable Sound
-    // Music volume
-    // Sound Volume
-    // Test Sound
-    // Enable Skinning
-    // Snake Color
-    // View keys
-
     Spacing(5);
 
     static float rgb[3] = { snake_color.x(), snake_color.y(), snake_color.z() };
@@ -1274,6 +1265,7 @@ void BasicScene::SettingsMenuHandler() {
 
     ImGui::SetCursorPosX(text_position2);
     if (ImGui::Button("Back", buttons_size1)) {
+        display_keys = false;
         menu_index = MainMenu;
     }
 
