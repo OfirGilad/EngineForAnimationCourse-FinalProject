@@ -251,13 +251,20 @@ void BasicScene::KeyCallback(Viewport* viewport, int x, int y, int key, int scan
             case GLFW_KEY_B:
                 SwitchView(false);
                 break;
-
-            // Debug Mode Buttons
             case GLFW_KEY_SPACE:
                 if (menu_index == StageMenu) {
-                    this->animate = !this->animate;
+                    this->animate = false;
+                    game_manager->stage_timer.StopTimer();
+                    menu_index = PauseMenu;
+                }
+                else if (menu_index == PauseMenu) {
+                    this->animate = true;
+                    game_manager->stage_timer.StartTimer();
+                    menu_index = StageMenu;
                 }
                 break;
+
+            // Debug Mode Buttons
             case GLFW_KEY_1:
                 debug_parameter = 1;
                 cout << "Health Debug" << endl;
@@ -377,6 +384,9 @@ void BasicScene::MenuManager() {
             break;
         case StageMenu:
             StageMenuHandler();
+            break;
+        case PauseMenu:
+            PauseMenuHandler();
             break;
         case StageCompletedMenu:
             StageCompletedMenuHandler();
@@ -523,10 +533,10 @@ void BasicScene::MainMenuHandler() {
     if (width != 0 && height != 0) {
         window_size1 = ImVec2(float(width), float(height));
 
-        buttons_size1 = ImVec2(float(width) / 4.f, float(height) / 8.f);
-        buttons_size2 = ImVec2(float(width) / 4.f, float(height) / 14.f);
+        buttons_size1 = ImVec2(float(width) / 4.f, float(height) / 9.f);
+        buttons_size2 = ImVec2(float(width) / 4.f, float(height) / 15.f);
 
-        font_scale1 = float(width) / 400.f;
+        font_scale1 = float(width) / 600.f;
 
         text_position1 = float(width) * 0.4f;
         text_position2 = float(width) * 0.35f;
@@ -604,6 +614,7 @@ void BasicScene::MainMenuHandler() {
 
     ImGui::SetCursorPosX(text_position2);
     if (ImGui::Button("Settings", buttons_size2)) {
+        last_menu_index = MainMenu;
         menu_index = SettingsMenu;
     }
 
@@ -721,10 +732,10 @@ void BasicScene::ShopMenuHandler() {
     if (width != 0 && height != 0) {
         window_size1 = ImVec2(float(width), float(height));
 
-        buttons_size1 = ImVec2(float(width) / 4.f, float(height) / 8.f);
-        buttons_size2 = ImVec2(float(width) / 4.f, float(height) / 14.f);
+        buttons_size1 = ImVec2(float(width) / 4.f, float(height) / 9.f);
+        buttons_size2 = ImVec2(float(width) / 4.f, float(height) / 15.f);
 
-        font_scale1 = float(width) / 400.f;
+        font_scale1 = float(width) / 600.f;
 
         text_position1 = float(width) * 0.44f;
         text_position2 = float(width) * 0.35f;
@@ -947,9 +958,9 @@ void BasicScene::StatsMenuHandler() {
         buttons_size1 = ImVec2(float(width) / 4.f, float(height) / 8.f);
         buttons_size2 = ImVec2(float(width) / 4.f, float(height) / 14.f);
 
-        font_scale1 = float(width) / 400.f;
+        font_scale1 = (float(width) / float(height)) * 1.5f;
 
-        text_position1 = float(width) * 0.4f;
+        text_position1 = float(width) * 0.43f;
         text_position2 = float(width) * 0.35f;
         text_position3 = float(width) * 0.3f;
 
@@ -1139,10 +1150,10 @@ void BasicScene::SettingsMenuHandler() {
     if (width != 0 && height != 0) {
         window_size1 = ImVec2(float(width), float(height));
 
-        buttons_size1 = ImVec2(float(width) / 4.f, float(height) / 8.f);
-        buttons_size2 = ImVec2(float(width) / 4.f, float(height) / 14.f);
+        buttons_size1 = ImVec2(float(width) / 4.f, float(height) / 9.f);
+        buttons_size2 = ImVec2(float(width) / 4.f, float(height) / 15.f);
 
-        font_scale1 = float(width) / 400.f;
+        font_scale1 = float(width) / 600.f;
 
         text_position1 = float(width) * 0.4f;
         text_position2 = float(width) * 0.35f;
@@ -1169,21 +1180,26 @@ void BasicScene::SettingsMenuHandler() {
 
     Spacing(5);
 
-    bool* skinning_enabled = &game_manager->snake.skinning_enabled;
-    if (*skinning_enabled)
-        gui_text = "Skinning On";
-    else {
-        gui_text = "Skinning Off";
-    }
-
-    ImGui::SetCursorPosX(text_position2);
-    if (ImGui::Checkbox(gui_text.c_str(), skinning_enabled)) {
-        if (*skinning_enabled) {
-            cout << "Skinning enabled" << endl;
-        }
+    if (last_menu_index != PauseMenu) {
+        bool* skinning_enabled = &game_manager->snake.skinning_enabled;
+        if (*skinning_enabled)
+            gui_text = "Skinning On";
         else {
-            cout << "Skinning disabled" << endl;
+            gui_text = "Skinning Off";
         }
+
+        ImGui::SetCursorPosX(text_position2);
+        if (ImGui::Checkbox(gui_text.c_str(), skinning_enabled)) {
+            if (*skinning_enabled) {
+                cout << "Skinning enabled" << endl;
+            }
+            else {
+                cout << "Skinning disabled" << endl;
+            }
+        }
+    }
+    else {
+        ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "Skinning option is blocked during stage!");
     }
 
     Spacing(5);
@@ -1298,7 +1314,7 @@ void BasicScene::SettingsMenuHandler() {
     ImGui::SetCursorPosX(text_position2);
     if (ImGui::Button("Back", buttons_size1)) {
         display_keys = false;
-        menu_index = MainMenu;
+        menu_index = last_menu_index;
     }
 
     ImGui::End();
@@ -1459,9 +1475,9 @@ void BasicScene::StageMenuHandler() {
 
     ImGui::SameLine(float(width) * 0.8f);
 
-    // Handle Game Time
+    // Handle Stage Time
     float stage_time = game_manager->stage_timer.GetElapsedTime();
-    gui_text = "Game Time: " + game_manager->stage_timer.SecondsToGameTime(stage_time);
+    gui_text = "Stage Time: " + game_manager->stage_timer.SecondsToGameTime(stage_time);
     ImGui::TextColored(ImVec4(1.0, 1.0, 1.0, 1.0), gui_text.c_str());
 
     Spacing(1);
@@ -1494,16 +1510,6 @@ void BasicScene::StageMenuHandler() {
         }
     }
 
-    if (ImGui::Button("Exit Stage")) {
-        menu_index = MainMenu;
-
-        game_manager->UnloadStage();
-        animate = false;
-
-        ImGui::End();
-        return;
-    }
-
     if (game_manager->stats->current_health == 0) {
         game_manager->sound_manager->StopMusic();
         SetAnimate(false);
@@ -1522,6 +1528,98 @@ void BasicScene::StageMenuHandler() {
     ImGui::End();
 }
 
+void BasicScene::PauseMenuHandler() {
+    string stage_music;
+    if (game_manager->sound_manager->playing_index != -game_manager->sound_manager->stage_index) {
+        stage_music = "stage" + std::to_string(game_manager->sound_manager->stage_index) + ".mp3";
+        game_manager->sound_manager->HandleMusic(stage_music);
+        game_manager->sound_manager->playing_index = -game_manager->sound_manager->stage_index;
+    }
+
+    // Set sizes
+    ImVec2 window_position1, window_size1, buttons_size1;
+    float font_scale1, text_position1, text_position2;
+
+    if (width != 0 && height != 0) {
+        window_position1 = ImVec2(float(width) * 0.39f, float(height) * 0.3f);
+
+        window_size1 = ImVec2(float(width) * 0.22f, float(height) * 0.45f);
+
+        buttons_size1 = ImVec2(float(width) / 6.f, float(height) / 16.f);
+
+        font_scale1 = float(width) / 800.f;
+
+        text_position1 = float(width) * 0.06f;
+        text_position2 = float(width) * 0.03f;
+    }
+    else {
+        window_position1 = window_size1, buttons_size1 = ImVec2(1, 1);
+        font_scale1 = text_position1 = text_position2 = 1;
+    }
+
+    int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
+    bool* pOpen = nullptr;
+    string gui_text;
+
+    ImGui::Begin("Menu", pOpen, flags);
+    ImGui::SetWindowPos(window_position1, ImGuiCond_Always);
+    ImGui::SetWindowSize(window_size1, ImGuiCond_Always);
+    ImGui::SetWindowFontScale(font_scale1);
+
+    ImGui::SetCursorPosX(text_position1);
+    ImGui::TextColored(ImVec4(1.0, 0.5, 0.5, 1.0), "Pause Menu");
+
+    Spacing(5);
+
+    // Handle Stage
+    ImGui::SetCursorPosX(text_position2);
+    int current_stage = game_manager->stats->selected_stage;
+    gui_text = "Stage: " + std::to_string(current_stage);
+    ImGui::TextColored(ImVec4(0.0, 0.0, 1.0, 1.0), gui_text.c_str());
+
+    Spacing(1);
+
+    // Handle Health
+    ImGui::SetCursorPosX(text_position2);
+    gui_text = "Health: " + std::to_string(game_manager->stats->current_health);
+    ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), gui_text.c_str());
+
+    Spacing(1);
+
+    // Handle Score
+    ImGui::SetCursorPosX(text_position2);
+    gui_text = "Score: " + std::to_string(game_manager->stats->current_score);
+    ImGui::TextColored(ImVec4(0.0, 1.0, 0.0, 1.0), gui_text.c_str());
+
+    Spacing(5);
+
+    ImGui::SetCursorPosX(text_position2);
+    if (ImGui::Button("Continue", buttons_size1)) {
+        menu_index = StageMenu;
+        
+        game_manager->stage_timer.StartTimer();
+        animate = true;
+    }
+
+    Spacing(5);
+
+    ImGui::SetCursorPosX(text_position2);
+    if (ImGui::Button("Setting", buttons_size1)) {
+        last_menu_index = PauseMenu;
+        menu_index = SettingsMenu;
+    }
+
+    Spacing(5);
+
+    ImGui::SetCursorPosX(text_position2);
+    if (ImGui::Button("Back To Main Menu", buttons_size1)) {
+        next_menu_index = MainMenu;
+        menu_index = NewHighScoreMenu;
+    }
+
+    ImGui::End();
+}
+
 void BasicScene::StageCompletedMenuHandler() {
     // Menu with no sound
     game_manager->sound_manager->StopMusic();
@@ -1531,7 +1629,7 @@ void BasicScene::StageCompletedMenuHandler() {
     float font_scale1, text_position1, text_position2;
 
     if (width != 0 && height != 0) {
-        window_position1 = ImVec2(float(width) * 0.375f, float(height) * 0.3f);
+        window_position1 = ImVec2(float(width) * 0.39f, float(height) * 0.3f);
 
         window_size1 = ImVec2(float(width) * 0.22f, float(height) * 0.45f);
 
@@ -1634,7 +1732,7 @@ void BasicScene::StageFailedMenuHandler() {
     float font_scale1, text_position1, text_position2;
 
     if (width != 0 && height != 0) {
-        window_position1 = ImVec2(float(width) * 0.375f, float(height) * 0.3f);
+        window_position1 = ImVec2(float(width) * 0.39f, float(height) * 0.3f);
 
         window_size1 = ImVec2(float(width) * 0.22f, float(height) * 0.45f);
 

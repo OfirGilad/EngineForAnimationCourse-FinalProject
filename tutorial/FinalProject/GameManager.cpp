@@ -68,13 +68,11 @@ void GameManager::UnloadStage() {
     snake.ResetSnakePosition();
 
     for (int i = 0; i < alive_objects.size(); i++) {
-        alive_objects[0]->SetDead();
-        alive_objects.erase(alive_objects.begin());
+        alive_objects[i]->SetDead();
     }
 
-    for (int i = 0; i < dead_objects.size(); i++) {
-        dead_objects.erase(dead_objects.begin());
-    }
+    alive_objects.clear();
+    dead_objects.clear();
 
     stage_timer.ResetTimer();
 }

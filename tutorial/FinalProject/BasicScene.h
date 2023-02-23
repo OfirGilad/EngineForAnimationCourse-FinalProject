@@ -45,7 +45,8 @@ public:
         HallOfFameMenu, 
         SettingsMenu,
         CreditsMenu, 
-        StageMenu, 
+        StageMenu,
+        PauseMenu,
         StageCompletedMenu, 
         StageFailedMenu, 
         NewHighScoreMenu
@@ -60,6 +61,7 @@ public:
     void SettingsMenuHandler();
     void CreditsMenuHandler();
     void StageMenuHandler();
+    void PauseMenuHandler();
     void StageCompletedMenuHandler();
     void StageFailedMenuHandler();
     void NewHighScoreMenuHandler();

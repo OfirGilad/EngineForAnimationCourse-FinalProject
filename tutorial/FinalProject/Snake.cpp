@@ -35,12 +35,10 @@ void Snake::InitSnake(int num_of_bones)
 
 
     // Creating first bone mesh
-    float scaleFactor = 1;
     int i = 0;
     //snake_bones.push_back(ObjLoader::ModelFromObj("bone " + to_string(i), "data/zcylinder.obj", snake_material));
     snake_bones.push_back(ObjLoader::ModelFromObj("bone " + to_string(i), "data/zcylinder.obj", snake_head_material));
-    snake_bones[i]->Scale(scaleFactor, Scene::Axis::X);
-    snake_bones[i]->SetCenter(Eigen::Vector3f(0, 0, -(bone_size / 2) * scaleFactor));
+    snake_bones[i]->SetCenter(Eigen::Vector3f(0, 0, -(bone_size / 2)));
     snake_bones[i]->showWireframe = false;
     root->AddChild(snake_bones[i]);
     snake_bones[i]->isHidden = true;
@@ -61,15 +59,14 @@ void Snake::InitSnake(int num_of_bones)
     {
         //snake_bones.push_back(ObjLoader::ModelFromObj("bone " + to_string(i), "data/zcylinder.obj", snake_material));
         snake_bones.push_back(ObjLoader::ModelFromObj("bone " + to_string(i), "data/zcylinder.obj", snake_head_material));
-        snake_bones[i]->Scale(scaleFactor, Scene::Axis::X);
-        snake_bones[i]->Translate(bone_size * scaleFactor, Scene::Axis::Z);
-        snake_bones[i]->SetCenter(Eigen::Vector3f(0, 0, -(bone_size / 2) * scaleFactor));
+        snake_bones[i]->Translate(bone_size, Scene::Axis::Z);
+        snake_bones[i]->SetCenter(Eigen::Vector3f(0, 0, -(bone_size / 2)));
         snake_bones[i]->showWireframe = false;
         snake_bones[i - 1]->AddChild(snake_bones[i]);
         snake_bones[i]->isHidden = true;
         i++;
     }
-    snake_bones[first_index]->Translate({ 0,0,(bone_size / 2) * scaleFactor });
+    snake_bones[first_index]->Translate({ 0,0,(bone_size / 2) });
 
 
     // Updating camera views and init skinning
@@ -103,15 +100,23 @@ void Snake::HideSnake() {
 }
 
 void Snake::ResetSnakePosition() {
+    std::vector<std::shared_ptr<cg3d::Model>> snake_bones = GetBones();
+    root->RemoveChild(snake_bones[first_index]);
     snake_bones[first_index]->SetTransform(Matrix4f::Identity());
+    root->AddChild(snake_bones[first_index]);
 
-    /*int i = 1;
+    int i = 1;
     while (i < number_of_bones)
     {
+        snake_bones[i - 1]->RemoveChild(snake_bones[i]);
         snake_bones[i]->SetTransform(Matrix4f::Identity());
-        snake_bones[i]->Translate(bone_size, Movable::Axis::Z);
+
+        snake_bones[i]->Translate(bone_size, Scene::Axis::Z);
+        snake_bones[i]->SetCenter(Eigen::Vector3f(0, 0, -(bone_size / 2)));
+        snake_bones[i - 1]->AddChild(snake_bones[i]);
+
         i++;
-    }*/
+    }
     Skinning();
 }
 
