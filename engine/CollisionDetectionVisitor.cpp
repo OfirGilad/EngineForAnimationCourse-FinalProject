@@ -15,7 +15,8 @@ namespace cg3d
         Visitor::Run(_scene, camera);
     }
 
-    void CollisionDetectionVisitor::Visit(Scene* _scene) {
+    void CollisionDetectionVisitor::Visit(Scene* _scene) 
+    {
         game_manager = ((BasicScene*)_scene)->game_manager;
 
         float stage_size = game_manager->stats->stage_size;

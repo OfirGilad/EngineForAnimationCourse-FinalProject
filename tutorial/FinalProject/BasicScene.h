@@ -43,6 +43,7 @@ public:
         ShopMenu, 
         StatsMenu, 
         HallOfFameMenu, 
+        SettingsMenu,
         CreditsMenu, 
         StageMenu, 
         StageCompletedMenu, 
@@ -56,6 +57,7 @@ public:
     void StatsMenuHandler();
     void StageSelectionMenuHandler();
     void HallOfFameMenuHandler();
+    void SettingsMenuHandler();
     void CreditsMenuHandler();
     void StageMenuHandler();
     void StageCompletedMenuHandler();

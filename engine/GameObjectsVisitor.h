@@ -28,23 +28,6 @@ namespace cg3d
         void Visit(Scene* scene) override;
 		
     private:
-        void moveAccordingToBeizerCurve(Model* model);
-        void setModelBezier(Eigen::Vector3f vectors, std::shared_ptr<Model> model);
-        //std::shared_ptr<Model> generateObjectBezier(int material_id, int model_id, std::string name, float scale);
-        void drawTheBeizerCurve(std::shared_ptr<Model> model);
-
-        std::shared_ptr<Material> material;
-        std::shared_ptr<Program> program;
-        BasicScene *basicScene;
-        bool is_visitor_inited = false;
-        float minx = -10.0f;
-        float maxx = 10.0f;
-        float miny = -5.0f;
-        float maxy = 5.0f;
-        float minz = -5.0f;
-        float maxz = 5.0f;
-        //float generate_random_number(float min, float max);
-
         GameManager* game_manager;
     };
 }

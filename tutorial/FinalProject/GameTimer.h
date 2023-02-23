@@ -9,6 +9,8 @@
 
 #include <iostream>
 #include <chrono>
+#include <iomanip>
+#include <sstream>
 
 using namespace std;
 using namespace std::chrono;
@@ -22,7 +24,11 @@ public:
     void StopTimer();
     void ResetTimer();
 	
+    string SecondsToGameTime(float seconds);
+    int GameTimeToSecond(const string& timeString);
+
     double GetElapsedTime();
+    void SetElapsedTime(float elapsed_time);
 	
 private:
     time_point<system_clock> start_time;

@@ -86,4 +86,7 @@ private:
     void BuildBonusObjects();
     void BuildObstacleObjects();
     void BuildExit();
+
+    // Init Game Timer
+    void InitGameTimer();
 };

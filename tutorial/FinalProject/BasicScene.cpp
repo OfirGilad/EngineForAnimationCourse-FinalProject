@@ -347,6 +347,9 @@ void BasicScene::MenuManager() {
         case HallOfFameMenu:
             HallOfFameMenuHandler();
             break;
+        case SettingsMenu:
+            SettingsMenuHandler();
+            break;
         case CreditsMenu:
             CreditsMenuHandler();
             break;
@@ -366,11 +369,11 @@ void BasicScene::MenuManager() {
 }
 
 void BasicScene::LoginMenuHandler() {
-    if (game_manager->sound_manager->playing_index != LoginMenu) {
+    if (game_manager->sound_manager->playing_index != MainMenu) {
         game_manager->sound_manager->HandleMusic("opening_theme.mp3");
-        game_manager->sound_manager->playing_index = LoginMenu;
+        game_manager->sound_manager->playing_index = MainMenu;
 
-        SetMenuImage("login.jpg");
+        SetMenuImage("main_menu.jpg");
     }
 
     // Set sizes
@@ -485,7 +488,7 @@ void BasicScene::LoginMenuHandler() {
 
 void BasicScene::MainMenuHandler() {
     if (game_manager->sound_manager->playing_index != MainMenu) {
-        game_manager->sound_manager->HandleMusic("main_menu.mp3");
+        game_manager->sound_manager->HandleMusic("opening_theme.mp3");
         game_manager->sound_manager->playing_index = MainMenu;
 
         SetMenuImage("main_menu.jpg");
@@ -571,6 +574,13 @@ void BasicScene::MainMenuHandler() {
     Spacing(5);
 
     ImGui::SetCursorPosX(text_position2);
+    if (ImGui::Button("Settings", buttons_size2)) {
+        menu_index = SettingsMenu;
+    }
+
+    Spacing(5);
+
+    ImGui::SetCursorPosX(text_position2);
     if (ImGui::Button("Credits", buttons_size2)) {
         menu_index = CreditsMenu;
     }
@@ -589,7 +599,7 @@ void BasicScene::MainMenuHandler() {
 
 void BasicScene::StageSelectionMenuHandler() {
     if (game_manager->sound_manager->playing_index != MainMenu) {
-        game_manager->sound_manager->HandleMusic("main_menu.mp3");
+        game_manager->sound_manager->HandleMusic("opening_theme.mp3");
         game_manager->sound_manager->playing_index = MainMenu;
 
         SetMenuImage("main_menu.jpg");
@@ -990,6 +1000,10 @@ void BasicScene::StatsMenuHandler() {
     gui_text = "Total Deaths: " + std::to_string(game_manager->stats->total_deaths);
     ImGui::Text(gui_text.c_str());
 
+    ImGui::SetCursorPosX(text_position3);
+    gui_text = "Time Played: " + game_manager->stats->time_played;
+    ImGui::Text(gui_text.c_str());
+
     Spacing(10);
 
     ImGui::SetCursorPosX(text_position2);
@@ -1071,6 +1085,61 @@ void BasicScene::HallOfFameMenuHandler() {
     Spacing(10);
 
     ImGui::SetCursorPosX(text_position1);
+    if (ImGui::Button("Back", buttons_size1)) {
+        menu_index = MainMenu;
+    }
+
+    ImGui::End();
+}
+
+void BasicScene::SettingsMenuHandler() {
+    if (game_manager->sound_manager->playing_index != SettingsMenu) {
+        game_manager->sound_manager->HandleMusic("settings.mp3");
+        game_manager->sound_manager->playing_index = SettingsMenu;
+
+        SetMenuImage("settings.jpg");
+    }
+
+    // Set sizes
+    ImVec2 window_size1, buttons_size1;
+    float font_scale1, text_position1, text_position2;
+
+    if (width != 0 && height != 0) {
+        window_size1 = ImVec2(float(width), float(height));
+
+        buttons_size1 = ImVec2(float(width) / 4.f, float(height) / 8.f);
+
+        font_scale1 = float(width) / 400.f;
+
+        text_position1 = float(width) * 0.4f;
+        text_position2 = float(width) * 0.35f;
+    }
+    else {
+        window_size1 = buttons_size1 = ImVec2(1, 1);
+        font_scale1 = text_position1 = text_position2 = 1;
+    }
+
+    int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
+    bool* pOpen = nullptr;
+    string gui_text;
+
+    ImGui::Begin("Menu", pOpen, flags);
+    ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
+    ImGui::SetWindowSize(ImVec2(width, height), ImGuiCond_Always);
+    ImGui::SetWindowFontScale(font_scale1);
+
+    LoadMenuImage();
+
+    ImGui::SetCursorPosX(text_position1);
+    ImGui::TextColored(ImVec4(0.6, 1.0, 0.4, 1.0), "Settings");
+
+    Spacing(5);
+
+    
+
+    Spacing(10);
+
+    ImGui::SetCursorPosX(text_position2);
     if (ImGui::Button("Back", buttons_size1)) {
         menu_index = MainMenu;
     }

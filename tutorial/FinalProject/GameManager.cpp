@@ -37,7 +37,7 @@ void GameManager::InitGameManager(std::shared_ptr<Movable> _root, std::vector<st
     BuildExit();
 
     // Init Game Timer
-    game_timer = GameTimer();
+    InitGameTimer();
 }
 
 void GameManager::LoadStage(int stage_number, bool new_stage)
@@ -364,4 +364,12 @@ Eigen::Vector3f GameManager::GenerateRandomPosition() {
     std::uniform_real_distribution<float> distribution(-stats->stage_size + 10, stats->stage_size - 10);
 
     return Eigen::Vector3f(distribution(generator), distribution(generator), distribution(generator));
+}
+
+void GameManager::InitGameTimer() {
+    game_timer = GameTimer();
+    string game_time = stats->time_played;
+    float elapsed_time = float(game_timer.GameTimeToSecond(game_time));
+    game_timer.SetElapsedTime(elapsed_time);
+    game_timer.StartTimer();
 }

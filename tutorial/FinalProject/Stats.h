@@ -27,25 +27,27 @@ public:
     bool save_data_available = false;
 
     // User data
-    string user_name;
-    int gold;
+    string user_name = "Guest";
+    int gold = 0;
 
-    // Snake stats
-    int max_health;
-    int score_multiplier;
-    int gold_multiplier;
-    int bonuses_duration;
-    int max_movement_speed;
 
-    // Statistics
-    int total_health_points_healed;
-    int total_health_points_lost;
-    int total_score_points_earned;
-    int total_gold_earned;
-    int total_gold_spent;
-    int total_bonuses_collected;
-    int total_deaths;
+    // Snake stats Default Values
+    int max_health = 100;
+    int score_multiplier = 1;
+    int gold_multiplier = 1;
+    int bonuses_duration = 10;
+    int max_movement_speed = 1;
 
+
+    // Statistics Default Values
+    int total_health_points_healed = 0;
+    int total_health_points_lost = 0;
+    int total_score_points_earned = 0;
+    int total_gold_earned = 0;
+    int total_gold_spent = 0;
+    int total_bonuses_collected = 0;
+    int total_deaths = 0;
+    string time_played = "00:00:00";
 
     // Stage stats
     bool stage_completed = false;

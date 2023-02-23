@@ -39,6 +39,7 @@ void Stats::InitStats() {
         total_gold_spent = save_data["statistics"]["total_gold_spent"];
         total_bonuses_collected = save_data["statistics"]["total_bonuses_collected"];
         total_deaths = save_data["statistics"]["total_deaths"];
+        time_played = save_data["statistics"]["time_played"];
     }
     else {
         std::cout << "Savedata does not exist!" << std::endl;
@@ -53,19 +54,12 @@ void Stats::NewGame(string name) {
 
     // User data
     user_name = name;
-    gold = 0;
 
     save_data["user_data"]["username"] = user_name;
     save_data["user_data"]["gold"] = gold;
 
 
     // Snake stats
-    max_health = 100;
-    score_multiplier = 1;
-    gold_multiplier = 1;
-    bonuses_duration = 5;
-    max_movement_speed = 1;
-
     save_data["snake_stats"]["max_health"] = max_health;
     save_data["snake_stats"]["score_multiplier"] = score_multiplier;
     save_data["snake_stats"]["gold_multiplier"] = gold_multiplier;
@@ -74,14 +68,6 @@ void Stats::NewGame(string name) {
     
     
     // Statistics
-    total_health_points_healed = 0;
-    total_health_points_lost = 0;
-    total_score_points_earned = 0;
-    total_gold_earned = 0;
-    total_gold_spent = 0;
-    total_bonuses_collected = 0;
-    total_deaths = 0;
-
     save_data["statistics"]["total_health_points_healed"] = total_health_points_healed;
     save_data["statistics"]["total_health_points_lost"] = total_health_points_lost;
     save_data["statistics"]["total_score_points_earned"] = total_score_points_earned;
@@ -89,6 +75,7 @@ void Stats::NewGame(string name) {
     save_data["statistics"]["total_gold_spent"] = total_gold_spent;
     save_data["statistics"]["total_bonuses_collected"] = total_bonuses_collected;
     save_data["statistics"]["total_deaths"] = total_deaths;
+    save_data["statistics"]["time_played"] = time_played;
 
 
     std::ofstream outfile("../tutorial/json/savedata.json");
@@ -118,7 +105,7 @@ void Stats::SaveGame() {
     save_data["statistics"]["total_gold_spent"] = total_gold_spent;
     save_data["statistics"]["total_bonuses_collected"] = total_bonuses_collected;
     save_data["statistics"]["total_deaths"] = total_deaths;
-
+    save_data["statistics"]["time_played"] = time_played;
 
     std::ofstream outfile("../tutorial/json/savedata.json");
     outfile << save_data.dump(4) << std::endl;

@@ -228,14 +228,17 @@ void ObstacleObject::CollisionWithObject() {
 
 void ObstacleObject::MoveObject() {
     model->RotateByDegree(1.f, Eigen::Vector3f(0.f, 1.f, 0.f));
+    bezier_logic.MoveOnCurve();
 }
 
 void ObstacleObject::SetAlive() {
-
+    bezier_logic.InitBezierCurve(model, stats->stage_size);
+    bezier_logic.GenerateBezierCurve();
+    root->AddChild(bezier_logic.GetBezierCurveModel());
 }
 
 void ObstacleObject::SetDead() {
-
+    root->RemoveChild(bezier_logic.GetBezierCurveModel());
 }
 
 ////////////////
