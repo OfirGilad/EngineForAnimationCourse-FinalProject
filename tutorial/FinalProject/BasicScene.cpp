@@ -468,7 +468,6 @@ void BasicScene::LoginMenuHandler() {
 
         ImGui::SetCursorPosX(text_position2);
         static char name[21] = "";
-        //ImGui::InputTextMultiline("", name, IM_ARRAYSIZE(name), ImVec2(200 * (width / 4), 35 * (height / 8)));
         ImGui::InputTextMultiline("", name, IM_ARRAYSIZE(name), input_text_size1);
 
         Spacing(5);
@@ -1534,6 +1533,8 @@ void BasicScene::PauseMenuHandler() {
         stage_music = "stage" + std::to_string(game_manager->sound_manager->stage_index) + ".mp3";
         game_manager->sound_manager->HandleMusic(stage_music);
         game_manager->sound_manager->playing_index = -game_manager->sound_manager->stage_index;
+
+        SetMenuImage("stage.jpg");
     }
 
     // Set sizes

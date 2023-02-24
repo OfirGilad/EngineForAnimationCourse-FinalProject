@@ -30,11 +30,11 @@ public:
     GameManager() {};
     void InitGameManager(std::shared_ptr<Movable> _root, std::vector<std::shared_ptr<Camera>> _camera_list);
 
-    void LoadStage(int stage_number, bool new_stage);
-    void UnloadStage();
-
     void NewGame(string name);
     void SaveGame();
+
+    void LoadStage(int stage_number, bool new_stage);
+    void UnloadStage();
 
     // Stage Builder
     std::shared_ptr<Movable> root;
@@ -74,9 +74,9 @@ private:
     void InitCollisionBoxes();
 
     // Init Stage
+    void InitStageParameters(bool new_stage);
     void InitBackground();
     void InitAxis();
-    void InitStageParameters(bool new_stage);
     void LoadGameObjects();
 
     bool background_loaded = false;

@@ -55,6 +55,7 @@ public:
     float base_length = 60.f;
     float stage_size = 0.f;
     int current_health = 100;
+    int last_time_damage = 0;
     int current_score = 0;
     int objective_score = 0;
     string active_bonus = "None";

@@ -12,9 +12,9 @@ void GameObjectsVisitor::Run(cg3d::Scene* _scene, cg3d::Camera* camera)
 
 void GameObjectsVisitor::Visit(Scene* _scene)
 {
-    game_manager = ((BasicScene*)_scene)->game_manager;
-
     if (_scene->GetAnimate()) {
+        game_manager = ((BasicScene*)_scene)->game_manager;
+
         for (int i = 0; i < int(game_manager->alive_objects.size()); i++) {
             GameObject* current_game_object = game_manager->alive_objects[i];
             current_game_object->MoveObject();

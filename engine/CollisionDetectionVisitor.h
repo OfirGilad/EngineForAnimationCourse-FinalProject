@@ -28,6 +28,7 @@ namespace cg3d
         void Visit(Scene* scene) override;
 
     private:
+        void TimerDamage();
         bool CheckSelfCollision();
         bool CheckBackgoroundCollision();
 

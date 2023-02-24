@@ -40,6 +40,23 @@ void GameManager::InitGameManager(std::shared_ptr<Movable> _root, std::vector<st
     InitTimers();
 }
 
+void GameManager::NewGame(string name) {
+    game_timer.ResetTimer();
+
+    stats->ResetStats(name);
+    leaderboard->ResetLeaderboard();
+
+    game_timer.StartTimer();
+}
+
+void GameManager::SaveGame() {
+    float time_played = game_timer.GetElapsedTime();
+    stats->time_played = game_timer.SecondsToGameTime(time_played);
+
+    stats->SaveStats();
+    leaderboard->SaveLeaderboard();
+}
+
 void GameManager::LoadStage(int stage_number, bool new_stage)
 {
     // Set Select Stage
@@ -77,23 +94,6 @@ void GameManager::UnloadStage() {
     stage_timer.ResetTimer();
 }
 
-void GameManager::NewGame(string name) {
-    game_timer.ResetTimer();
-
-    stats->ResetStats(name);
-    leaderboard->ResetLeaderboard();
-
-    game_timer.StartTimer();
-}
-
-void GameManager::SaveGame() {
-    float time_played = game_timer.GetElapsedTime();
-    stats->time_played = game_timer.SecondsToGameTime(time_played);
-
-    stats->SaveStats();
-    leaderboard->SaveLeaderboard();
-}
-
 void GameManager::InitCollisionBoxes() {
     auto program = std::make_shared<Program>("shaders/basicShader");
     auto material{ std::make_shared<Material>("material", program) }; // empty material
@@ -105,6 +105,17 @@ void GameManager::InitCollisionBoxes() {
     cube2->showFaces = false;
     cube1->showWireframe = true;
     cube2->showWireframe = true;
+}
+
+void GameManager::InitStageParameters(bool new_stage) {
+    if (new_stage) {
+        stats->current_score = 0;
+    }
+
+    stats->last_time_damage = 0;
+    stats->current_movement_speed = stats->min_movement_speed;
+    stats->current_health = stats->max_health;
+    stats->objective_score = stats->current_score + 100 * stats->selected_stage;
 }
 
 void GameManager::InitBackground() {
@@ -143,16 +154,6 @@ void GameManager::InitAxis() {
     axis->Translate(Eigen::Vector3f(0, 0, 0));
 
     axis_loaded = true;
-}
-
-void GameManager::InitStageParameters(bool new_stage) {
-    if (new_stage) {
-        stats->current_score = 0;
-    }
-
-    stats->current_movement_speed = stats->min_movement_speed;
-    stats->current_health = stats->max_health;
-    stats->objective_score = stats->current_score + 100 * stats->selected_stage;
 }
 
 void GameManager::LoadGameObjects() {
