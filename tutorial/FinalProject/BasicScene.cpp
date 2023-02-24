@@ -190,7 +190,8 @@ void BasicScene::KeyCallback(Viewport* viewport, int x, int y, int key, int scan
     // Handle ImGui Menu
     if (ImGui::GetIO().WantCaptureKeyboard) return;
 
-    auto system = camera->GetRotation().transpose();
+    static bool WASD_events[4];
+    static bool UDLR_events[4];
 
     if (action == GLFW_PRESS || action == GLFW_REPEAT) {
         switch (key) // NOLINT(hicpp-multiway-paths-covered)
@@ -199,54 +200,28 @@ void BasicScene::KeyCallback(Viewport* viewport, int x, int y, int key, int scan
                 glfwSetWindowShouldClose(window, GLFW_TRUE);
                 break;
             case GLFW_KEY_W:
-                if (GetAnimate()) {
-                    game_manager->snake.MoveUp();
-                }
+                WASD_events[0] = true;
                 break;
             case GLFW_KEY_S:
-                if (GetAnimate()) {
-                    game_manager->snake.MoveDown();
-                }
+                WASD_events[1] = true;
                 break;
             case GLFW_KEY_A:
-                if (GetAnimate()) {
-                    game_manager->snake.MoveLeft();
-                }
+                WASD_events[2] = true;
                 break;
             case GLFW_KEY_D:
-                if (GetAnimate()) {
-                    game_manager->snake.MoveRight();
-                }
+                WASD_events[3] = true;
                 break;
             case GLFW_KEY_UP:
-                if (GetAnimate()) {
-                    if (game_manager->stats->current_movement_speed < game_manager->stats->max_movement_speed) {
-                        game_manager->stats->current_movement_speed += 1;
-                    }
-                    else {
-                        cout << "Max movement speed already reached" << endl;
-                    }
-                }
+                UDLR_events[0] = true;
                 break;
             case GLFW_KEY_DOWN:
-                if (GetAnimate()) {
-                    if (game_manager->stats->current_movement_speed > game_manager->stats->min_movement_speed) {
-                        game_manager->stats->current_movement_speed -= 1;
-                    }
-                    else {
-                        cout << "Min movement speed already reached" << endl;
-                    }
-                }
+                UDLR_events[1] = true;
                 break;
             case GLFW_KEY_LEFT:
-                if (GetAnimate()) {
-                    game_manager->snake.RollLeft();
-                }
+                UDLR_events[2] = true;
                 break;
             case GLFW_KEY_RIGHT:
-                if (GetAnimate()) {
-                    game_manager->snake.RollRight();
-                }
+                UDLR_events[3] = true;
                 break;
             case GLFW_KEY_V:
                 SwitchView(true);
@@ -255,12 +230,14 @@ void BasicScene::KeyCallback(Viewport* viewport, int x, int y, int key, int scan
                 SwitchView(false);
                 break;
             case GLFW_KEY_SPACE:
-                if (menu_index == StageMenu) {
+                if (menu_index == StageMenu)
+                {
                     this->animate = false;
                     game_manager->stage_timer.StopTimer();
                     menu_index = PauseMenu;
                 }
-                else if (menu_index == PauseMenu) {
+                else if (menu_index == PauseMenu)
+                {
                     this->animate = true;
                     game_manager->stage_timer.StartTimer();
                     menu_index = StageMenu;
@@ -281,35 +258,124 @@ void BasicScene::KeyCallback(Viewport* viewport, int x, int y, int key, int scan
                 cout << "Gold Debug" << endl;
                 break;
             case GLFW_KEY_EQUAL:
-                if (debug_parameter == 1) {
+                if (debug_parameter == 1)
+                {
                     game_manager->stats->current_health += 10;
                     game_manager->stats->total_health_points_healed += 10;
                 }
-                if (debug_parameter == 2) {
+                if (debug_parameter == 2)
+                {
                     game_manager->stats->current_score += 10;
                     game_manager->stats->total_score_points_earned += 10;
                 }
-                if (debug_parameter == 3) {
+                if (debug_parameter == 3)
+                {
                     game_manager->stats->gold += 10;
                     game_manager->stats->total_gold_earned += 10;
                 }
                 cout << "+ Debug" << endl;
                 break;
             case GLFW_KEY_MINUS:
-                if (debug_parameter == 1) {
+                if (debug_parameter == 1)
+                {
                     game_manager->stats->current_health -= 10;
                     game_manager->stats->total_health_points_lost += 10;
                 }
-                if (debug_parameter == 2) {
+                if (debug_parameter == 2)
+                {
                     game_manager->stats->current_score -= 10;
                     // No event
                 }
-                if (debug_parameter == 3) {
+                if (debug_parameter == 3)
+                {
                     game_manager->stats->gold -= 10;
                     game_manager->stats->total_gold_spent += 10;
                 }
                 cout << "- Debug" << endl;
                 break;
+        }
+    }
+    else if (action == GLFW_RELEASE)
+    {
+        switch (key)
+        {
+            case GLFW_KEY_W:
+                WASD_events[0] = false;
+                break;
+            case GLFW_KEY_S:
+                WASD_events[1] = false;
+                break;
+            case GLFW_KEY_A:
+                WASD_events[2] = false;
+                break;
+            case GLFW_KEY_D:
+                WASD_events[3] = false;
+                break;
+            case GLFW_KEY_UP:
+                UDLR_events[0] = false;
+                break;
+            case GLFW_KEY_DOWN:
+                UDLR_events[1] = false;
+                break;
+            case GLFW_KEY_LEFT:
+                UDLR_events[2] = false;
+                break;
+            case GLFW_KEY_RIGHT:
+                UDLR_events[3] = false;
+                break;
+        }
+    }
+
+    if (animate)
+    {
+        // WASD events
+        if (WASD_events[0]) 
+        {
+            game_manager->snake.MoveUp();
+        }
+        if (WASD_events[1])
+        {
+            game_manager->snake.MoveDown();
+        }
+        if (WASD_events[2])
+        {
+            game_manager->snake.MoveLeft();
+        }
+        if (WASD_events[3])
+        {
+            game_manager->snake.MoveRight();
+        }
+
+        // UP DWON LEFT RIGHT events
+        if (UDLR_events[0])
+        {
+            if (game_manager->stats->current_movement_speed < game_manager->stats->max_movement_speed)
+            {
+                game_manager->stats->current_movement_speed += 1;
+            }
+            else
+            {
+                cout << "Max movement speed already reached" << endl;
+            }
+        }
+        if (UDLR_events[1])
+        {
+            if (game_manager->stats->current_movement_speed > game_manager->stats->min_movement_speed)
+            {
+                game_manager->stats->current_movement_speed -= 1;
+            }
+            else
+            {
+                cout << "Min movement speed already reached" << endl;
+            }
+        }
+        if (UDLR_events[2])
+        {
+            game_manager->snake.RollLeft();
+        }
+        if (UDLR_events[3])
+        {
+            game_manager->snake.RollRight();
         }
     }
 }
