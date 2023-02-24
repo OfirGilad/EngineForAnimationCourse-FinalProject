@@ -13,6 +13,7 @@ def play_sound(sound_file):
         "obstacle_object.mp3": 1,
         "score_object.mp3": 3,
         "stage_complete.mp3": 12,
+        "shield.mp3": 5
     }
 
     p = vlc.MediaPlayer(sound_file)

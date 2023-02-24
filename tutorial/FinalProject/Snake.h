@@ -12,8 +12,7 @@
 #include "IglMeshLoader.h"
 #include "ObjLoader.h"
 
-#include "igl/AABB.h"
-
+#include "igl/per_vertex_normals.h"
 #include <igl/directed_edge_orientations.h>
 #include <igl/directed_edge_parents.h>
 #include <igl/forward_kinematics.h>

@@ -79,7 +79,7 @@ public:
     void SetDead() override;
 
 private:
-    int bonus_duration;
+    int bonus_value, bonus_duration;
 };
 
 class ObstacleObject : public GameObject

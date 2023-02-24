@@ -280,11 +280,13 @@ void Snake::Skinning()
     igl::dqs(V, W, vQ, vT, U);
 
     // Update mesh
+    Eigen::MatrixXd VN;
+    igl::per_vertex_normals(U, snake_body->GetMeshList()[0]->data[0].faces, VN);
     std::shared_ptr<cg3d::Mesh> new_mesh = std::make_shared<cg3d::Mesh>(
         snake_body->name,
         U,
         snake_body->GetMeshList()[0]->data[0].faces,
-        snake_body->GetMeshList()[0]->data[0].vertexNormals,
+        VN,
         snake_body->GetMeshList()[0]->data[0].textureCoords);
     snake_body->SetMeshList({ new_mesh });
 }

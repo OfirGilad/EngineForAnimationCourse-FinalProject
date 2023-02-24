@@ -29,7 +29,7 @@ namespace cg3d
             TimerDamage();
 
             // Self Collision
-            if (CheckSelfCollision()) {
+            if ((game_manager->stats->active_bonus != "Shield") && (CheckSelfCollision())) {
                 _scene->SetAnimate(false);
                 int current_health = game_manager->stats->current_health;
                 game_manager->stats->total_health_points_lost += current_health;

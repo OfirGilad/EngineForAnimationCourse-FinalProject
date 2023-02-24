@@ -80,6 +80,11 @@ void HealthObject::CollisionWithObject() {
 
     // Handle event
     health_value = stage_number * 10;
+
+    if (stats->active_bonus == "Stats Boost") {
+        health_value *= 2;
+    }
+
     if (current_health + health_value > max_health) {
         health_value = max_health - current_health;
     }
@@ -128,7 +133,12 @@ void ScoreObject::CollisionWithObject() {
 
     // Handle event
     score_value = 10 * stage_number * score_multiplier;
-    current_score = current_score + score_value;
+
+    if (stats->active_bonus == "Stats Boost") {
+        score_value *= 2;
+    }
+
+    current_score += score_value;
 
     // Update stats
     stats->current_score = current_score;
@@ -172,7 +182,12 @@ void GoldObject::CollisionWithObject() {
 
     // Handle event
     gold_value = 10 * stage_number * gold_multiplier;
-    gold = gold + gold_value;
+
+    if (stats->active_bonus == "Stats Boost") {
+        gold_value *= 2;
+    }
+
+    gold += gold_value;
 
     // Update stats
     stats->gold = gold;
@@ -214,10 +229,19 @@ void BonusObject::CollisionWithObject() {
     bonus_duration = stats->bonuses_duration;
 
     // Handle event
-    //stats->active_bonus = "Magnet";
-    stats->active_bonus = "Freeze Time";
-    //stats->active_bonus = "Shield";
-    //stats->active_bonus = "Stats Booster";
+    bonus_value = rand() % 4;
+    if (bonus_value == 0) {
+        stats->active_bonus = "Magnet";
+    }
+    else if (bonus_value == 1) {
+        stats->active_bonus = "Freeze Time";
+    }
+    else if (bonus_value == 2) {
+        stats->active_bonus = "Shield";
+    }
+    else {
+        stats->active_bonus = "Stats Boost";
+    }
 
     stats->active_bonus_timer.ResetTimer();
     stats->active_bonus_timer.StartTimer();
@@ -255,6 +279,13 @@ void BonusObject::SetDead() {
 ////////////////////
 
 void ObstacleObject::CollisionWithObject() {
+    if (stats->active_bonus == "Shield") {
+        // Handle sound
+        sound_manager->HandleSound("shield.mp3");
+        cout << "ShieldBlock" << endl;
+        return;
+    }
+
     // Get required parameters
     int stage_number = stats->selected_stage;
     current_health = stats->current_health;

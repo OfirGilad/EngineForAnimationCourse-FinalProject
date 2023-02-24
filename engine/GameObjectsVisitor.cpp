@@ -66,7 +66,7 @@ void GameObjectsVisitor::Visit(Scene* _scene)
                     return;
                 }
             }
-            else if (object_time > 5.f) {
+            else if (object_time > 5.f * game_manager->stats->selected_stage) {
                 // Reset Timers
                 current_game_object->dead_timer.ResetTimer();
                 current_game_object->alive_timer.StartTimer();
