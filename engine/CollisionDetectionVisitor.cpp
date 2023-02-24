@@ -25,10 +25,8 @@ namespace cg3d
 
             std::shared_ptr<cg3d::Model> snake_head = game_manager->snake.GetBones()[0];
             
-
             // Handle Timer Damage
             TimerDamage();
-
 
             // Self Collision
             if (CheckSelfCollision()) {
