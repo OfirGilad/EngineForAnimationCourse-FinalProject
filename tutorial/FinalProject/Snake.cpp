@@ -117,6 +117,8 @@ void Snake::ResetSnakePosition() {
 
         i++;
     }
+    snake_bones[first_index]->Translate({ 0,0,(bone_size / 2) });
+
     Skinning();
 }
 
@@ -259,8 +261,8 @@ void Snake::SkinningInit() {
 
     // vQ - rotations of joints
     // vT - translation of joints
-    vT.resize(number_of_bones + 1);
     vQ.resize(number_of_bones + 1, Eigen::Quaterniond::Identity());
+    vT.resize(number_of_bones + 1);
 }
 
 

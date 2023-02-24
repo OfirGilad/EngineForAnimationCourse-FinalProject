@@ -232,13 +232,13 @@ void BasicScene::KeyCallback(Viewport* viewport, int x, int y, int key, int scan
             case GLFW_KEY_SPACE:
                 if (menu_index == StageMenu)
                 {
-                    this->animate = false;
+                    animate = false;
                     game_manager->stage_timer.StopTimer();
                     menu_index = PauseMenu;
                 }
                 else if (menu_index == PauseMenu)
                 {
-                    this->animate = true;
+                    animate = true;
                     game_manager->stage_timer.StartTimer();
                     menu_index = StageMenu;
                 }
@@ -772,7 +772,8 @@ void BasicScene::StageSelectionMenuHandler() {
             menu_index = StageMenu;
 
             game_manager->LoadStage(i, true);
-            animate = true;
+            SetMenuImage("loading.jpg");
+            display_loading = true;
         }
     }
 
@@ -1469,21 +1470,19 @@ void BasicScene::CreditsMenuHandler() {
 }
 
 void BasicScene::StageMenuHandler() {
-    string stage_music;
-    if (game_manager->sound_manager->playing_index != -game_manager->sound_manager->stage_index) {
-        stage_music = "stage" + std::to_string(game_manager->sound_manager->stage_index) + ".mp3";
-        game_manager->sound_manager->HandleMusic(stage_music);
-        game_manager->sound_manager->playing_index = -game_manager->sound_manager->stage_index;
-
-        SetMenuImage("stage.jpg");
-    }
+    int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBackground;
+    bool* pOpen = nullptr;
+    string gui_text;
 
     // Set sizes
-    ImVec2 window_size1, buttons_size1;
+    ImVec2 window_position1, window_size1, window_size2, buttons_size1;
     float font_scale1, font_scale2, text_position1;
 
     if (width != 0 && height != 0) {
+        window_position1 = ImVec2(float(width) * 0.45f, float(height) * 0.38f);
+
         window_size1 = ImVec2(float(width), float(height) * 0.13f);
+        window_size2 = ImVec2(float(width) * 0.1f, float(height) * 0.1f);
 
         buttons_size1 = ImVec2(float(width) / 4.f, float(height) / 7.f);
 
@@ -1493,13 +1492,62 @@ void BasicScene::StageMenuHandler() {
         text_position1 = float(width) * 0.45f;
     }
     else {
-        buttons_size1 = ImVec2(1, 1);
+        window_position1 = window_size1 = window_size2 = buttons_size1 = ImVec2(1, 1);
         font_scale1 = font_scale2 = text_position1 = 1;
     }
 
-    int flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
-    bool* pOpen = nullptr;
-    string gui_text;
+    // Display loading screen
+    if (display_loading) {
+        if (game_manager->stage_timer.GetElapsedTime() < 3.f) {
+            ImGui::Begin("Menu", pOpen, flags);
+            ImGui::SetWindowSize(ImVec2(width, height), ImGuiCond_Always);
+
+            LoadMenuImage();
+            ImGui::ProgressBar(game_manager->stage_timer.GetElapsedTime() / 3.f);
+
+            ImGui::End();
+            return;
+        }
+        else if (game_manager->stage_timer.GetElapsedTime() < 6.f) {
+            ImGui::Begin("Menu", pOpen, flags);
+            ImGui::SetWindowPos(window_position1, ImGuiCond_Always);
+            ImGui::SetWindowSize(window_size2, ImGuiCond_Always);
+
+            if (game_manager->stage_timer.GetElapsedTime() < 4.0f) {
+                SetMenuImage("3.png");
+                LoadMenuImage();
+            }
+            else if ((4.1f < game_manager->stage_timer.GetElapsedTime()) && (game_manager->stage_timer.GetElapsedTime() < 5.0f)) {
+                SetMenuImage("2.png");
+                LoadMenuImage();
+            }
+            else if ((5.1f < game_manager->stage_timer.GetElapsedTime()) && (game_manager->stage_timer.GetElapsedTime() < 6.0f)) {
+                SetMenuImage("1.png");
+                LoadMenuImage();
+            }
+
+            ImGui::End();
+
+            // Play Music
+            string stage_music;
+            if (game_manager->sound_manager->playing_index != -game_manager->sound_manager->stage_index) {
+                stage_music = "stage" + std::to_string(game_manager->sound_manager->stage_index) + ".mp3";
+                game_manager->sound_manager->HandleMusic(stage_music);
+                game_manager->sound_manager->playing_index = -game_manager->sound_manager->stage_index;
+            }
+
+            return;
+        }
+        else {
+            SetMenuImage("stage.jpg");
+            animate = true;
+            display_loading = false;
+            
+            // Reset Timer
+            game_manager->stage_timer.ResetTimer();
+            game_manager->stage_timer.StartTimer();
+        }
+    }
 
     ImGui::Begin("Menu", pOpen, flags);
     ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
@@ -1779,7 +1827,8 @@ void BasicScene::StageCompletedMenuHandler() {
             menu_index = StageMenu;
 
             game_manager->LoadStage(current_stage, false);
-            animate = true;
+            SetMenuImage("loading.jpg");
+            display_loading = true;
         }
     }
 
@@ -2138,7 +2187,7 @@ void BasicScene::SetMenuImage(string image_name) {
 void BasicScene::LoadMenuImage() {
     // Set Image
     ImVec2 window_size = ImGui::GetWindowSize();
-    ImVec2 window_position = ImGui::GetWindowPos();
+    ImVec2 window_position = ImGui::GetWindowPos() - ImVec2(5,5);
     ImVec2 image_position = window_position + ImGui::GetCursorPos();
     ImVec2 image_size = window_size;
 

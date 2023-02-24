@@ -100,6 +100,7 @@ private:
     bool display_keys = false;
     bool payed_credits = false;
     bool display_new_game = true;
+    bool display_loading = true;
 
     // Invalid Checks
     bool ShopMenu_InvalidGold1 = false;

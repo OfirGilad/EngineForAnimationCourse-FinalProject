@@ -20,9 +20,6 @@
 #include <igl/lbs_matrix.h>
 #include <igl/deform_skeleton.h>
 #include <igl/dqs.h>
-#include <igl/readDMAT.h>
-#include <igl/readOBJ.h>
-#include <igl/readTGF.h>
 #include <igl/opengl/glfw/Viewer.h>
 
 #include <Eigen/Geometry>
