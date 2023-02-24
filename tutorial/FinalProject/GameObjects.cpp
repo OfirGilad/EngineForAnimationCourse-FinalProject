@@ -214,10 +214,13 @@ void BonusObject::CollisionWithObject() {
     bonus_duration = stats->bonuses_duration;
 
     // Handle event
-    stats->active_bonus = "Magnet";
-    //stats->active_bonus = "Freeze Time";
+    //stats->active_bonus = "Magnet";
+    stats->active_bonus = "Freeze Time";
     //stats->active_bonus = "Shield";
     //stats->active_bonus = "Stats Booster";
+
+    stats->active_bonus_timer.ResetTimer();
+    stats->active_bonus_timer.StartTimer();
 
     // Update stats
     stats->total_bonuses_collected += 1;

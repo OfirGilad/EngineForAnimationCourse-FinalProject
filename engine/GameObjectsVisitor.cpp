@@ -15,16 +15,25 @@ void GameObjectsVisitor::Visit(Scene* _scene)
     if (_scene->GetAnimate()) {
         game_manager = ((BasicScene*)_scene)->game_manager;
 
-        // Handle Active Bonus 
+        // Handle Active Bonus
+        string active_bonus = game_manager->stats->active_bonus;
+
         if (game_manager->stats->active_bonus != "None") {
-            game_manager->active_bonus_timer.StartTimer();
             int bonuses_duration = game_manager->stats->bonuses_duration;
-            int current_active_bonus_time = game_manager->active_bonus_timer.GetElapsedTime();
+            int current_active_bonus_time = game_manager->stats->active_bonus_timer.GetElapsedTime();
 
             if (current_active_bonus_time > bonuses_duration) {
-                game_manager->active_bonus_timer.ResetTimer();
+                game_manager->stats->active_bonus_timer.ResetTimer();
                 game_manager->stats->active_bonus = "None";
             }
+        }
+
+        // Handle Freeze Time
+        if (active_bonus == "Freeze Time") {
+            game_manager->stage_timer.StopTimer();
+        }
+        else {
+            game_manager->stage_timer.StartTimer();
         }
 
         // Handle Alive Game Objects

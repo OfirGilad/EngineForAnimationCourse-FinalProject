@@ -872,7 +872,7 @@ void BasicScene::ShopMenuHandler() {
     ImGui::TextColored(ImVec4(1.0, 0.0, 1.0, 1.0), gui_text.c_str());
 
     ImGui::SetCursorPosX(text_position2);
-    item4_cost = bonuses_duration * 100;
+    item4_cost = bonuses_duration * 10;
     gui_text = to_string(item4_cost) + " Gold###4";
     if (ImGui::Button(gui_text.c_str(), buttons_size2)) {
         if (gold >= item4_cost) {
@@ -1486,7 +1486,7 @@ void BasicScene::StageMenuHandler() {
 
     // Handle Active Bonus
     int bonus_duration = game_manager->stats->bonuses_duration;
-    int current_active_bonus_time = game_manager->active_bonus_timer.GetElapsedTime();
+    int current_active_bonus_time = game_manager->stats->active_bonus_timer.GetElapsedTime();
     int bonus_duration_left = bonus_duration - current_active_bonus_time;
     string active_bonus = game_manager->stats->active_bonus;
     if (active_bonus == "None") {

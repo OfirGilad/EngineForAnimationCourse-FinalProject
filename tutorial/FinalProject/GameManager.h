@@ -18,7 +18,7 @@
 
 #include "Snake.h"
 #include "Leaderboard.h"
-#include "GameObjects.h" // Includes: Stats and SoundManager 
+#include "GameObjects.h" // Includes: Stats, SoundManager, GameTimer
 
 
 using namespace std;
@@ -67,7 +67,7 @@ public:
     ObjectsBuilder objects_builder;
 
     // Timers
-    GameTimer game_timer, stage_timer, active_bonus_timer;
+    GameTimer game_timer, stage_timer;
 
 private:
     // Collision boxes for CollisionDetectionVisitor

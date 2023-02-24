@@ -10,8 +10,7 @@
 #include <string>
 #include "Scene.h"
 #include "SoundManager.h"
-#include "Stats.h"
-#include "GameTimer.h"
+#include "Stats.h" // Includes: GameTimer
 #include "GameLogics.h"
 
 using namespace cg3d;

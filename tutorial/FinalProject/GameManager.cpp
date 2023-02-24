@@ -387,5 +387,4 @@ void GameManager::InitTimers() {
     game_timer.StartTimer();
 
     stage_timer = GameTimer();
-    active_bonus_timer = GameTimer();
 }

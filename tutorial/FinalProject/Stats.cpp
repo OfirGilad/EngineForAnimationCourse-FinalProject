@@ -41,6 +41,8 @@ void Stats::InitStats() {
         std::cout << "Savedata does not exist!" << std::endl;
         save_data_available = false;
     }
+
+    active_bonus_timer = GameTimer();
 }
 
 void Stats::ResetStats(string name) {

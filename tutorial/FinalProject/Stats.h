@@ -13,6 +13,8 @@
 #include <iostream>
 #include "Scene.h"
 
+#include "GameTimer.h"
+
 using namespace std;
 using namespace nlohmann;
 
@@ -40,7 +42,7 @@ public:
     int max_movement_speed = 2;
 
 
-    // Statistics Default Values
+    // Statistics default values
     int total_health_points_healed = 0;
     int total_health_points_lost = 0;
     int total_score_points_earned = 0;
@@ -59,11 +61,14 @@ public:
     int last_time_damage = 0;
     int current_score = 0;
     int objective_score = 0;
-    string active_bonus = "None";
-    std::shared_ptr<cg3d::Model> snake_head;
     int current_movement_speed = 1;
     int min_movement_speed = 1; // Always
     int leaderboard_position = -1;
+
+    // Active bonus Parameters
+    GameTimer active_bonus_timer;
+    std::shared_ptr<cg3d::Model> snake_head;
+    string active_bonus = "None";
 
 private:
     json save_data;
