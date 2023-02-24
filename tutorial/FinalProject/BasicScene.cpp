@@ -1485,7 +1485,16 @@ void BasicScene::StageMenuHandler() {
     Spacing(1);
 
     // Handle Active Bonus
-    gui_text = "Active Bonus: " + game_manager->stats->active_bonus;
+    int bonus_duration = game_manager->stats->bonuses_duration;
+    int current_active_bonus_time = game_manager->active_bonus_timer.GetElapsedTime();
+    int bonus_duration_left = bonus_duration - current_active_bonus_time;
+    string active_bonus = game_manager->stats->active_bonus;
+    if (active_bonus == "None") {
+        gui_text = "Active Bonus: " + game_manager->stats->active_bonus;
+    }
+    else {
+        gui_text = "Active Bonus: " + game_manager->stats->active_bonus + " (" + to_string(bonus_duration_left) + "s)";
+    }
     ImGui::TextColored(ImVec4(1.0, 0.0, 1.0, 1.0), gui_text.c_str());
 
     ImGui::SameLine(float(width) * 0.3f);
