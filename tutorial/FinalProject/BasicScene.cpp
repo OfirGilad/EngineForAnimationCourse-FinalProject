@@ -2173,8 +2173,8 @@ void BasicScene::SetMenuImage(string image_name) {
         std::cout << "image not loaded! " << std::endl;
     }
     else {
-        glGenTextures(1, &back_ground_image_texture);
-        glBindTexture(GL_TEXTURE_2D, back_ground_image_texture);
+        glGenTextures(1, &background_image_texture);
+        glBindTexture(GL_TEXTURE_2D, background_image_texture);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image_width, image_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, background_image);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -2192,7 +2192,7 @@ void BasicScene::LoadMenuImage() {
     ImVec2 image_size = window_size;
 
     ImGui::GetWindowDrawList()->AddImage(
-        (void*)(intptr_t)back_ground_image_texture,
+        (void*)(intptr_t)background_image_texture,
         image_position,
         image_position + image_size,
         ImVec2(0, 0),

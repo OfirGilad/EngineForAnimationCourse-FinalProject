@@ -93,7 +93,7 @@ private:
     int width = 1;
     int height = 1;
 
-    int menu_index = MainMenu;
+    int menu_index = LoginMenu;
     int last_menu_index = MainMenu; // For ShopMenu
     int next_menu_index = MainMenu; // For NewHighScoreMenu
 
@@ -115,7 +115,7 @@ private:
     Eigen::Vector3f snake_color = Eigen::Vector3f(0.5f, 0.25f, 0.0f);
 
     unsigned char* background_image;
-    GLuint back_ground_image_texture;
+    GLuint background_image_texture;
     int image_width;
     int image_height;
     int screen_width;
