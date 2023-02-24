@@ -530,6 +530,7 @@ void BasicScene::LoginMenuHandler() {
     if (display_new_game) {
         if (ImGui::Button("New Game", buttons_size1)) {
             display_new_game = false;
+            Login_InvalidSaveData = false;
         }
     }
     else {
@@ -540,14 +541,26 @@ void BasicScene::LoginMenuHandler() {
         ImGui::InputTextMultiline("", name, IM_ARRAYSIZE(name), input_text_size1);
 
         Spacing(5);
-
+        
         ImGui::SetCursorPosX(text_position2);
         if (ImGui::Button("Start New Game", buttons_size1)) {
-            display_new_game = true;
-            
-            game_manager->NewGame(name);
-            menu_index = MainMenu;
+            if (name[0] == '\0') {
+                Login_InvalidName = true;
+            }
+            else {
+                display_new_game = true;
+                Login_InvalidName = false;
+                Login_InvalidSaveData = false;
+                menu_index = MainMenu;
+
+                game_manager->NewGame(name);
+            }
         }
+    }
+
+    if (Login_InvalidName) {
+        ImGui::SetCursorPosX(text_position2);
+        ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "Invalid input name!");
     }
 
     Spacing(5);
@@ -556,16 +569,17 @@ void BasicScene::LoginMenuHandler() {
     if (display_new_game) {
         if (!game_manager->stats->save_data_available) {
             ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled));
-
+            // If save data not found
             if (ImGui::Button("Continue Game", buttons_size1)) {
-                cout << "No save data available" << endl;
+                Login_InvalidSaveData = true;
             }
             ImGui::PopStyleColor();
         }
         else {
             if (ImGui::Button("Continue Game", buttons_size1)) {
-                // If load detected
+                // If save data found
                 display_new_game = true;
+                Login_InvalidSaveData = false;
                 menu_index = MainMenu;
             }
         }
@@ -573,7 +587,13 @@ void BasicScene::LoginMenuHandler() {
     else {
         if (ImGui::Button("Cancel", buttons_size1)) {
             display_new_game = true;
+            Login_InvalidName = false;
         }
+    }
+
+    if (Login_InvalidSaveData) {
+        ImGui::SetCursorPosX(text_position2);
+        ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "No save data available!");
     }
 
     Spacing(10);

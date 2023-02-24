@@ -103,6 +103,8 @@ private:
     bool display_loading = true;
 
     // Invalid Checks
+    bool Login_InvalidName = false;
+    bool Login_InvalidSaveData = false;
     bool ShopMenu_InvalidGold1 = false;
     bool ShopMenu_InvalidGold2 = false;
     bool ShopMenu_InvalidGold3 = false;
