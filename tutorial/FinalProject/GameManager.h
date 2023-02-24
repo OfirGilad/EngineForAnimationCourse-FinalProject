@@ -67,7 +67,7 @@ public:
     ObjectsBuilder objects_builder;
 
     // Timers
-    GameTimer game_timer, stage_timer;
+    GameTimer game_timer, stage_timer, active_bonus_timer;
 
 private:
     // Collision boxes for CollisionDetectionVisitor

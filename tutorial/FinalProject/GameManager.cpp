@@ -22,6 +22,7 @@ void GameManager::InitGameManager(std::shared_ptr<Movable> _root, std::vector<st
     // Init Stats
     stats = new Stats();
     stats->InitStats();
+    stats->snake_head = snake.GetBones()[0];
 
     // Init Leaderboard
     leaderboard = new Leaderboard();
@@ -386,4 +387,5 @@ void GameManager::InitTimers() {
     game_timer.StartTimer();
 
     stage_timer = GameTimer();
+    active_bonus_timer = GameTimer();
 }

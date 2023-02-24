@@ -11,6 +11,7 @@
 #include "../json/json.hpp"
 #include <fstream>
 #include <iostream>
+#include "Scene.h"
 
 using namespace std;
 using namespace nlohmann;
@@ -59,6 +60,7 @@ public:
     int current_score = 0;
     int objective_score = 0;
     string active_bonus = "None";
+    std::shared_ptr<cg3d::Model> snake_head;
     int current_movement_speed = 1;
     int min_movement_speed = 1; // Always
     int leaderboard_position = -1;

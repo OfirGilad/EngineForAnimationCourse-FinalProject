@@ -15,6 +15,17 @@ void GameObjectsVisitor::Visit(Scene* _scene)
     if (_scene->GetAnimate()) {
         game_manager = ((BasicScene*)_scene)->game_manager;
 
+        if (game_manager->stats->active_bonus != "None") {
+            game_manager->active_bonus_timer.StartTimer();
+            int bonuses_duration = game_manager->stats->bonuses_duration;
+            int current_active_bonus_time = game_manager->active_bonus_timer.GetElapsedTime();
+
+            if (current_active_bonus_time > bonuses_duration) {
+                game_manager->active_bonus_timer.ResetTimer();
+                game_manager->stats->active_bonus = "None";
+            }
+        }
+
         for (int i = 0; i < int(game_manager->alive_objects.size()); i++) {
             GameObject* current_game_object = game_manager->alive_objects[i];
             current_game_object->MoveObject();

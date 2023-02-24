@@ -96,6 +96,12 @@ void HealthObject::CollisionWithObject() {
 
 void HealthObject::MoveObject() {
     model->RotateByDegree(1.f, Eigen::Vector3f(0.f, 1.f, 0.f));
+
+    if (stats->active_bonus == "Magnet") {
+        Eigen::Vector3f object_translation = stats->snake_head->GetTranslation() - model->GetTranslation();
+        object_translation.normalize();
+        model->Translate(object_translation);
+    }
 }
 
 void HealthObject::SetAlive() {
@@ -135,6 +141,12 @@ void ScoreObject::CollisionWithObject() {
 
 void ScoreObject::MoveObject() {
     model->RotateByDegree(1.f, Eigen::Vector3f(0.f, 1.f, 0.f));
+
+    if (stats->active_bonus == "Magnet") {
+        Eigen::Vector3f object_translation = stats->snake_head->GetTranslation() - model->GetTranslation();
+        object_translation.normalize();
+        model->Translate(object_translation);
+    }
 }
 
 void ScoreObject::SetAlive() {
@@ -173,6 +185,12 @@ void GoldObject::CollisionWithObject() {
 
 void GoldObject::MoveObject() {
     model->RotateByDegree(1.f, Eigen::Vector3f(0.f, 1.f, 0.f));
+
+    if (stats->active_bonus == "Magnet") {
+        Eigen::Vector3f object_translation = stats->snake_head->GetTranslation() - model->GetTranslation();
+        object_translation.normalize();
+        model->Translate(object_translation);
+    }
 }
 
 void GoldObject::SetAlive() {
@@ -196,6 +214,10 @@ void BonusObject::CollisionWithObject() {
     bonus_duration = stats->bonuses_duration;
 
     // Handle event
+    stats->active_bonus = "Magnet";
+    //stats->active_bonus = "Freeze Time";
+    //stats->active_bonus = "Shield";
+    //stats->active_bonus = "Stats Booster";
 
     // Update stats
     stats->total_bonuses_collected += 1;

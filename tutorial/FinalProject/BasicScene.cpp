@@ -26,6 +26,9 @@ BasicScene::BasicScene(std::string name, Display* display) : SceneWithImGui(std:
     ImGui::StyleColorsDark();
     ImGuiStyle& style = ImGui::GetStyle();
     style.FrameRounding = 5.0f;
+
+    // Disable debug messages
+    glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, NULL, GL_FALSE);
 }
 
 void BasicScene::Init(float fov, int width, int height, float near, float far)
@@ -2000,7 +2003,7 @@ bool BasicScene::ProgramHandler(const Program& program) {
     }
     if (program.name == "bonus") {
         program.SetUniform4f("lightColor", 0.7f, 0.7f, 0.7f, 0.5f);
-        program.SetUniform4f("Kai", 0.0f, 0.0f, 1.0f, 1.0f);
+        program.SetUniform4f("Kai", 1.0f, 0.0, 1.0f, 1.0f);
         program.SetUniform4f("Kdi", 0.5f, 0.5f, 0.5f, 1.0f);
         program.SetUniform1f("specular_exponent", 5.0f);
         program.SetUniform4f("light_position", 0.0, 15.0f, 0.0, 1.0f);
