@@ -1562,7 +1562,7 @@ void BasicScene::StageMenuHandler() {
         }
         else {
             SetMenuImage("stage.jpg");
-            animate = true;
+            //animate = true;
             display_loading = false;
             
             // Reset Timers

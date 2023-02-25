@@ -45,7 +45,8 @@ public:
 
 
     // Inverse Kinematics
-    void InitInverseKinematics(vector<std::shared_ptr<cg3d::Model>> arms, std::shared_ptr<cg3d::Model> destination, bool animate);
+    void InitInverseKinematics(vector<std::shared_ptr<cg3d::Model>> links);
+    void SetDestinationPosition(Eigen::Vector3f destination_position);
     Eigen::Vector3f GetDestinationPosition();
     Eigen::Vector3f GetLinkTipPosition(int link_id);
     Eigen::Vector3f GetLinkSourcePosition(int link_id);
@@ -94,9 +95,8 @@ private:
 
 
     // Inverse Kinematics
-    vector<std::shared_ptr<cg3d::Model>> arms;
-    std::shared_ptr<cg3d::Model> destination;
-    bool animate;
+    vector<std::shared_ptr<cg3d::Model>> links;
+    Eigen::Vector3f destination_position;
 
     int IK_mode = 0;
     bool animate_CCD = false;
@@ -105,8 +105,8 @@ private:
     float angle_divider = 50.f;
 
     int first_link_id = 0;
-    int last_link_id = 2;
-    int num_of_links = 3;
+    int last_link_id = 0;
+    int num_of_links = 0;
     float link_length = 1.6f;
 
 

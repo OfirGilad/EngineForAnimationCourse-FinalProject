@@ -15,6 +15,8 @@ void GameManager::InitGameManager(std::shared_ptr<Movable> _root, std::vector<st
     // Init Snake
     snake = Snake(root, camera_list);
     snake.InitSnake(number_of_bones);
+    fabrik_logic = GameLogics();
+    fabrik_logic.InitInverseKinematics(snake.GetBones());
 
     // Init Sound Manager
     sound_manager = new SoundManager();
@@ -68,7 +70,7 @@ void GameManager::LoadStage(int stage_number, bool new_stage)
     InitBackground();
     InitAxis();
     LoadGameObjects();
-    snake.ShowSnake();
+    //snake.ShowSnake();
     stage_timer.StartTimer();
 }
 
@@ -84,8 +86,8 @@ void GameManager::UnloadStage() {
         axis_loaded = false;
     }
 
-    snake.HideSnake();
-    snake.ResetSnakePosition();
+    //snake.HideSnake();
+    //snake.ResetSnakePosition();
 
     for (int i = 0; i < alive_objects.size(); i++) {
         alive_objects[i]->SetDead();

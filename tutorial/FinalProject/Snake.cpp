@@ -33,15 +33,19 @@ void Snake::InitSnake(int num_of_bones)
     auto snake_head_material = std::make_shared<Material>("snake_material", snake_program);
     snake_head_material->program->name = "snake head program";
 
+    //root->RotateByDegree(90, Eigen::Vector3f(-1, 0, 0));
 
     // Creating first bone mesh
     int i = 0;
     //snake_bones.push_back(ObjLoader::ModelFromObj("bone " + to_string(i), "data/zcylinder.obj", snake_material));
     snake_bones.push_back(ObjLoader::ModelFromObj("bone " + to_string(i), "data/zcylinder.obj", snake_head_material));
-    snake_bones[i]->SetCenter(Eigen::Vector3f(0, 0, -(bone_size / 2)));
-    snake_bones[i]->showWireframe = false;
+   
     root->AddChild(snake_bones[i]);
-    snake_bones[i]->isHidden = true;
+    snake_bones[i]->SetCenter(Eigen::Vector3f(0, 0, -(bone_size / 2)));
+    snake_bones[first_index]->Translate({ 0,0,(bone_size / 2) });
+    snake_bones[i]->showWireframe = false;
+
+    //snake_bones[i]->isHidden = true;
     i++;
 
 
@@ -53,21 +57,29 @@ void Snake::InitSnake(int num_of_bones)
     snake_head->Translate(0.0, Movable::Axis::Z);
     snake_head->isHidden = true;
 
+    float bone_translation = 0.8f;
 
     // Creating the other bone meshes
     while(i < number_of_bones)
     {
         //snake_bones.push_back(ObjLoader::ModelFromObj("bone " + to_string(i), "data/zcylinder.obj", snake_material));
         snake_bones.push_back(ObjLoader::ModelFromObj("bone " + to_string(i), "data/zcylinder.obj", snake_head_material));
-        snake_bones[i]->Translate(bone_size, Scene::Axis::Z);
+
+        bone_translation += bone_size;
+
+        root->AddChild(snake_bones[i]);
         snake_bones[i]->SetCenter(Eigen::Vector3f(0, 0, -(bone_size / 2)));
+        snake_bones[i]->Translate(bone_translation, Scene::Axis::Z);
         snake_bones[i]->showWireframe = false;
-        snake_bones[i - 1]->AddChild(snake_bones[i]);
-        snake_bones[i]->isHidden = true;
+        
+        //snake_bones[i - 1]->AddChild(snake_bones[i]);
+        //snake_bones[i]->isHidden = true;
         i++;
     }
-    snake_bones[first_index]->Translate({ 0,0,(bone_size / 2) });
+    
 
+    // Reverse for Fabrik
+    std::reverse(snake_bones.begin(), snake_bones.end());
 
     // Updating camera views and init skinning
     UpdateCameraView();
@@ -125,45 +137,57 @@ void Snake::ResetSnakePosition() {
 // Snake Movement
 void Snake::MoveUp()
 {
-    snake_bones[first_index]->Rotate(0.1f, Scene::Axis::X);
-    snake_bones[first_index + 1]->Rotate(-0.1f, Scene::Axis::X);
+    snake_bones[last_index]->Rotate(0.1f, Scene::Axis::X);
+    //for (int i = 1; i < number_of_bones; i++) {
+    //    snake_bones[i]->Rotate(0.1f, Scene::Axis::X);
+    //}
+    //snake_bones[first_index + 1]->Rotate(-0.1f, Scene::Axis::X);
 }
 
 void Snake::MoveDown()
 {
-    snake_bones[first_index]->Rotate(-0.1f, Scene::Axis::X);
-    snake_bones[first_index + 1]->Rotate(0.1f, Scene::Axis::X);
+    snake_bones[last_index]->Rotate(-0.1f, Scene::Axis::X);
+    //for (int i = 1; i < number_of_bones; i++) {
+    //    snake_bones[i]->Rotate(-0.1f, Scene::Axis::X);
+    //}
+    //snake_bones[first_index + 1]->Rotate(0.1f, Scene::Axis::X);
 }
 
 void Snake::MoveLeft()
 {
-    snake_bones[first_index]->Rotate(0.1f, Scene::Axis::Y);
-    snake_bones[first_index + 1]->Rotate(-0.1f, Scene::Axis::Y);
+    snake_bones[last_index]->Rotate(0.1f, Scene::Axis::Y);
+    //for (int i = 1; i < number_of_bones; i++) {
+    //    snake_bones[i]->Rotate(0.1f, Scene::Axis::Y);
+    //}
+    //snake_bones[first_index + 1]->Rotate(-0.1f, Scene::Axis::Y);
 }
 
 void Snake::MoveRight()
 {
-    snake_bones[first_index]->Rotate(-0.1f, Scene::Axis::Y);
-    snake_bones[first_index + 1]->Rotate(0.1f, Scene::Axis::Y);
+    snake_bones[last_index]->Rotate(-0.1f, Scene::Axis::Y);
+    //for (int i = 1; i < number_of_bones; i++) {
+    //    snake_bones[i]->Rotate(-0.1f, Scene::Axis::Y);
+    //}
+    //snake_bones[first_index + 1]->Rotate(0.1f, Scene::Axis::Y);
 }
 
 void Snake::RollLeft()
 {
-    snake_bones[first_index]->Rotate(0.1f, Scene::Axis::Z);
-    snake_bones[first_index + 1]->Rotate(-0.1f, Scene::Axis::Z);
+    snake_bones[last_index]->Rotate(0.1f, Scene::Axis::Z);
+    //snake_bones[first_index + 1]->Rotate(-0.1f, Scene::Axis::Z);
 }
 
 void Snake::RollRight()
 {
-    snake_bones[first_index]->Rotate(-0.1f, Scene::Axis::Z);
-    snake_bones[first_index + 1]->Rotate(0.1f, Scene::Axis::Z);
+    snake_bones[last_index]->Rotate(-0.1f, Scene::Axis::Z);
+    //snake_bones[first_index + 1]->Rotate(0.1f, Scene::Axis::Z);
 }
 
 
 void Snake::UpdateCameraView()
 {
     // Set global view
-    snake_bones[first_index]->AddChild(camera_list[0]);
+    //snake_bones[first_index]->AddChild(camera_list[0]);
     Eigen::Vector3f camera_translation0 = Eigen::Vector3f(0.f, 10.f, 50.f);
     camera_list[0]->Translate(camera_translation0);
     camera_list[0]->RotateByDegree(-15.f, Movable::Axis::X);

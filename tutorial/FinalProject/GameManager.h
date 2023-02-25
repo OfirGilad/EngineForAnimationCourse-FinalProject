@@ -54,6 +54,7 @@ public:
 
     // Snake
     Snake snake;
+    GameLogics fabrik_logic;
     int number_of_bones = 16;
 
     // Sound Manager

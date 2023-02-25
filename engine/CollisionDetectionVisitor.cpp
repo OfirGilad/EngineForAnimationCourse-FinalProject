@@ -23,13 +23,13 @@ namespace cg3d
             float stage_size = game_manager->stats->stage_size;
             backgound_cube_space = Eigen::Vector3f(stage_size, stage_size, stage_size);
 
-            std::shared_ptr<cg3d::Model> snake_head = game_manager->snake.GetBones()[0];
+            std::shared_ptr<cg3d::Model> snake_head = game_manager->snake.GetBones()[game_manager->snake.last_index];
             
             // Handle Timer Damage
             TimerDamage();
 
             // Self Collision
-            if ((game_manager->stats->active_bonus != "Shield") && (CheckSelfCollision())) {
+            /*if ((game_manager->stats->active_bonus != "Shield") && (CheckSelfCollision())) {
                 _scene->SetAnimate(false);
                 int current_health = game_manager->stats->current_health;
                 game_manager->stats->total_health_points_lost += current_health;
@@ -37,7 +37,7 @@ namespace cg3d
                 cout << "Self Collision" << endl;
 
                 return;
-            }
+            }*/
 
             // Background Collision
             if (CheckBackgoroundCollision()) {
@@ -96,10 +96,10 @@ namespace cg3d
 
     bool CollisionDetectionVisitor::CheckSelfCollision()
     {
-        std::shared_ptr<cg3d::Model> snake_head = game_manager->snake.GetBones()[0];
+        std::shared_ptr<cg3d::Model> snake_head = game_manager->snake.GetBones()[game_manager->snake.last_index];
         int number_of_bones = int(game_manager->snake.GetBones().size());
 
-        for (int i = 2; i < number_of_bones; i++)
+        for (int i = number_of_bones; i > 1; i--)
         {
             std::shared_ptr<cg3d::Model> inner_bone = game_manager->snake.GetBones()[i];
 
