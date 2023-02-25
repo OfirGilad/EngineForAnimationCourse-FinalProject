@@ -8,7 +8,7 @@
 #endif //ENGINEFORANIMATIONCOURSE_FINALPROJECT_STATS_H
 
 #include <string>
-#include "../json/json.hpp"
+#include "json.hpp"
 #include <fstream>
 #include <iostream>
 #include "Scene.h"

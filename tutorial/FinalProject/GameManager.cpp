@@ -60,11 +60,11 @@ void GameManager::SaveGame() {
 
 void GameManager::LoadStage(int stage_number, bool new_stage)
 {
+    UnloadStage();
+
     // Set Select Stage
     stats->selected_stage = stage_number;
     InitStageParameters(new_stage);
-
-    UnloadStage();
     InitBackground();
     InitAxis();
     LoadGameObjects();
@@ -73,6 +73,8 @@ void GameManager::LoadStage(int stage_number, bool new_stage)
 }
 
 void GameManager::UnloadStage() {
+    stats->selected_stage = 0;
+
     if (background_loaded) {
         root->RemoveChild(background);
         background_loaded = false;
@@ -93,6 +95,57 @@ void GameManager::UnloadStage() {
     dead_objects.clear();
 
     stage_timer.ResetTimer();
+
+    stats->active_bonus = "None";
+    stats->active_bonus_timer.ResetTimer();
+}
+
+void GameManager::PauseStageHandle(bool pause_status) {
+    if (pause_status) {
+        stage_timer.StopTimer();
+
+        for (int i = 0; i < alive_objects.size(); i++) {
+            alive_objects[i]->alive_timer.StopTimer();
+        }
+
+        for (int i = 0; i < dead_objects.size(); i++) {
+            dead_objects[i]->dead_timer.StopTimer();
+        }
+
+        if (stats->active_bonus != "None") {
+            stats->active_bonus_timer.StopTimer();
+        }
+    }
+    else {
+        stage_timer.StartTimer();
+
+        for (int i = 0; i < alive_objects.size(); i++) {
+            alive_objects[i]->alive_timer.StartTimer();
+        }
+
+        for (int i = 0; i < dead_objects.size(); i++) {
+            dead_objects[i]->dead_timer.StartTimer();
+        }
+
+        if (stats->active_bonus != "None") {
+            stats->active_bonus_timer.StartTimer();
+        }
+    }
+}
+
+void GameManager::ResetTimers() {
+    stage_timer.ResetTimer();
+    stage_timer.StartTimer();
+
+    for (int i = 0; i < alive_objects.size(); i++) {
+        alive_objects[i]->alive_timer.ResetTimer();
+        alive_objects[i]->alive_timer.StartTimer();
+    }
+
+    for (int i = 0; i < dead_objects.size(); i++) {
+        alive_objects[i]->alive_timer.ResetTimer();
+        alive_objects[i]->alive_timer.StartTimer();
+    }
 }
 
 void GameManager::InitCollisionBoxes() {
@@ -176,7 +229,7 @@ void GameManager::InitCustomObjects() {
     auto program1 = std::make_shared<Program>("shaders/phongShader");
     auto material1 = std::make_shared<Material>("material", program1);
     material1->program->name = "health";
-    health_model = ObjLoader::ModelFromObj("health", "../tutorial/objects/health.obj", material1);
+    health_model = ObjLoader::ModelFromObj("health", "objects/health.obj", material1);
 
     health_model->Scale(0.3f, Movable::Axis::XYZ);
     health_model->Translate(-1.5f, Movable::Axis::Z);
@@ -185,7 +238,7 @@ void GameManager::InitCustomObjects() {
     auto program2 = std::make_shared<Program>("shaders/phongShader");
     auto material2 = std::make_shared<Material>("material", program2);
     material2->program->name = "score";
-    score_model = ObjLoader::ModelFromObj("score", "../tutorial/objects/score.obj", material2);
+    score_model = ObjLoader::ModelFromObj("score", "objects/score.obj", material2);
 
     score_model->Scale(0.17f, Movable::Axis::XYZ);
     score_model->Translate(-1.7f, Movable::Axis::Z);
@@ -194,7 +247,7 @@ void GameManager::InitCustomObjects() {
     auto program3 = std::make_shared<Program>("shaders/phongShader");
     auto material3 = std::make_shared<Material>("material", program3);
     material3->program->name = "gold";
-    gold_model = ObjLoader::ModelFromObj("gold", "../tutorial/objects/gold.obj", material3);
+    gold_model = ObjLoader::ModelFromObj("gold", "objects/gold.obj", material3);
 
     gold_model->Scale(0.17f, Movable::Axis::XYZ);
     gold_model->Translate(-0.6f, Movable::Axis::Z);
@@ -203,7 +256,7 @@ void GameManager::InitCustomObjects() {
     auto program4 = std::make_shared<Program>("shaders/phongShader");
     auto material4 = std::make_shared<Material>("material", program4);
     material4->program->name = "bonus";
-    bonus_model = ObjLoader::ModelFromObj("bonus", "../tutorial/objects/bonus.obj", material4);
+    bonus_model = ObjLoader::ModelFromObj("bonus", "objects/bonus.obj", material4);
 
     bonus_model->Scale(0.17f, Movable::Axis::XYZ);
     bonus_model->Translate(-1.7f, Movable::Axis::Z);
@@ -212,7 +265,7 @@ void GameManager::InitCustomObjects() {
     auto program5 = std::make_shared<Program>("shaders/phongShader");
     auto material5 = std::make_shared<Material>("material", program5);
     material5->program->name = "obstacle";
-    obstacle_model = ObjLoader::ModelFromObj("obstacle", "../tutorial/objects/obstacle.obj", material5);
+    obstacle_model = ObjLoader::ModelFromObj("obstacle", "objects/obstacle.obj", material5);
 
     obstacle_model->Scale(0.17f, Movable::Axis::XYZ);
     obstacle_model->Translate(-2.5f, Movable::Axis::Z);
@@ -221,7 +274,7 @@ void GameManager::InitCustomObjects() {
     auto program6 = std::make_shared<Program>("shaders/phongShader");
     auto material6 = std::make_shared<Material>("material", program6);
     material6->program->name = "exit";
-    exit_model = ObjLoader::ModelFromObj("obstacle", "../tutorial/objects/exit.obj", material6);
+    exit_model = ObjLoader::ModelFromObj("obstacle", "objects/exit.obj", material6);
 
     exit_model->Scale(0.15f, Movable::Axis::XYZ);
 }

@@ -233,13 +233,13 @@ void BasicScene::KeyCallback(Viewport* viewport, int x, int y, int key, int scan
                 if (menu_index == StageMenu)
                 {
                     animate = false;
-                    game_manager->stage_timer.StopTimer();
+                    game_manager->PauseStageHandle(true);
                     menu_index = PauseMenu;
                 }
                 else if (menu_index == PauseMenu)
                 {
                     animate = true;
-                    game_manager->stage_timer.StartTimer();
+                    game_manager->PauseStageHandle(false);
                     menu_index = StageMenu;
                 }
                 break;
@@ -1563,9 +1563,8 @@ void BasicScene::StageMenuHandler() {
             animate = true;
             display_loading = false;
             
-            // Reset Timer
-            game_manager->stage_timer.ResetTimer();
-            game_manager->stage_timer.StartTimer();
+            // Reset Timers
+            game_manager->ResetTimers();
         }
     }
 
@@ -2186,7 +2185,7 @@ bool BasicScene::ProgramHandler(const Program& program) {
 }
 
 void BasicScene::SetMenuImage(string image_name) {
-    string image_path = "../tutorial/images/" + image_name;
+    string image_path = "images/" + image_name;
     background_image = stbi_load(image_path.c_str(), &image_width, &image_height, &channels, STBI_rgb_alpha);
     if (background_image == NULL) {
         // Error handling if the image couldn't be loaded

@@ -35,6 +35,8 @@ public:
 
     void LoadStage(int stage_number, bool new_stage);
     void UnloadStage();
+    void PauseStageHandle(bool pause_status);
+    void ResetTimers();
 
     // Stage Builder
     std::shared_ptr<Movable> root;

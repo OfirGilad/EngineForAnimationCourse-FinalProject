@@ -6,7 +6,7 @@
 
 
 void Stats::InitStats() {
-    std::ifstream file("../tutorial/json/savedata.json");
+    std::ifstream file("jsons/savedata.json");
 
     if (file.good()) {
         std::cout << "Savedata exists! \nReading data" << std::endl;
@@ -76,7 +76,7 @@ void Stats::ResetStats(string name) {
     save_data["statistics"]["time_played"] = time_played;
 
 
-    std::ofstream outfile("../tutorial/json/savedata.json");
+    std::ofstream outfile("jsons/savedata.json");
     outfile << save_data.dump(4) << std::endl;
 }
 
@@ -105,6 +105,6 @@ void Stats::SaveStats() {
     save_data["statistics"]["total_deaths"] = total_deaths;
     save_data["statistics"]["time_played"] = time_played;
 
-    std::ofstream outfile("../tutorial/json/savedata.json");
+    std::ofstream outfile("jsons/savedata.json");
     outfile << save_data.dump(4) << std::endl;
 }

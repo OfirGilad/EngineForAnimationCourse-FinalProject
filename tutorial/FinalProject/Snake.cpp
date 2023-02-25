@@ -46,7 +46,7 @@ void Snake::InitSnake(int num_of_bones)
 
 
     // Creating the custom snake head mesh
-    snake_head = ObjLoader::ModelFromObj("snake head", "../tutorial/objects/snake_head.obj", snake_head_material);
+    snake_head = ObjLoader::ModelFromObj("snake head", "objects/snake_head.obj", snake_head_material);
     snake_bones[first_index]->AddChild(snake_head);
     snake_head->Scale(0.09f);
     snake_head->RotateByDegree(180, Movable::Axis::Y);

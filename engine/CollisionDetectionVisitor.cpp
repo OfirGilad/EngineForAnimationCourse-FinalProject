@@ -58,10 +58,6 @@ namespace cg3d
                 bool collision_check = collision_logic.CollisionCheck(snake_head->GetAABBTree(), current_game_object->model->GetAABBTree(), 0);
 
                 if (collision_check) {
-                    // Reset Timers
-                    current_game_object->alive_timer.ResetTimer();
-                    current_game_object->dead_timer.StartTimer();
-
                     // Remove Collision Boxes
                     snake_head->RemoveChild(game_manager->cube1);
                     current_game_object->model->RemoveChild(game_manager->cube2);

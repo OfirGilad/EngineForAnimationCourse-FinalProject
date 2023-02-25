@@ -39,21 +39,29 @@ void GameObjectsVisitor::Visit(Scene* _scene)
         // Handle Alive Game Objects
         for (int i = 0; i < int(game_manager->alive_objects.size()); i++) {
             GameObject* current_game_object = game_manager->alive_objects[i];
-            current_game_object->MoveObject();
+            float object_alive_time = current_game_object->alive_timer.GetElapsedTime();
+
+            if (object_alive_time > 20.f * game_manager->stats->selected_stage) {
+                // Move to Dead Objects
+                game_manager->alive_objects.erase(game_manager->alive_objects.begin() + i);
+                game_manager->dead_objects.push_back(current_game_object);
+
+                // Handle Object Event
+                current_game_object->SetDead();
+            }
+            else{
+                current_game_object->MoveObject();
+            }
         }
 
         // Handle Dead Game Objects
         for (int i = 0; i < int(game_manager->dead_objects.size()); i++) {
             GameObject* current_game_object = game_manager->dead_objects[i];
-            float object_time = current_game_object->dead_timer.GetElapsedTime();
+            float object_dead_time = current_game_object->dead_timer.GetElapsedTime();
 
             // Handle Exit Object
             if (current_game_object->model->name == "ExitObject") {
                 if (game_manager->stats->current_score >= game_manager->stats->objective_score) {
-                    // Reset Timers
-                    current_game_object->dead_timer.ResetTimer();
-                    current_game_object->alive_timer.StartTimer();
-
                     // Move to Alive Objects
                     game_manager->dead_objects.erase(game_manager->dead_objects.begin() + i);
                     game_manager->alive_objects.push_back(current_game_object);
@@ -66,11 +74,7 @@ void GameObjectsVisitor::Visit(Scene* _scene)
                     return;
                 }
             }
-            else if (object_time > 5.f * game_manager->stats->selected_stage) {
-                // Reset Timers
-                current_game_object->dead_timer.ResetTimer();
-                current_game_object->alive_timer.StartTimer();
-
+            else if (object_dead_time > 5.f * game_manager->stats->selected_stage) {
                 // Move to Alive Objects
                 game_manager->dead_objects.erase(game_manager->dead_objects.begin() + i);
                 game_manager->alive_objects.push_back(current_game_object);

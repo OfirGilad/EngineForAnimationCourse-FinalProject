@@ -6,7 +6,7 @@
 
 
 void Leaderboard::InitLeaderboard() {
-    std::ifstream file("../tutorial/json/leaderboard.json");
+    std::ifstream file("jsons/leaderboard.json");
 
     if (file.good()) {
         std::cout << "Leaderboard exists! \nReading data" << std::endl;
@@ -51,7 +51,7 @@ void Leaderboard::ResetLeaderboard() {
         leaderboard_data[index]["score"] = score;
     }
 
-    std::ofstream outfile("../tutorial/json/leaderboard.json");
+    std::ofstream outfile("jsons/leaderboard.json");
     outfile << leaderboard_data.dump(4) << std::endl;
 }
 
@@ -64,7 +64,7 @@ void Leaderboard::SaveLeaderboard() {
         leaderboard_data[index]["score"] = leaderboard_list[i].second;
     }
 
-    std::ofstream outfile("../tutorial/json/leaderboard.json");
+    std::ofstream outfile("jsons/leaderboard.json");
     outfile << leaderboard_data.dump(4) << std::endl;
 }
 

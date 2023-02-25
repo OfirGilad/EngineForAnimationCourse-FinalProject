@@ -23,7 +23,7 @@ void SoundManager::HandleMusic(string music_file) {
 
     if (music_player_enabled) {
         // Calling a script to play the music
-        std::string command = python_version + " ../tutorial/scripts/new_play_music.py \"" + music_file + "\"";
+        std::string command = python_version + " scripts/new_play_music.py \"" + music_file + "\"";
         pipe = _popen(command.c_str(), "w");
         if (!pipe) {
             std::cerr << "Error: Could not open pipe to Python process." << std::endl;
@@ -42,7 +42,7 @@ void SoundManager::HandleSound(string sound_file) {
     // Calling a script to play the sound
     const auto& PlaySound = [&](std::string sound_file) {
         string updated_volume = to_string(sound_volume * 100);
-        std::string command = python_version + " ../tutorial/scripts/new_play_sound.py " + sound_file + " " + updated_volume + "";
+        std::string command = python_version + " scripts/new_play_sound.py " + sound_file + " " + updated_volume + "";
         system(command.c_str());
     };
 

@@ -78,6 +78,8 @@ void HealthObject::CollisionWithObject() {
     current_health = stats->current_health;
     max_health = stats->max_health;
 
+    cout << "Time Since was alive: " << alive_timer.GetElapsedTime() << endl;
+
     // Handle event
     health_value = stage_number * 10;
 
@@ -115,10 +117,17 @@ void HealthObject::SetAlive() {
     model->Translate(GenerateRandomPosition());
     root->AddChild(model);
 
+    // Reset Timers
+    dead_timer.ResetTimer();
+    alive_timer.StartTimer();
 }
 
 void HealthObject::SetDead() {
     root->RemoveChild(model);
+
+    // Reset Timers
+    alive_timer.ResetTimer();
+    dead_timer.StartTimer();
 }
 
 /////////////////
@@ -131,8 +140,10 @@ void ScoreObject::CollisionWithObject() {
     current_score = stats->current_score;
     score_multiplier = stats->score_multiplier;
 
+    cout << "Time Since was alive: " << alive_timer.GetElapsedTime() << endl;
+
     // Handle event
-    score_value = 10 * stage_number * score_multiplier;
+    score_value = 50 * stage_number * score_multiplier - (int(alive_timer.GetElapsedTime()) / 10) * 10;
 
     if (stats->active_bonus == "Stats Boost") {
         score_value *= 2;
@@ -164,10 +175,18 @@ void ScoreObject::SetAlive() {
     model->Translate(-original_translation);
     model->Translate(GenerateRandomPosition());
     root->AddChild(model);
+
+    // Reset Timers
+    dead_timer.ResetTimer();
+    alive_timer.StartTimer();
 }
 
 void ScoreObject::SetDead() {
     root->RemoveChild(model);
+
+    // Reset Timers
+    alive_timer.ResetTimer();
+    dead_timer.StartTimer();
 }
 
 ////////////////
@@ -179,6 +198,8 @@ void GoldObject::CollisionWithObject() {
     int stage_number = stats->selected_stage;
     gold = stats->gold;
     gold_multiplier = stats->gold_multiplier;
+
+    cout << "Time Since was alive: " << alive_timer.GetElapsedTime() << endl;
 
     // Handle event
     gold_value = 10 * stage_number * gold_multiplier;
@@ -213,10 +234,18 @@ void GoldObject::SetAlive() {
     model->Translate(-original_translation);
     model->Translate(GenerateRandomPosition());
     root->AddChild(model);
+
+    // Reset Timers
+    dead_timer.ResetTimer();
+    alive_timer.StartTimer();
 }
 
 void GoldObject::SetDead() {
     root->RemoveChild(model);
+
+    // Reset Timers
+    alive_timer.ResetTimer();
+    dead_timer.StartTimer();
 }
 
 /////////////////
@@ -227,6 +256,8 @@ void BonusObject::CollisionWithObject() {
     // Get required parameters
     int stage_number = stats->selected_stage;
     bonus_duration = stats->bonuses_duration;
+
+    cout << "Time Since was alive: " << alive_timer.GetElapsedTime() << endl;
 
     // Handle event
     bonus_value = rand() % 4;
@@ -267,11 +298,19 @@ void BonusObject::SetAlive() {
     bezier_logic.InitBezierCurve(model, stats->stage_size);
     bezier_logic.GenerateBezierCurve();
     root->AddChild(bezier_logic.GetBezierCurveModel());
+
+    // Reset Timers
+    dead_timer.ResetTimer();
+    alive_timer.StartTimer();
 }
 
 void BonusObject::SetDead() {
     root->RemoveChild(model);
     root->RemoveChild(bezier_logic.GetBezierCurveModel());
+
+    // Reset Timers
+    alive_timer.ResetTimer();
+    dead_timer.StartTimer();
 }
 
 ////////////////////
@@ -289,6 +328,8 @@ void ObstacleObject::CollisionWithObject() {
     // Get required parameters
     int stage_number = stats->selected_stage;
     current_health = stats->current_health;
+
+    cout << "Time Since was alive: " << alive_timer.GetElapsedTime() << endl;
 
     // Handle event
     damage_value = 10 * stage_number;
@@ -319,11 +360,19 @@ void ObstacleObject::SetAlive() {
     bezier_logic.InitBezierCurve(model, stats->stage_size);
     bezier_logic.GenerateBezierCurve();
     root->AddChild(bezier_logic.GetBezierCurveModel());
+
+    // Reset Timers
+    dead_timer.ResetTimer();
+    alive_timer.StartTimer();
 }
 
 void ObstacleObject::SetDead() {
     root->RemoveChild(model);
     root->RemoveChild(bezier_logic.GetBezierCurveModel());
+
+    // Reset Timers
+    alive_timer.ResetTimer();
+    dead_timer.StartTimer();
 }
 
 ////////////////
@@ -332,6 +381,7 @@ void ObstacleObject::SetDead() {
 
 void ExitObject::CollisionWithObject() {
     // Get required parameters
+    cout << "Time Since was alive: " << alive_timer.GetElapsedTime() << endl;
 
     // Handle event
 
@@ -352,8 +402,16 @@ void ExitObject::MoveObject() {
 
 void ExitObject::SetAlive() {
     root->AddChild(model);
+
+    // Reset Timers
+    dead_timer.ResetTimer();
+    alive_timer.StartTimer();
 }
 
 void ExitObject::SetDead() {
     root->RemoveChild(model);
+
+    // Reset Timers
+    alive_timer.ResetTimer();
+    dead_timer.StartTimer();
 }
