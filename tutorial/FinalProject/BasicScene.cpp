@@ -230,17 +230,19 @@ void BasicScene::KeyCallback(Viewport* viewport, int x, int y, int key, int scan
                 SwitchView(false);
                 break;
             case GLFW_KEY_SPACE:
-                if (menu_index == StageMenu)
-                {
-                    animate = false;
-                    game_manager->PauseStageHandle(true);
-                    menu_index = PauseMenu;
-                }
-                else if (menu_index == PauseMenu)
-                {
-                    animate = true;
-                    game_manager->PauseStageHandle(false);
-                    menu_index = StageMenu;
+                if (display_loading == false) {
+                    if (menu_index == StageMenu)
+                    {
+                        animate = false;
+                        game_manager->PauseStageHandle(true);
+                        menu_index = PauseMenu;
+                    }
+                    else if (menu_index == PauseMenu)
+                    {
+                        animate = true;
+                        game_manager->PauseStageHandle(false);
+                        menu_index = StageMenu;
+                    }
                 }
                 break;
 
