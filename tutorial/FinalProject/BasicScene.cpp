@@ -632,7 +632,7 @@ void BasicScene::MainMenuHandler() {
 
         font_scale1 = float(width) / 600.f;
 
-        text_position1 = float(width) * 0.4f;
+        text_position1 = float(width) * 0.42f;
         text_position2 = float(width) * 0.35f;
     }
     else {
@@ -1250,7 +1250,7 @@ void BasicScene::SettingsMenuHandler() {
 
         font_scale1 = float(width) / 600.f;
 
-        text_position1 = float(width) * 0.4f;
+        text_position1 = float(width) * 0.42f;
         text_position2 = float(width) * 0.35f;
         text_position3 = float(width) * 0.15f;
     }
@@ -1448,7 +1448,7 @@ void BasicScene::CreditsMenuHandler() {
 
         font_scale1 = float(width) / 400.f;
 
-        text_position1 = float(width) * 0.4f;
+        text_position1 = float(width) * 0.42f;
         text_position2 = float(width) * 0.35f;
         text_position3 = float(width) * 0.3f;
     }
@@ -1545,7 +1545,13 @@ void BasicScene::StageMenuHandler() {
             ImGui::SetWindowFontScale(font_scale1);
 
             LoadMenuImage();
-            ImGui::ProgressBar(game_manager->stage_timer.GetElapsedTime() / 3.f);
+            ImGui::SetCursorPos(ImVec2(width * 0.45f, height * 0.02f));
+            ImGui::Text("Pro Tip:");
+            ImGui::SetCursorPosX(width * 0.08);
+            ImGui::Text("Don't forget to spend Gold to improve your stats");
+
+            ImGui::SetCursorPosY(height * 0.92f);
+            ImGui::ProgressBar(game_manager->stage_timer.GetElapsedTime() / 3.f, ImVec2(width * 0.99, height * 0.05f));
 
             ImGui::End();
             return;
@@ -1555,7 +1561,7 @@ void BasicScene::StageMenuHandler() {
             ImGui::SetWindowPos(window_position1, ImGuiCond_Always);
             ImGui::SetWindowSize(window_size2, ImGuiCond_Always);
 
-            if (game_manager->stage_timer.GetElapsedTime() < 4.0f) {
+            if ((3.1f < game_manager->stage_timer.GetElapsedTime()) && game_manager->stage_timer.GetElapsedTime() < 4.0f) {
                 SetMenuImage("3.png");
                 LoadMenuImage();
             }
@@ -1655,7 +1661,14 @@ void BasicScene::StageMenuHandler() {
     ImGui::SameLine(float(width) * 0.3f);
 
     // Handle Objective Score
-    gui_text = "Objective Score: " + std::to_string(game_manager->stats->objective_score);
+    int objective_score = game_manager->stats->objective_score;
+    int current_score = game_manager->stats->current_score;
+    if (current_score < objective_score) {
+        gui_text = "Objective Score: " + std::to_string(objective_score);
+    }
+    else {
+        gui_text = "Objective: Go to the EXIT!";
+    }
     ImGui::TextColored(ImVec4(0.0, 0.0, 0.0, 1.0), gui_text.c_str());
 
     ImGui::SameLine(float(width) * 0.6f);
