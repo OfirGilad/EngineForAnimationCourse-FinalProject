@@ -1522,7 +1522,9 @@ void BasicScene::StageMenuHandler() {
     if (display_loading) {
         if (game_manager->stage_timer.GetElapsedTime() < 3.f) {
             ImGui::Begin("Menu", pOpen, flags);
+            ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
             ImGui::SetWindowSize(ImVec2(width, height), ImGuiCond_Always);
+            ImGui::SetWindowFontScale(font_scale1);
 
             LoadMenuImage();
             ImGui::ProgressBar(game_manager->stage_timer.GetElapsedTime() / 3.f);
@@ -1844,13 +1846,8 @@ void BasicScene::StageCompletedMenuHandler() {
     else {
         if (ImGui::Button("Continue", buttons_size1)) {
             current_stage++;
-            game_manager->sound_manager->stage_index = current_stage;
             menu_index = StageMenu;
-
-            font_scale1 = float(width) / 400.f;
-            ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
-            ImGui::SetWindowSize(ImVec2(width, height), ImGuiCond_Always);
-            ImGui::SetWindowFontScale(font_scale1);
+            game_manager->sound_manager->stage_index = current_stage;
 
             game_manager->LoadStage(current_stage, false);
             SetMenuImage("loading.jpg");
