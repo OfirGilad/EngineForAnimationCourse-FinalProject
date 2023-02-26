@@ -93,7 +93,7 @@ private:
     int width = 1;
     int height = 1;
 
-    int menu_index = StageSelectionMenu;
+    int menu_index = LoginMenu;
     int last_menu_index = MainMenu; // For ShopMenu
     int next_menu_index = MainMenu; // For NewHighScoreMenu
 

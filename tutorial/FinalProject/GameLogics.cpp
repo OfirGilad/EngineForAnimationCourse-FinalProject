@@ -548,46 +548,41 @@ bool GameLogics::BoxesIntersectionCheck(Eigen::AlignedBox<double, 3>& aligned_bo
 
 // Inverse Kinematics
 
-void GameLogics::InitInverseKinematics(vector<std::shared_ptr<cg3d::Model>> links)
-{
-    this->links = links;
-    this->num_of_links = links.size();
-    this->last_link_id = num_of_links - 1;
+void GameLogics::InitInverseKinematics(vector<std::shared_ptr<cg3d::Model>> arms, std::shared_ptr<cg3d::Model> destination, bool animate) {
+    this->arms = arms;
+    this->destination = destination;
+    this->animate = animate;
 }
 
-void GameLogics::SetDestinationPosition(Eigen::Vector3f destination_position)
-{
-    animate_CCD = true;
-    animate_Fabrik = true;
-    this->destination_position = destination_position;
-}
 
-// Get the destination position
+// Get the destination position (sphere1 center)
 Eigen::Vector3f GameLogics::GetDestinationPosition()
 {
+    Eigen::Matrix4f destination_transform = destination->GetAggregatedTransform();
+    Eigen::Vector3f destination_position = Eigen::Vector3f(destination_transform.col(3).x(), destination_transform.col(3).y(), destination_transform.col(3).z());
+
     return destination_position;
 }
 
 // Get the tip position of arms[link_id]
 Eigen::Vector3f GameLogics::GetLinkTipPosition(int link_id)
 {
-    Eigen::Vector3f link_length = Eigen::Vector3f(0, 0, 0.8f);
+    Eigen::Vector3f cyl_length = Eigen::Vector3f(0, 0, 0.8f);
 
-    Eigen::Matrix4f arm_transform = links[link_id]->GetAggregatedTransform();
+    Eigen::Matrix4f arm_transform = arms[link_id]->GetAggregatedTransform();
     Eigen::Vector3f arm_center = Eigen::Vector3f(arm_transform.col(3).x(), arm_transform.col(3).y(), arm_transform.col(3).z());
-    Eigen::Vector3f arm_tip_position = arm_center - links[link_id]->GetRotation() * link_length;
+    Eigen::Vector3f arm_tip_position = arm_center + arms[link_id]->GetRotation() * cyl_length;
 
     return arm_tip_position;
 }
 
 // Get the source position of arms[link_id]
-Eigen::Vector3f GameLogics::GetLinkSourcePosition(int link_id)
-{
-    Eigen::Vector3f link_length = Eigen::Vector3f(0, 0, 0.8f);
+Eigen::Vector3f GameLogics::GetLinkSourcePosition(int link_id) {
+    Eigen::Vector3f cyl_length = Eigen::Vector3f(0, 0, 0.8f);
 
-    Eigen::Matrix4f arm_transform = links[link_id]->GetAggregatedTransform();
+    Eigen::Matrix4f arm_transform = arms[link_id]->GetAggregatedTransform();
     Eigen::Vector3f arm_center = Eigen::Vector3f(arm_transform.col(3).x(), arm_transform.col(3).y(), arm_transform.col(3).z());
-    Eigen::Vector3f arm_source_position = arm_center + links[link_id]->GetRotation() * link_length;
+    Eigen::Vector3f arm_source_position = arm_center - arms[link_id]->GetRotation() * cyl_length;
 
     return arm_source_position;
 }
@@ -622,9 +617,8 @@ std::vector<Eigen::Matrix3f> GameLogics::GetEulerAnglesMatrices(Eigen::Matrix3f 
 }
 
 // Inverse Kinematics Coordinate Decent Method
-void GameLogics::IKCyclicCoordinateDecentMethod()
-{
-    if (animate_CCD) {
+void GameLogics::IKCyclicCoordinateDecentMethod() {
+    if (animate_CCD && animate) {
         Eigen::Vector3f D = GetDestinationPosition();
         Eigen::Vector3f first_link_position = GetLinkSourcePosition(first_link_id);
 
@@ -661,23 +655,23 @@ void GameLogics::IKCyclicCoordinateDecentMethod()
 
             // Rotate link
             float angle = acosf(dot) / angle_divider;
-            Eigen::Vector3f rotation_vector = links[curr_link]->GetRotation().transpose() * normal;
+            Eigen::Vector3f rotation_vector = arms[curr_link]->GetRotation().transpose() * normal;
             Eigen::Matrix3f Ri = (Eigen::AngleAxisf(angle, rotation_vector.normalized())).toRotationMatrix();
             Eigen::Vector3f euler_angles = Ri.eulerAngles(2, 0, 2);
 
-            links[curr_link]->Rotate(euler_angles[0], Scene::Axis::Z);
-            links[curr_link]->Rotate(euler_angles[1], Scene::Axis::X);
-            links[curr_link]->Rotate(euler_angles[2], Scene::Axis::Z);
+            arms[curr_link]->Rotate(euler_angles[0], Scene::Axis::Z);
+            arms[curr_link]->Rotate(euler_angles[1], Scene::Axis::X);
+            arms[curr_link]->Rotate(euler_angles[2], Scene::Axis::Z);
 
             curr_link--;
         }
+        animate = false;
     }
 }
 
 // Inverse Kinematics Fabrik Method
-void GameLogics::IKFabrikMethod()
-{
-    if (animate_Fabrik) {
+void GameLogics::IKFabrikMethod() {
+    if (animate_Fabrik && animate) {
         // The joint positions
         std::vector<Eigen::Vector3f> p;
         p.resize(num_of_links + 1);
@@ -706,13 +700,13 @@ void GameLogics::IKFabrikMethod()
         float dist = (root - t).norm();
 
         // 1.3. % Check whether the target is within reach
-        //if (dist > link_length * num_of_links) {
-        //    // 1.5. % The target is unreachable
-        //    std::cout << "cannot reach" << std::endl;
-        //    animate_Fabrik = false;
-        //    return;
-        //}
-        //else {
+        if (dist > link_length * num_of_links) {
+            // 1.5. % The target is unreachable
+            std::cout << "cannot reach" << std::endl;
+            animate_Fabrik = false;
+            return;
+        }
+        else {
             // 1.14. % The target is reachable; thus set as b the initial position of joint p_0
             Eigen::Vector3f b = p[first_link_id];
 
@@ -721,11 +715,11 @@ void GameLogics::IKFabrikMethod()
             float diff_A = (endEffector - t).norm();
             float tol = delta;
 
-            //if (diff_A < tol) {
-            //    std::cout << "distance: " << diff_A << std::endl;
-            //    animate_Fabrik = false;
-            //    return;
-            //}
+            if (diff_A < tol) {
+                std::cout << "distance: " << diff_A << std::endl;
+                animate_Fabrik = false;
+                return;
+            }
             while (diff_A > tol) {
                 // 1.19. % STAGE 1: FORWARD REACHING
                 // 1.20. % Set the end effector p_n as target t
@@ -742,30 +736,22 @@ void GameLogics::IKFabrikMethod()
                     child = parent;
                     parent = parent - 1;
                 }
-                
-                //// 1.29. % STAGE 2: BACKWORD REACHING
-                //// 1.30. % Set the root p0 its initial position
-                //p[first_link_id] = b;
-                //parent = first_link_id;
-                //child = first_link_id + 1;
+                // 1.29. % STAGE 2: BACKWORD REACHING
+                // 1.30. % Set the root p0 its initial position
+                p[first_link_id] = b;
+                parent = first_link_id;
+                child = first_link_id + 1;
 
-                //while (child != num_of_links) {
-                //    //1.33. % Find the distance r_i between the new joint position p_i and the joint p_i+1
-                //    ri_array[parent] = (p[child] - p[parent]).norm();
-                //    lambda_i_array[parent] = link_length / ri_array[parent];
-                //    //1.36 % Find the new joint positions p_i.
-                //    p[child] = (1 - lambda_i_array[parent]) * p[parent] + lambda_i_array[parent] * p[child];
-                //    parent = child;
-                //    child = child + 1;
-                //}
-                
+                while (child != num_of_links) {
+                    //1.33. % Find the distance r_i between the new joint position p_i and the joint p_i+1
+                    ri_array[parent] = (p[child] - p[parent]).norm();
+                    lambda_i_array[parent] = link_length / ri_array[parent];
+                    //1.36 % Find the new joint positions p_i.
+                    p[child] = (1 - lambda_i_array[parent]) * p[parent] + lambda_i_array[parent] * p[child];
+                    parent = child;
+                    child = child + 1;
+                }
                 diff_A = (p[last_link_id + 1] - t).norm();
-            }
-            
-            for (int i = 1; i < p.size(); i++) {
-                Eigen::Vector3f new_translation = p[i] - GetLinkTipPosition(i - 1);
-                cout << new_translation << endl;
-                links[i - 1]->Translate(new_translation);
             }
 
             // Using Fabrik output to rotate the links
@@ -784,14 +770,13 @@ void GameLogics::IKFabrikMethod()
                 animate_Fabrik = false;
                 std::cout << "distance: " << distance << std::endl;
             }
-            animate_Fabrik = false;
-        //}
+        }
+        animate = false;
     }
 }
 
 // Inverse Kinematics helper function to perform the links rotations
-void GameLogics::IKSolverHelper(int link_id, Eigen::Vector3f D)
-{
+void GameLogics::IKSolverHelper(int link_id, Eigen::Vector3f D) {
     Eigen::Vector3f R = GetLinkSourcePosition(link_id);
     Eigen::Vector3f E = GetLinkTipPosition(link_id);
     Eigen::Vector3f RD = D - R;
@@ -809,20 +794,17 @@ void GameLogics::IKSolverHelper(int link_id, Eigen::Vector3f D)
 
     // Rotate link
     float angle = acosf(dot) / angle_divider;
-    Eigen::Vector3f rotation_vector = links[link_id]->GetRotation().transpose() * normal;
+    Eigen::Vector3f rotation_vector = arms[link_id]->GetRotation().transpose() * normal;
     Eigen::Matrix3f Ri = (Eigen::AngleAxisf(angle, rotation_vector.normalized())).toRotationMatrix();
     Eigen::Vector3f euler_angles = Ri.eulerAngles(2, 0, 2);
 
-    links[link_id]->Rotate(euler_angles[0], Scene::Axis::Z);
-    links[link_id]->Rotate(euler_angles[1], Scene::Axis::X);
-    links[link_id]->Rotate(euler_angles[2], Scene::Axis::Z);
+    arms[link_id]->Rotate(euler_angles[0], Scene::Axis::Z);
+    arms[link_id]->Rotate(euler_angles[1], Scene::Axis::X);
+    arms[link_id]->Rotate(euler_angles[2], Scene::Axis::Z);
 }
 
 
-// Bezier Curve
-
-void GameLogics::InitBezierCurve(std::shared_ptr<cg3d::Model> model, float stage_size)
-{
+void GameLogics::InitBezierCurve(std::shared_ptr<cg3d::Model> model, float stage_size) {
     this->model = model;
     this->stage_size = stage_size;
     t = 0;
@@ -889,8 +871,7 @@ void GameLogics::GenerateBezierCurve()
     model->Translate(object_translation);
 }
 
-void GameLogics::MoveOnCurve()
-{
+void GameLogics::MoveOnCurve() {
     // Find next position
     if (move_forward) {
         if (t > 0.99f) {
@@ -924,8 +905,7 @@ void GameLogics::MoveOnCurve()
     model->Translate(object_translation);
 }
 
-Eigen::Vector3f GameLogics::GenerateRandomPosition(int point_zone)
-{
+Eigen::Vector3f GameLogics::GenerateRandomPosition(int point_zone) {
     std::random_device random_device;
     std::mt19937 generator(random_device());
     std::uniform_real_distribution<float> distribution1(0, stage_size - 10);

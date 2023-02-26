@@ -61,9 +61,6 @@ public:
     // Skinning status
     bool skinning_enabled = false;
 
-    int first_index = 0;
-    int last_index = 0;
-
 private:
     void UpdateCameraView();
     
@@ -76,6 +73,8 @@ private:
     std::shared_ptr <Model> snake_head, snake_body;
     float bone_size = 1.6f;
     int number_of_bones = 0;
+    int first_index = 0;
+    int last_index = 0;
     int view_state = 0;
     float snake_length = 0;
 
