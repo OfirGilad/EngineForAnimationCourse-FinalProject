@@ -39,7 +39,7 @@ public:
     int score_multiplier = 1;
     int gold_multiplier = 1;
     int bonuses_duration = 10;
-    int max_movement_speed = 2;
+    int max_movement_speed = 3;
 
 
     // Statistics default values

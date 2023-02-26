@@ -212,9 +212,10 @@ void GameManager::InitAxis() {
 
 void GameManager::LoadGameObjects() {
     int selected_stage = stats->selected_stage;
+    int number_of_objects_to_load = (max_number_of_objects / 3) * selected_stage;
 
     for (int i = 0; i < int(all_objects.size()); i++) {
-        for (int j = 0; j < selected_stage; j++) {
+        for (int j = 0; j < number_of_objects_to_load; j++) {
             all_objects[i][j]->SetAlive();
             alive_objects.push_back(all_objects[i][j]);
         }
@@ -290,7 +291,7 @@ void GameManager::BuildGameObjects() {
 void GameManager::BuildHealthObjects() {
     std::vector<GameObject*> objects_list;
 
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < max_number_of_objects; i++) {
         // Init meshes
         temp_object1 = Model::Create("health", health_model->GetMesh(), health_model->material);
         temp_object1->SetTransform(health_model->GetTransform());
@@ -315,7 +316,7 @@ void GameManager::BuildHealthObjects() {
 void GameManager::BuildScoreObjects() {
     std::vector<GameObject*> objects_list;
 
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < max_number_of_objects; i++) {
         // Init meshes
         temp_object1 = Model::Create("score", score_model->GetMesh(), score_model->material);
         temp_object1->SetTransform(score_model->GetTransform());
@@ -340,7 +341,7 @@ void GameManager::BuildScoreObjects() {
 void GameManager::BuildGoldObjects() {
     std::vector<GameObject*> objects_list;
 
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < max_number_of_objects; i++) {
         // Init meshes
         temp_object1 = Model::Create("gold", gold_model->GetMesh(), gold_model->material);
         temp_object1->SetTransform(gold_model->GetTransform());
@@ -365,7 +366,7 @@ void GameManager::BuildGoldObjects() {
 void GameManager::BuildBonusObjects() {
     std::vector<GameObject*> objects_list;
 
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < max_number_of_objects; i++) {
         // Init meshes
         temp_object1 = Model::Create("bonus", bonus_model->GetMesh(), bonus_model->material);
         temp_object1->SetTransform(bonus_model->GetTransform());
@@ -390,7 +391,7 @@ void GameManager::BuildBonusObjects() {
 void GameManager::BuildObstacleObjects() {
     std::vector<GameObject*> objects_list;
 
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < max_number_of_objects; i++) {
         // Init meshes
         temp_object1 = Model::Create("obstacle", obstacle_model->GetMesh(), obstacle_model->material);
         temp_object1->SetTransform(obstacle_model->GetTransform());

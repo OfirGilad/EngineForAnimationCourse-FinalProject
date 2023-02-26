@@ -48,6 +48,7 @@ public:
     std::vector<GameObject*> alive_objects;
     std::vector<GameObject*> dead_objects;
     GameObject* exit_object;
+    int max_number_of_objects = 6;
 
     // CollisionDetectionVisitor Parameters
     std::shared_ptr<cg3d::Model> cube1, cube2;
