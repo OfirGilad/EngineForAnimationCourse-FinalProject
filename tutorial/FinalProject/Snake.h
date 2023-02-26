@@ -64,7 +64,7 @@ private:
     vector<std::shared_ptr<Camera>> camera_list;
     std::shared_ptr<Movable> root;
     std::vector<std::shared_ptr<Model>> snake_bones;
-    std::shared_ptr <Model> snake_head, snake_body;
+    std::shared_ptr <Model> snake_head, snake_tail, snake_body;
     float bone_size = 1.6f;
     int number_of_bones = 0;
     int first_index = 0;

@@ -38,9 +38,10 @@ void Snake::InitSnake(int num_of_bones)
     int i = 0;
     //snake_bones.push_back(ObjLoader::ModelFromObj("bone " + to_string(i), "data/zcylinder.obj", snake_material));
     snake_bones.push_back(ObjLoader::ModelFromObj("bone " + to_string(i), "data/zcylinder.obj", snake_head_material));
+    root->AddChild(snake_bones[i]);
+    snake_bones[first_index]->Translate({ 0,0,(bone_size / 2) });
     snake_bones[i]->SetCenter(Eigen::Vector3f(0, 0, -(bone_size / 2)));
     snake_bones[i]->showWireframe = false;
-    root->AddChild(snake_bones[i]);
     snake_bones[i]->isHidden = true;
     i++;
 
@@ -59,14 +60,21 @@ void Snake::InitSnake(int num_of_bones)
     {
         //snake_bones.push_back(ObjLoader::ModelFromObj("bone " + to_string(i), "data/zcylinder.obj", snake_material));
         snake_bones.push_back(ObjLoader::ModelFromObj("bone " + to_string(i), "data/zcylinder.obj", snake_head_material));
+        snake_bones[i - 1]->AddChild(snake_bones[i]);
         snake_bones[i]->Translate(bone_size, Scene::Axis::Z);
         snake_bones[i]->SetCenter(Eigen::Vector3f(0, 0, -(bone_size / 2)));
         snake_bones[i]->showWireframe = false;
-        snake_bones[i - 1]->AddChild(snake_bones[i]);
         snake_bones[i]->isHidden = true;
         i++;
     }
-    snake_bones[first_index]->Translate({ 0,0,(bone_size / 2) });
+
+
+    // Creating the custom snake tail mesh
+    snake_tail = ObjLoader::ModelFromObj("snake tail", "objects/obstacle.obj", snake_head_material);
+    snake_bones[last_index]->AddChild(snake_tail);
+    snake_tail->Scale(0.07f);
+    snake_tail->Translate(0.0, Movable::Axis::Z);
+    snake_tail->isHidden = true;
 
 
     // Updating camera views and init skinning
@@ -75,7 +83,8 @@ void Snake::InitSnake(int num_of_bones)
 }
 
 
-void Snake::ShowSnake() {
+void Snake::ShowSnake() 
+{
     if (skinning_enabled) {
         snake_body->isHidden = false;
     }
@@ -85,9 +94,11 @@ void Snake::ShowSnake() {
         }
     }
     snake_head->isHidden = false;
+    snake_tail->isHidden = false;
 }
 
-void Snake::HideSnake() {
+void Snake::HideSnake() 
+{
     if (skinning_enabled) {
         snake_body->isHidden = true;
     }
@@ -97,9 +108,11 @@ void Snake::HideSnake() {
         }
     }
     snake_head->isHidden = true;
+    snake_tail->isHidden = true;
 }
 
-void Snake::ResetSnakePosition() {
+void Snake::ResetSnakePosition() 
+{
     std::vector<std::shared_ptr<cg3d::Model>> snake_bones = GetBones();
     root->RemoveChild(snake_bones[first_index]);
     snake_bones[first_index]->SetTransform(Matrix4f::Identity());
@@ -217,7 +230,8 @@ void Snake::CalculateWeight()
 }
 
 
-void Snake::SkinningInit() {
+void Snake::SkinningInit() 
+{
     // Create snake mesh
     auto program = std::make_shared<Program>("shaders/phongShader");
     auto material = std::make_shared<Material>("snake_material", program);
