@@ -804,6 +804,8 @@ void GameLogics::IKSolverHelper(int link_id, Eigen::Vector3f D) {
 }
 
 
+// Bezier Curve
+
 void GameLogics::InitBezierCurve(std::shared_ptr<cg3d::Model> model, float stage_size) {
     this->model = model;
     this->stage_size = stage_size;

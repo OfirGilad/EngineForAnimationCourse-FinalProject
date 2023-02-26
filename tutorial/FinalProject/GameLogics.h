@@ -105,8 +105,8 @@ private:
     float angle_divider = 50.f;
 
     int first_link_id = 0;
-    int last_link_id = 2;
-    int num_of_links = 3;
+    int last_link_id = 15;
+    int num_of_links = 16;
     float link_length = 1.6f;
 
 
@@ -116,7 +116,7 @@ private:
     float t = 0.f;
     bool move_forward = true;
     int total_curve_points = 20;
-    Eigen::Matrix <float, 4, 3 > MG;
+    Eigen::Matrix<float, 4, 3> MG;
 
     float bezier_step = 0.001;
 };
