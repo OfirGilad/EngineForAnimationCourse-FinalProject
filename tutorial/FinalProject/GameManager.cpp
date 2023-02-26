@@ -169,7 +169,7 @@ void GameManager::InitStageParameters(bool new_stage) {
     stats->last_time_damage = 0;
     stats->current_movement_speed = stats->min_movement_speed;
     stats->current_health = stats->max_health;
-    stats->objective_score = stats->current_score + 100 * stats->selected_stage;
+    stats->objective_score = stats->current_score + 200 * stats->selected_stage;
 }
 
 void GameManager::InitBackground() {
