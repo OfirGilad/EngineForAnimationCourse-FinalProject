@@ -1694,6 +1694,7 @@ void BasicScene::StageMenuHandler() {
         SetAnimate(false);
         game_manager->sound_manager->HandleSound("obstacle_object.mp3");
         game_manager->sound_manager->HandleSound("game_over.mp3");
+        game_manager->stats->total_deaths++;
         menu_index = StageFailedMenu;
     }
 
