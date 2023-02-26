@@ -13,14 +13,7 @@
 #include "ObjLoader.h"
 
 #include "igl/per_vertex_normals.h"
-#include <igl/directed_edge_orientations.h>
-#include <igl/directed_edge_parents.h>
-#include <igl/forward_kinematics.h>
-#include <igl/PI.h>
-#include <igl/lbs_matrix.h>
-#include <igl/deform_skeleton.h>
 #include <igl/dqs.h>
-#include <igl/opengl/glfw/Viewer.h>
 
 #include <Eigen/Geometry>
 #include <Eigen/StdVector>
@@ -52,6 +45,9 @@ public:
     void RollLeft();
     void RollRight();
 
+    void UpdateCameraView();
+    void ResetCameraView();
+
     void SkinningInit();
     void Skinning();
 
@@ -62,8 +58,6 @@ public:
     bool skinning_enabled = false;
 
 private:
-    void UpdateCameraView();
-    
     void CalculateWeight();
 
     

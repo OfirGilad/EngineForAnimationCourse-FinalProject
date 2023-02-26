@@ -166,18 +166,19 @@ void BasicScene::CursorPosCallback(Viewport* viewport, int x, int y, bool draggi
     //}
 
     if ((dragging) && (camera_list[0] == camera)) {
-        auto system = camera->GetRotation().transpose() * GetRotation();
+        //auto system = camera->GetRotation().transpose() * GetRotation();
+        auto system = Eigen::Matrix3f::Identity();;
         auto moveCoeff = camera->CalcMoveCoeff(pickedModelDepth, viewport->width);
         auto angleCoeff = camera->CalcAngleCoeff(viewport->width);
         
-        // camera->SetTout(cameraToutAtPress);
-        if (buttonState[GLFW_MOUSE_BUTTON_RIGHT] != GLFW_RELEASE)
-            camera->TranslateInSystem(system, { -float(xAtPress - x) / moveCoeff / 10.0f, float(yAtPress - y) / moveCoeff / 10.0f, 0 });
-        if (buttonState[GLFW_MOUSE_BUTTON_MIDDLE] != GLFW_RELEASE)
+        if (buttonState[GLFW_MOUSE_BUTTON_RIGHT] != GLFW_RELEASE) {
+            camera->RotateInSystem(system, float(y - yAtPress) / angleCoeff, Axis::X);
+        }
+        if (buttonState[GLFW_MOUSE_BUTTON_MIDDLE] != GLFW_RELEASE) {
             camera->RotateInSystem(system, float(x - xAtPress) / 180.0f, Axis::Z);
+        }
         if (buttonState[GLFW_MOUSE_BUTTON_LEFT] != GLFW_RELEASE) {
             camera->RotateInSystem(system, float(x - xAtPress) / angleCoeff, Axis::Y);
-            camera->RotateInSystem(system, float(y - yAtPress) / angleCoeff, Axis::X);
         }
 
         xAtPress = x;
@@ -244,6 +245,9 @@ void BasicScene::KeyCallback(Viewport* viewport, int x, int y, int key, int scan
                         menu_index = StageMenu;
                     }
                 }
+                break;
+            case GLFW_KEY_R:
+                game_manager->snake.ResetCameraView();
                 break;
 
             // Debug Mode Buttons
@@ -1248,7 +1252,7 @@ void BasicScene::SettingsMenuHandler() {
 
         text_position1 = float(width) * 0.4f;
         text_position2 = float(width) * 0.35f;
-        text_position3 = float(width) * 0.3f;
+        text_position3 = float(width) * 0.15f;
     }
     else {
         window_size1 = buttons_size1 = buttons_size2 = ImVec2(1, 1);
@@ -1290,6 +1294,7 @@ void BasicScene::SettingsMenuHandler() {
         }
     }
     else {
+        ImGui::SetCursorPosX(text_position3);
         ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "Skinning option is blocked during stage!");
     }
 
@@ -1387,6 +1392,8 @@ void BasicScene::SettingsMenuHandler() {
         ImGui::SetCursorPosX(text_position3);
         ImGui::Text("B - Switch view backward");
         ImGui::SetCursorPosX(text_position3);
+        ImGui::Text("R - Reset global view");
+        ImGui::SetCursorPosX(text_position3);
         ImGui::Text("UP - Increase snake speed");
         ImGui::SetCursorPosX(text_position3);
         ImGui::Text("DOWN - Decrease snake speed");
@@ -1398,6 +1405,17 @@ void BasicScene::SettingsMenuHandler() {
         ImGui::Text("SPACE - Pause stage");
         ImGui::SetCursorPosX(text_position3);
         ImGui::Text("ESC - Exit game");
+        Spacing(5);
+        ImGui::SetCursorPosX(text_position3);
+        ImGui::Text("Mouse Keys: ");
+        ImGui::SetCursorPosX(text_position3);
+        ImGui::Text("Right click hold - Move global view left and right");
+        ImGui::SetCursorPosX(text_position3);
+        ImGui::Text("Left click hold - Move global view up and down");
+        ImGui::SetCursorPosX(text_position3);
+        ImGui::Text("Scroll click hold - Roll global view left and right");
+        ImGui::SetCursorPosX(text_position3);
+        ImGui::Text("Scroll - Zoom global view in and out");
     }
 
     Spacing(10);

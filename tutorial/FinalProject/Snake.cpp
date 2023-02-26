@@ -181,6 +181,18 @@ void Snake::UpdateCameraView()
 }
 
 
+void Snake::ResetCameraView() 
+{
+    snake_bones[0]->RemoveChild(camera_list[0]);
+    camera_list[0]->SetTransform(Matrix4f::Identity());
+
+    snake_bones[first_index]->AddChild(camera_list[0]);
+    Eigen::Vector3f camera_translation = Eigen::Vector3f(0.f, 10.f, 50.f);
+    camera_list[0]->Translate(camera_translation);
+    camera_list[0]->RotateByDegree(-15.f, Movable::Axis::X);
+}
+
+
 void Snake::CalculateWeight() 
 {
     int n = int(V.rows());
