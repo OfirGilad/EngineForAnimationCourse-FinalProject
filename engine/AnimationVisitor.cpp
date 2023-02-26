@@ -31,25 +31,27 @@ namespace cg3d
 
             if (model->name.find("bone") != std::string::npos)
             {
+                float movement_speed = float(scene->game_manager->stats->current_movement_speed) * -0.1f;
+
                 if (model->name == std::string("bone 0"))
                 {
-                    float movement_speed = float(scene->game_manager->stats->current_movement_speed) * -0.1f;
                     model->TranslateInSystem(system, Eigen::Vector3f(0, 0, movement_speed));
                     snake.Skinning();
                 }
                 else {
                     std::string curr_bone_name = std::string("bone ") + std::to_string(bone_index + 1);
+                    movement_speed = max(-0.95f, movement_speed + 0.1f);
 
                     if (model->name == "bone 1" && bone_index == 0) {
                         //Rotate Forward
                         vector2x = model->Tout.rotation() * vector1x;
                         quaternionx = Eigen::Quaternionf::FromTwoVectors(vector2x, vector1x);
-                        quaternionx = quaternionx.slerp(0.95, Eigen::Quaternionf::Identity());
+                        quaternionx = quaternionx.slerp(0.95 + movement_speed, Eigen::Quaternionf::Identity());
                         model->Rotate(quaternionx);
 
                         vector2y = model->Tout.rotation() * vector1y;
                         quaterniony = Eigen::Quaternionf::FromTwoVectors(vector2y, vector1y);
-                        quaterniony = quaterniony.slerp(0.95, Eigen::Quaternionf::Identity());
+                        quaterniony = quaterniony.slerp(0.95 + movement_speed, Eigen::Quaternionf::Identity());
                         model->Rotate(quaterniony);
 
                         bone_index = (bone_index + 1) % number_of_bones;
@@ -66,12 +68,12 @@ namespace cg3d
                         //Rotate Forward
                         vector2x = model->Tout.rotation() * vector1x;
                         quaternionx = Eigen::Quaternionf::FromTwoVectors(vector2x, vector1x);
-                        quaternionx = quaternionx.slerp(0.95, Eigen::Quaternionf::Identity());
+                        quaternionx = quaternionx.slerp(0.95 + movement_speed, Eigen::Quaternionf::Identity());
                         model->Rotate(quaternionx);
 
                         vector2y = model->Tout.rotation() * vector1y;
                         quaterniony = Eigen::Quaternionf::FromTwoVectors(vector2y, vector1y);
-                        quaterniony = quaterniony.slerp(0.95, Eigen::Quaternionf::Identity());
+                        quaterniony = quaterniony.slerp(0.95 + movement_speed, Eigen::Quaternionf::Identity());
                         model->Rotate(quaterniony);
                         
                         bone_index = (bone_index + 1) % number_of_bones;
