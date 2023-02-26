@@ -116,6 +116,7 @@ private:
     // Snake Color
     Eigen::Vector3f snake_color = Eigen::Vector3f(0.5f, 0.25f, 0.0f);
 
+    // Menu Images
     unsigned char* background_image;
     GLuint background_image_texture;
     int image_width;

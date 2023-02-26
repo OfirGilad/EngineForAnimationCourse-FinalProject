@@ -1847,6 +1847,11 @@ void BasicScene::StageCompletedMenuHandler() {
             game_manager->sound_manager->stage_index = current_stage;
             menu_index = StageMenu;
 
+            font_scale1 = float(width) / 400.f;
+            ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
+            ImGui::SetWindowSize(ImVec2(width, height), ImGuiCond_Always);
+            ImGui::SetWindowFontScale(font_scale1);
+
             game_manager->LoadStage(current_stage, false);
             SetMenuImage("loading.jpg");
             display_loading = true;
