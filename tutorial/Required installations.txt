@@ -4,3 +4,4 @@ Install VLC
 
 Required Python Libraries:
 pip install python-vlc
+pip install pygame
