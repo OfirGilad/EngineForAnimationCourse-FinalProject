@@ -183,7 +183,7 @@ void Snake::UpdateCameraView()
 
     // Set snake front view
     snake_bones[first_index]->AddChild(camera_list[1]);
-    Vector3f camera_translation1 = camera_list[1]->GetRotation() * Vector3f(0.f, 0.6f, 0.6f);
+    Vector3f camera_translation1 = camera_list[1]->GetRotation() * Vector3f(0.f, 0.6f, -0.5f);
     camera_list[1]->Translate(camera_translation1);
 
     // Set snake back view
