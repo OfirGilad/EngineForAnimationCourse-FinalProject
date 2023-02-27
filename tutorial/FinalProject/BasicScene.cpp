@@ -489,14 +489,14 @@ void BasicScene::LoginMenuHandler() {
     if (width != 0 && height != 0) {
         window_size1 = ImVec2(float(width), float(height));
 
-        buttons_size1 = ImVec2(float(width) / 4.f, float(height) / 8.f);
+        buttons_size1 = ImVec2(float(width) / 3.f, float(height) / 6.f);
 
-        input_text_size1 = ImVec2((float(width) / 4.f), (float(height) / 16.f));
+        input_text_size1 = ImVec2((float(width) / 3.f), (float(height) / 16.f));
 
         font_scale1 = float(width) / 400.f;
 
         text_position1 = float(width) * 0.38f;
-        text_position2 = float(width) * 0.35f;
+        text_position2 = float(width) * 0.3f;
     }
     else {
         window_size1 = buttons_size1 = input_text_size1 = ImVec2(1, 1);
@@ -529,7 +529,7 @@ void BasicScene::LoginMenuHandler() {
     ImGui::SameLine();
     ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "D");
 
-    Spacing(5);
+    Spacing(10);
 
     ImGui::SetCursorPosX(text_position2);
     if (display_new_game) {
