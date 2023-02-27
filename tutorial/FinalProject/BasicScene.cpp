@@ -1537,7 +1537,7 @@ void BasicScene::StageMenuHandler() {
 
     // Display loading screen
     if (display_loading) {
-        if (game_manager->stage_timer.GetElapsedTime() < 3.f) {
+        if (game_manager->stage_timer.GetElapsedTime() < 6.f) {
             ImGui::Begin("Menu", pOpen, flags);
             ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Always);
             ImGui::SetWindowSize(ImVec2(width, height), ImGuiCond_Always);
@@ -1545,30 +1545,30 @@ void BasicScene::StageMenuHandler() {
 
             LoadMenuImage();
             ImGui::SetCursorPos(ImVec2(width * 0.45f, height * 0.02f));
-            ImGui::Text("Pro Tip:");
+            ImGui::TextColored(ImVec4(0.0, 0.0, 0.0, 1.0), "Pro Tip:");
             ImGui::SetCursorPosX(width * 0.08);
-            ImGui::Text("Don't forget to spend Gold to improve your stats");
+            ImGui::TextColored(ImVec4(0.0, 0.0, 0.0, 1.0), "Don't forget to spend Gold to improve your stats");
 
             ImGui::SetCursorPosY(height * 0.92f);
-            ImGui::ProgressBar(game_manager->stage_timer.GetElapsedTime() / 3.f, ImVec2(width * 0.99, height * 0.05f));
+            ImGui::ProgressBar(game_manager->stage_timer.GetElapsedTime() / 6.f, ImVec2(width * 0.99, height * 0.05f));
 
             ImGui::End();
             return;
         }
-        else if (game_manager->stage_timer.GetElapsedTime() < 6.f) {
+        else if (game_manager->stage_timer.GetElapsedTime() < 9.1f) {
             ImGui::Begin("Menu", pOpen, flags);
             ImGui::SetWindowPos(window_position1, ImGuiCond_Always);
             ImGui::SetWindowSize(window_size2, ImGuiCond_Always);
 
-            if ((3.1f < game_manager->stage_timer.GetElapsedTime()) && game_manager->stage_timer.GetElapsedTime() < 4.0f) {
+            if ((6.1f < game_manager->stage_timer.GetElapsedTime()) && game_manager->stage_timer.GetElapsedTime() < 7.0f) {
                 SetMenuImage("3.png");
                 LoadMenuImage();
             }
-            else if ((4.1f < game_manager->stage_timer.GetElapsedTime()) && (game_manager->stage_timer.GetElapsedTime() < 5.0f)) {
+            else if ((7.1f < game_manager->stage_timer.GetElapsedTime()) && (game_manager->stage_timer.GetElapsedTime() < 8.0f)) {
                 SetMenuImage("2.png");
                 LoadMenuImage();
             }
-            else if ((5.1f < game_manager->stage_timer.GetElapsedTime()) && (game_manager->stage_timer.GetElapsedTime() < 6.0f)) {
+            else if ((8.1f < game_manager->stage_timer.GetElapsedTime()) && (game_manager->stage_timer.GetElapsedTime() < 9.0f)) {
                 SetMenuImage("1.png");
                 LoadMenuImage();
             }
