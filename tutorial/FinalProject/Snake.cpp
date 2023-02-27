@@ -192,7 +192,7 @@ void Snake::UpdateCameraView()
     camera_list[2]->Translate(camera_translation2);
     camera_list[2]->RotateByDegree(180, Movable::Axis::Y);
 
-    // Set global static view
+    // Set snake global static view
     Eigen::Vector3f camera_translation3 = Eigen::Vector3f(0.f, 50.f, 0.f);
     camera_list[3]->Translate(camera_translation3);
     camera_list[3]->RotateByDegree(-90, Movable::Axis::X);

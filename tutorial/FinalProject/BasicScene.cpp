@@ -37,7 +37,7 @@ void BasicScene::Init(float fov, int width, int height, float near, float far)
     camera_list[0] = Camera::Create("snake far view", fov, float(width) / height, near, far);
     camera_list[1] = Camera::Create("snake front view", fov, float(width) / height, near, far);
     camera_list[2] = Camera::Create("snake back view", fov, float(width) / height, near, far);
-    camera_list[3] = Camera::Create("global static view", fov, float(width) / height, near, far);
+    camera_list[3] = Camera::Create("snake global static view", fov, float(width) / height, near, far);
 
     camera = camera_list[0];
     number_of_cameras = int(camera_list.size());
@@ -1413,13 +1413,13 @@ void BasicScene::SettingsMenuHandler() {
         ImGui::SetCursorPosX(text_position3);
         ImGui::TextColored(ImVec4(1.f, 0.f, 0.f, 1.f), "Mouse Keys: ");
         ImGui::SetCursorPosX(text_position3);
-        ImGui::TextColored(ImVec4(0.f, 1.f, 0.f, 1.f), "Right click hold - Move global view left and right");
+        ImGui::TextColored(ImVec4(0.f, 1.f, 0.f, 1.f), "Right click hold - Move snake far view left and right");
         ImGui::SetCursorPosX(text_position3);
-        ImGui::TextColored(ImVec4(0.f, 1.f, 0.f, 1.f), "Left click hold - Move global view up and down");
+        ImGui::TextColored(ImVec4(0.f, 1.f, 0.f, 1.f), "Left click hold - Move snake far view up and down");
         ImGui::SetCursorPosX(text_position3);
-        ImGui::TextColored(ImVec4(0.f, 1.f, 0.f, 1.f), "Scroll click hold - Roll global view left and right");
+        ImGui::TextColored(ImVec4(0.f, 1.f, 0.f, 1.f), "Scroll click hold - Roll snake far view left and right");
         ImGui::SetCursorPosX(text_position3);
-        ImGui::TextColored(ImVec4(0.f, 1.f, 0.f, 1.f), "Scroll - Zoom global view in and out");
+        ImGui::TextColored(ImVec4(0.f, 1.f, 0.f, 1.f), "Scroll - Zoom snake global and far view in and out");
     }
 
     Spacing(10);
