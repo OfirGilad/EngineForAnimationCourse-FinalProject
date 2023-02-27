@@ -34,9 +34,10 @@ void BasicScene::Init(float fov, int width, int height, float near, float far)
 {
     // Set camera list
     camera_list.resize(camera_list.capacity());
-    camera_list[0] = Camera::Create("global view", fov, float(width) / height, near, far);
+    camera_list[0] = Camera::Create("snake far view", fov, float(width) / height, near, far);
     camera_list[1] = Camera::Create("snake front view", fov, float(width) / height, near, far);
     camera_list[2] = Camera::Create("snake back view", fov, float(width) / height, near, far);
+    camera_list[3] = Camera::Create("global static view", fov, float(width) / height, near, far);
 
     camera = camera_list[0];
     number_of_cameras = int(camera_list.size());
@@ -123,9 +124,13 @@ void BasicScene::ScrollCallback(Viewport* viewport, int x, int y, int xoffset, i
     // Handle ImGui Menu
     if (ImGui::GetIO().WantCaptureMouse) return;
 
-    // Enable scrolling only for global camera
+    // Enable scrolling only for global cameras
     if (camera_index == 0) {
         camera->Translate({ 0, 0, -float(yoffset) });
+        cameraToutAtPress = camera->GetTout();
+    }
+    else if (camera_index == 3) {
+        camera->Translate({ 0, -float(yoffset), 0 });
         cameraToutAtPress = camera->GetTout();
     }
 }
@@ -418,7 +423,7 @@ void BasicScene::SwitchView(bool next)
         camera_index = (camera_index + 1) % number_of_cameras;
     }
     else {
-        camera_index = (camera_index + 2) % number_of_cameras;
+        camera_index = (camera_index + 3) % number_of_cameras;
     }
     
     camera = camera_list[camera_index];
@@ -1683,6 +1688,7 @@ void BasicScene::StageMenuHandler() {
         }
         if (ImGui::Button(std::to_string(i + 1).c_str())) {
             SetCamera(i);
+            camera_index = i;
         }
         if (selected_camera) {
             ImGui::PopStyleColor();
