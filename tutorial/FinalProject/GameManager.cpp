@@ -176,7 +176,16 @@ void GameManager::InitBackground() {
     int stage_number = stats->selected_stage;
 
     auto daylight{ std::make_shared<Material>("daylight", "shaders/cubemapShader") };
-    daylight->AddTexture(0, "textures/cubemaps/Daylight Box_", 3);
+    
+    if (stats->selected_stage == 1) {
+        daylight->AddTexture(0, "cubemaps/Stage1/Stage1 Box_", 3);
+    }
+    else if (stats->selected_stage == 2) {
+        daylight->AddTexture(0, "cubemaps/Stage2/Stage2 Box_", 3);
+    }
+    else if (stats->selected_stage == 3) {
+        daylight->AddTexture(0, "cubemaps/Stage3/Stage3 Box_", 3);
+    }
 
     background = Model::Create("background", Mesh::Cube(), daylight);
     root->AddChild(background);
