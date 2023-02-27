@@ -277,8 +277,8 @@ void GameManager::InitCustomObjects() {
     material5->program->name = "obstacle";
     obstacle_model = ObjLoader::ModelFromObj("obstacle", "objects/obstacle.obj", material5);
 
-    obstacle_model->Scale(0.17f, Movable::Axis::XYZ);
-    obstacle_model->Translate(-2.5f, Movable::Axis::Z);
+    obstacle_model->Scale(0.68f, Movable::Axis::XYZ);
+    obstacle_model->Translate(-10.0f, Movable::Axis::Z);
 
     // Exit
     auto program6 = std::make_shared<Program>("shaders/phongShader");
@@ -411,7 +411,8 @@ void GameManager::BuildObstacleObjects() {
         temp_object2->AddChild(temp_object1);
 
         // Fix Scaling
-        temp_object2->Scale(Eigen::Vector3f(5.f, 5.f, 5.f));
+        temp_object2->Scale(Eigen::Vector3f(15.f, 15.f, 15.f));
+        //temp_object2->Scale(Eigen::Vector3f(20.f, 20.f, 20.f));
         temp_object2->isHidden = true;
         //temp_object2->showFaces = false;
 
