@@ -1052,7 +1052,7 @@ void BasicScene::StatsMenuHandler() {
         buttons_size1 = ImVec2(float(width) / 4.f, float(height) / 8.f);
         buttons_size2 = ImVec2(float(width) / 4.f, float(height) / 14.f);
 
-        font_scale1 = (float(width) / float(height)) * 1.5f;
+        font_scale1 = (float(width) / float(height)) * 2.5f;
 
         text_position1 = float(width) * 0.43f;
         text_position2 = float(width) * 0.35f;
