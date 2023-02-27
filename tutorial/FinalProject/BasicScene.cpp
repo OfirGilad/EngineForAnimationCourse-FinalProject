@@ -1052,7 +1052,7 @@ void BasicScene::StatsMenuHandler() {
         buttons_size1 = ImVec2(float(width) / 4.f, float(height) / 8.f);
         buttons_size2 = ImVec2(float(width) / 4.f, float(height) / 14.f);
 
-        font_scale1 = (float(width) / float(height)) * 2.5f;
+        font_scale1 = float(width) / 500.f;
 
         text_position1 = float(width) * 0.43f;
         text_position2 = float(width) * 0.35f;
@@ -1437,22 +1437,23 @@ void BasicScene::CreditsMenuHandler() {
     }
 
     // Set sizes
-    ImVec2 window_size1, buttons_size1;
+    ImVec2 window_size1, buttons_size1, buttons_size2;
     float font_scale1, text_position1, text_position2, text_position3;
 
     if (width != 0 && height != 0) {
         window_size1 = ImVec2(float(width), float(height));
 
         buttons_size1 = ImVec2(float(width) / 4.f, float(height) / 8.f);
+        buttons_size2 = ImVec2(float(width) / 2.f, float(height) / 10.f);
 
-        font_scale1 = float(width) / 400.f;
+        font_scale1 = float(width) / 250.f;
 
-        text_position1 = float(width) * 0.42f;
+        text_position1 = float(width) * 0.38f;
         text_position2 = float(width) * 0.35f;
-        text_position3 = float(width) * 0.3f;
+        text_position3 = float(width) * 0.05f;
     }
     else {
-        window_size1 = buttons_size1 = ImVec2(1, 1);
+        window_size1 = buttons_size1 = buttons_size2 = ImVec2(1, 1);
         font_scale1 = text_position1 = text_position2 = text_position3 = 1;
     }
 
@@ -1493,7 +1494,7 @@ void BasicScene::CreditsMenuHandler() {
         ImGui::Text(gui_text.c_str());
     }
     else {
-        if (ImGui::Button("Contribute Credit")) {
+        if (ImGui::Button("Contribute Credit", buttons_size2)) {
             payed_credits = true;
         }
     }
@@ -1869,9 +1870,6 @@ void BasicScene::StageCompletedMenuHandler() {
         if (ImGui::Button("End Game", buttons_size1)) {
             next_menu_index = CreditsMenu;
             menu_index = NewHighScoreMenu;
-
-            game_manager->UnloadStage();
-            animate = false;
         }
     }
     else {
