@@ -8,7 +8,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "stb_image.h"
-#include <imgui.h>
 #include <imgui_internal.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
@@ -1378,44 +1377,44 @@ void BasicScene::SettingsMenuHandler() {
             display_keys = false;
         }
         ImGui::SetCursorPosX(text_position3);
-        ImGui::Text("Keyboard Keys: ");
+        ImGui::TextColored(ImVec4(1.f, 0.f, 0.f, 1.f), "Keyboard Keys: ");
         ImGui::SetCursorPosX(text_position3);
-        ImGui::Text("W - Move snake up");
+        ImGui::TextColored(ImVec4(0.f, 1.f, 0.f, 1.f), "W - Move snake up");
         ImGui::SetCursorPosX(text_position3);
-        ImGui::Text("S - Move snake down");
+        ImGui::TextColored(ImVec4(0.f, 1.f, 0.f, 1.f), "S - Move snake down");
         ImGui::SetCursorPosX(text_position3);
-        ImGui::Text("A - Move snake left");
+        ImGui::TextColored(ImVec4(0.f, 1.f, 0.f, 1.f), "A - Move snake left");
         ImGui::SetCursorPosX(text_position3);
-        ImGui::Text("D - Move snake right");
+        ImGui::TextColored(ImVec4(0.f, 1.f, 0.f, 1.f), "D - Move snake right");
         ImGui::SetCursorPosX(text_position3);
-        ImGui::Text("V - Switch view forward");
+        ImGui::TextColored(ImVec4(0.f, 1.f, 0.f, 1.f), "V - Switch view forward");
         ImGui::SetCursorPosX(text_position3);
-        ImGui::Text("B - Switch view backward");
+        ImGui::TextColored(ImVec4(0.f, 1.f, 0.f, 1.f), "B - Switch view backward");
         ImGui::SetCursorPosX(text_position3);
-        ImGui::Text("R - Reset global view");
+        ImGui::TextColored(ImVec4(0.f, 1.f, 0.f, 1.f), "R - Reset global view");
         ImGui::SetCursorPosX(text_position3);
-        ImGui::Text("UP - Increase snake speed");
+        ImGui::TextColored(ImVec4(0.f, 1.f, 0.f, 1.f), "UP - Increase snake speed");
         ImGui::SetCursorPosX(text_position3);
-        ImGui::Text("DOWN - Decrease snake speed");
+        ImGui::TextColored(ImVec4(0.f, 1.f, 0.f, 1.f), "DOWN - Decrease snake speed");
         ImGui::SetCursorPosX(text_position3);
-        ImGui::Text("LEFT - Rotate snake left");
+        ImGui::TextColored(ImVec4(0.f, 1.f, 0.f, 1.f), "LEFT - Rotate snake left");
         ImGui::SetCursorPosX(text_position3);
-        ImGui::Text("RIGHT - Rotate snake right");
+        ImGui::TextColored(ImVec4(0.f, 1.f, 0.f, 1.f), "RIGHT - Rotate snake right");
         ImGui::SetCursorPosX(text_position3);
-        ImGui::Text("SPACE - Pause stage");
+        ImGui::TextColored(ImVec4(0.f, 1.f, 0.f, 1.f), "SPACE - Pause stage");
         ImGui::SetCursorPosX(text_position3);
-        ImGui::Text("ESC - Exit game");
+        ImGui::TextColored(ImVec4(0.f, 1.f, 0.f, 1.f), "ESC - Exit game");
         Spacing(5);
         ImGui::SetCursorPosX(text_position3);
-        ImGui::Text("Mouse Keys: ");
+        ImGui::TextColored(ImVec4(1.f, 0.f, 0.f, 1.f), "Mouse Keys: ");
         ImGui::SetCursorPosX(text_position3);
-        ImGui::Text("Right click hold - Move global view left and right");
+        ImGui::TextColored(ImVec4(0.f, 1.f, 0.f, 1.f), "Right click hold - Move global view left and right");
         ImGui::SetCursorPosX(text_position3);
-        ImGui::Text("Left click hold - Move global view up and down");
+        ImGui::TextColored(ImVec4(0.f, 1.f, 0.f, 1.f), "Left click hold - Move global view up and down");
         ImGui::SetCursorPosX(text_position3);
-        ImGui::Text("Scroll click hold - Roll global view left and right");
+        ImGui::TextColored(ImVec4(0.f, 1.f, 0.f, 1.f), "Scroll click hold - Roll global view left and right");
         ImGui::SetCursorPosX(text_position3);
-        ImGui::Text("Scroll - Zoom global view in and out");
+        ImGui::TextColored(ImVec4(0.f, 1.f, 0.f, 1.f), "Scroll - Zoom global view in and out");
     }
 
     Spacing(10);

@@ -118,5 +118,5 @@ private:
     int total_curve_points = 20;
     Eigen::Matrix<float, 4, 3> MG;
 
-    float bezier_step = 0.001;
+    float bezier_step = 0.001f;
 };

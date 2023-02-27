@@ -9,6 +9,8 @@
 #include "SceneWithImGui.h"
 #include "GameManager.h"
 
+#include <imgui.h>
+
 class BasicScene : public cg3d::SceneWithImGui
 {
 public:
